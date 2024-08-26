@@ -1,0 +1,16 @@
+# Compilados
+*.o
+*.a
+*.so
+*.out
+
+# Archivos de configuración de compilador y generados por el sistema
+*.log
+*.tmp
+*.swp
+*.swo
+*.DS_Store
+
+# Archivos específicos de editor
+.vscode/
+*.code-workspace
