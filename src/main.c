@@ -14,34 +14,73 @@
 #include <stdlib.h>
 #include <readline/history.h>
 #include <readline/readline.h>
+#include <unistd.h>
+#include <sys/wait.h>
 #include "libft.h"
+#include "minishell.h"
 
-void	handle_command(char *input)
+void	execute_command(t_vars *vars)
 {
-	printf("Error: comando no reconocido -> %s\n", input);
+	char	**args;
+	pid_t	pid;
+	int		status;
+
+	args = ft_split(vars->input, ' ');
+	if (args == NULL || args[0] == NULL)
+	{
+		ft_free_split(args);
+		return ;
+	}
+	pid = fork();
+	if (pid == 0)
+	{
+		if (execvp(args[0], args) == -1)
+			perror("minishell");
+		exit(EXIT_FAILURE);
+	}
+	else if (pid < 0)
+		perror("minishell");
+	else
+		waitpid(pid, &status, 0);
+	ft_free_split(args);
 }
 
-int	main(void)
+void	handle_command(t_vars *vars)
 {
-	char	*input;
-	int		running;
+	if (ft_strlen(vars->input) > 0)
+		add_history(vars->input);
+	if (ft_strncmp(vars->input, "exit", 5) == 0)
+		vars->running = 0;
+	else
+		execute_command(vars);
+}
 
-	running = 1;
-	while (running)
+void	init_vars(t_vars *vars)
+{
+	vars->running = 1;
+	vars->input = NULL;
+}
+
+void	shell_loop(t_vars *vars)
+{
+	while (vars->running)
 	{
-		input = readline("minishell> ");
-		if (input == NULL)
+		vars->input = readline("minishell> ");
+		if (vars->input == NULL)
 		{
 			printf("\n");
 			exit(0);
 		}
-		if (ft_strlen(input) > 0)
-			add_history(input);
-		if (ft_strncmp(input, "exit", 5) == 0)
-			running = 0;
-		else
-			handle_command(input);
-		free(input);
+		handle_command(vars);
+		free(vars->input);
 	}
+}
+
+int	main(void)
+{
+	t_vars	vars;
+
+	init_vars(&vars);
+	shell_loop(&vars);
 	return (0);
 }

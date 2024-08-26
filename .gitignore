@@ -3,6 +3,7 @@
 *.a
 *.so
 *.out
+minishell
 
 # Archivos de configuración de compilador y generados por el sistema
 *.log
