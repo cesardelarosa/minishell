@@ -20,7 +20,7 @@
 void	builtin_cd(char **args)
 {
 	if (args[1] == NULL)
-		fprintf(stderr, "minishell: expected argument to \"cd\"\n");
+		perror("minishell: expected argument to \"cd\"\n");
 	else
 	{
 		if (chdir(args[1]) != 0)
@@ -75,13 +75,13 @@ void	builtin_exit(char **args)
 
 int	handle_builtin(char **args)
 {
-	if (!strcmp(args[0], "cd"))
+	if (!ft_strncmp(args[0], "cd", 3))
 		builtin_cd(args);
-	else if (!strcmp(args[0], "pwd"))
+	else if (!ft_strncmp(args[0], "pwd", 4))
 		builtin_pwd();
-	else if (!strcmp(args[0], "echo"))
+	else if (!ft_strncmp(args[0], "echo", 5))
 		builtin_echo(args);
-	else if (!strcmp(args[0], "exit"))
+	else if (!ft_strncmp(args[0], "exit", 5))
 		builtin_exit(args);
 	else
 		return (0);
