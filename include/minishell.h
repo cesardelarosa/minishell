@@ -13,12 +13,7 @@
 #ifndef MINISHELL_H
 # define MINISHELL_H
 
-typedef struct s_vars
-{
-	char	*input;
-	int		running;
-}	t_vars;
-
 void	ft_free_split(char **split);
+int		handle_builtin(char **args);
 
 #endif
