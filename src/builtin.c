@@ -45,7 +45,7 @@ void	builtin_echo(char **args)
 
 	newline = 1;
 	i = 1;
-	if (args[1] && strcmp(args[1], "-n") == 0)
+	if (args[1] && ft_strncmp(args[1], "-n", 3) == 0)
 	{
 		newline = 0;
 		i++;
