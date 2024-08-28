@@ -16,12 +16,14 @@
 #include <sys/wait.h>
 #include <string.h>
 #include <dirent.h>
-#include "libft.h"
-#include "minishell.h"
+#include <signal.h>
 #include <readline/history.h>
 #include <readline/readline.h>
+#include "libft.h"
+#include "minishell.h"
 
-extern char	**environ;
+extern char				**environ;
+volatile sig_atomic_t	g_received_signal;
 
 char	*which(const char *cmd)
 {
@@ -81,19 +83,31 @@ void	execute_command(char **args)
 	}
 }
 
+void	signal_handler(int signo)
+{
+	if (signo == SIGINT)
+	{
+		g_received_signal = signo;
+		write(1, "\n", 1);
+		rl_on_new_line();
+		rl_replace_line("", 0);
+		rl_redisplay();
+	}
+}
+
 int	main(void)
 {
 	char	*input;
 	char	**args;
 
+	g_received_signal = 0;
+	signal(SIGINT, signal_handler);
+	signal(SIGQUIT, SIG_IGN);
 	while (1)
 	{
 		input = readline("minishell> ");
 		if (input == NULL)
-		{
-			printf("\n");
-			exit(0);
-		}
+			break ;
 		if (ft_strlen(input) > 0)
 			add_history(input);
 		args = ft_split(input, ' ');
@@ -101,7 +115,7 @@ int	main(void)
 		if (args == NULL || args[0] == NULL)
 		{
 			ft_free_split(args);
-			exit(0);
+			continue ;
 		}
 		execute_command(args);
 		ft_free_split(args);
