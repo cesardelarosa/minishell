@@ -15,3 +15,8 @@ minishell
 # Archivos específicos de editor
 .vscode/
 *.code-workspace
+
+# Informacion en notas o subject
+*.pdf
+*.txt
+*.md

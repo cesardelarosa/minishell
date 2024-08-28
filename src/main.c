@@ -23,7 +23,6 @@
 #include "minishell.h"
 
 extern char				**environ;
-volatile sig_atomic_t	g_received_signal;
 
 char	*which(const char *cmd)
 {
@@ -83,11 +82,10 @@ void	execute_command(char **args)
 	}
 }
 
-void	signal_handler(int signo)
+void	sigquit_handler(int sign)
 {
-	if (signo == SIGINT)
+	if (sign == SIGINT)
 	{
-		g_received_signal = signo;
 		write(1, "\n", 1);
 		rl_on_new_line();
 		rl_replace_line("", 0);
@@ -100,8 +98,7 @@ int	main(void)
 	char	*input;
 	char	**args;
 
-	g_received_signal = 0;
-	signal(SIGINT, signal_handler);
+	signal(SIGINT, sigquit_handler);
 	signal(SIGQUIT, SIG_IGN);
 	while (1)
 	{
