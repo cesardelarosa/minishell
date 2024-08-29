@@ -10,6 +10,7 @@ OBJS = $(SRCS:$(SRC_DIR)/%.c=$(SRC_DIR)/%.o)
 CC = gcc
 CFLAGS = -Wall -Wextra -Werror -I$(INC_DIR) -I$(LIBFT_DIR)
 LDFLAGS = -lreadline
+SANITIZE = -fsanitize=address -g
 
 all: $(NAME)
 
@@ -17,7 +18,7 @@ $(LIBFT_DIR)/libft.a:
 	$(MAKE) -C $(LIBFT_DIR)
 
 $(NAME): $(OBJS) $(LIBFT_DIR)/libft.a
-	$(CC) $(CFLAGS) -o $(NAME) $(OBJS) $(LDFLAGS) -L$(LIBFT_DIR) -lft
+	$(CC) $(CFLAGS) $(SANITIZE) -o $(NAME) $(OBJS) $(LDFLAGS) -L$(LIBFT_DIR) -lft
 
 $(SRC_DIR)/%.o: $(SRC_DIR)/%.c
 	$(CC) $(CFLAGS) -c $< -o $@
