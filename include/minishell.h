@@ -13,7 +13,8 @@
 #ifndef MINISHELL_H
 # define MINISHELL_H
 
-void	ft_free_split(char **split);
+//void	ft_free_split(char **split);
+char	**ft_free_split(char **result);
 int		handle_builtin(char **args);
 
 #endif

@@ -6,7 +6,7 @@
 /*   By: cde-la-r <cde-la-r@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/14 21:21:30 by cde-la-r          #+#    #+#             */
-/*   Updated: 2023/09/19 22:19:40 by cde-la-r         ###   ########.fr       */
+/*   Updated: 2024/08/29 18:30:13 by cde-la-r         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,10 +34,15 @@ static int	count_words(const char *s, char c)
 	return (count);
 }
 
-static char	**free_split(char **result, int i)
+char	**ft_free_split(char **result)
 {
-	while (i > 0)
-		free(result[--i]);
+	int	i;
+
+	if (!result)
+		return (NULL);
+	i = 0;
+	while (result[i])
+		free(result[i++]);
 	free(result);
 	return (NULL);
 }
@@ -63,7 +68,7 @@ char	**ft_split(char const *s, char c)
 			s++;
 		result[i++] = ft_substr(start, 0, s - start);
 		if (!result[i - 1])
-			return (free_split(result, i));
+			return (ft_free_split(result));
 	}
 	result[i] = NULL;
 	return (result);
