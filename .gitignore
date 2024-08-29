@@ -20,3 +20,5 @@ minishell
 *.pdf
 *.txt
 *.md
+
+!README.md

@@ -64,21 +64,18 @@ void	execute_command(char **args)
 		pid = fork();
 		if (pid == 0)
 		{
+			if (access(args[0], X_OK) == 0)
+				execve(args[0], args, environ);
 			exec_path = which(args[0]);
 			if (exec_path != NULL)
-			{
 				execve(exec_path, args, environ);
-				perror("minishell");
-				free(exec_path);
-			}
-			else
-				perror("minishell: command not found\n");
+			free(exec_path);
+			perror("minishell");
 			exit(EXIT_FAILURE);
 		}
 		else if (pid < 0)
 			perror("minishell");
-		else
-			waitpid(pid, &status, 0);
+		waitpid(pid, &status, 0);
 	}
 }
 
