@@ -26,8 +26,8 @@
 	- [ ] << recibe delimitador con el que leer el input
 	- [ ] >> redirige el output en modo append
 - [ ] Variables de entorno ($):
-	- Variables se expanden a sus valores
-	- $? se expande al estado de salida del comando mas reciente en la pipeline
+	- [ ] Variables se expanden a sus valores
+	- [ ] $? se expande al estado de salida del comando mas reciente en la pipeline
 
 # Funcionalidades bonus
 
