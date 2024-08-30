@@ -22,13 +22,13 @@
 #include "libft.h"
 #include "minishell.h"
 
-extern char **environ;
+extern char	**environ;
 
 char	*which(const char *cmd)
 {
 	char	*path;
 	char	*dir;
-	char    *full_path;
+	char	*full_path;
 	size_t	cmd_len;
 
 	path = getenv("PATH");
