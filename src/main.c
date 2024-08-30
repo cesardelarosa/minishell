@@ -59,10 +59,13 @@ void	handle_extern(char **args)
 
 	if (access(args[0], X_OK) == 0)
 		execve(args[0], args, environ);
-	exec_path = which(args[0]);
-	if (exec_path != NULL)
-		execve(exec_path, args, environ);
-	free(exec_path);
+	else if (access(args[0], F_OK) != 0)
+	{
+		exec_path = which(args[0]);
+		if (exec_path != NULL)
+			execve(exec_path, args, environ);
+		free(exec_path);
+	}
 	perror("minishell");
 	exit(EXIT_FAILURE);
 }
