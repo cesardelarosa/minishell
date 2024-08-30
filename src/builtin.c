@@ -20,11 +20,11 @@
 void	builtin_cd(char **args)
 {
 	if (args[1] == NULL)
-		perror("minishell: expected argument to \"cd\"\n");
+		perror("minishell: cd: expected argument");
 	else
 	{
 		if (chdir(args[1]) != 0)
-			perror("minishell");
+			perror("minishell: cd: failed to change directory");
 	}
 }
 
@@ -35,7 +35,7 @@ void	builtin_pwd(void)
 	if (getcwd(cwd, sizeof(cwd)) != NULL)
 		printf("%s\n", cwd);
 	else
-		perror("minishell");
+		perror("minishell: pwd: failed to get current directory");
 }
 
 void	builtin_echo(char **args)

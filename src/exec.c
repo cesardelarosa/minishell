@@ -62,7 +62,7 @@ void	handle_extern(char **args)
 			execve(exec_path, args, environ);
 		free(exec_path);
 	}
-	perror("minishell");
+	perror("minishell: execution failed");
 	exit(EXIT_FAILURE);
 }
 
@@ -94,8 +94,9 @@ void	handle_command(char **args)
 		if (pid == 0)
 			handle_extern(args);
 		else if (pid < 0)
-			perror("minishell");
-		waitpid(pid, &status, 0);
+			perror("minishell: fork error");
+		else if (waitpid(pid, &status, 0) == -1)
+			perror("minishell: waitpid error");
 	}
 	ft_free_split(args);
 }
