@@ -90,13 +90,18 @@ void	sigquit_handler(int sign)
 	}
 }
 
+void	setup_signal_handlers(void)
+{
+	signal(SIGINT, sigquit_handler);
+	signal(SIGQUIT, SIG_IGN);
+}
+
 int	main(void)
 {
 	char	*input;
 	char	**args;
 
-	signal(SIGINT, sigquit_handler);
-	signal(SIGQUIT, SIG_IGN);
+	setup_signal_handlers();
 	while (1)
 	{
 		input = readline("minishell> ");
