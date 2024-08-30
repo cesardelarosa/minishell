@@ -8,7 +8,7 @@ SRCS = $(wildcard $(SRC_DIR)/*.c)
 OBJS = $(SRCS:$(SRC_DIR)/%.c=$(SRC_DIR)/%.o)
 
 CC = gcc
-CFLAGS = -Wall -Wextra -Werror -Werror -I$(INC_DIR) -I$(LIBFT_DIR)
+CFLAGS = -Wall -Wextra -Werror -I$(INC_DIR) -I$(LIBFT_DIR)
 LDFLAGS = -lreadline
 SANITIZE = -fsanitize=address -g
 
