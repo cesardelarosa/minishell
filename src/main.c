@@ -70,12 +70,14 @@ void	handle_extern(char **args)
 	exit(EXIT_FAILURE);
 }
 
-void	execute_command(char **args)
+void	handle_command(char **args)
 {
 	pid_t	pid;
 	int		status;
 
-	if (handle_builtin(args) == 0)
+	if (args == NULL)
+		return ;
+	if (args[0] != NULL && handle_builtin(args) == 0)
 	{
 		pid = fork();
 		if (pid == 0)
@@ -84,12 +86,6 @@ void	execute_command(char **args)
 			perror("minishell");
 		waitpid(pid, &status, 0);
 	}
-}
-
-void	handle_command(char **args)
-{
-	if (args != NULL && args[0] != NULL)
-		execute_command(args);
 	ft_free_split(args);
 }
 
