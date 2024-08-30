@@ -22,7 +22,7 @@
 #include "libft.h"
 #include "minishell.h"
 
-extern char	**environ;
+extern char 	**environ;
 
 char	*which(const char *cmd)
 {
