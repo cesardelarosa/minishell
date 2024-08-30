@@ -12,26 +12,26 @@
 
 #include "libft.h"
 
-static int	count_words(const char *s, char c)
+int	ft_split_size(const char *s, char c)
 {
-	int	count;
+	int	size;
 	int	in_word;
 
-	count = 0;
+	size = 0;
 	in_word = 0;
 	while (*s)
 	{
 		if (*s != c)
 		{
 			if (!in_word)
-				count++;
+				size++;
 			in_word = 1;
 		}
 		else
 			in_word = 0;
 		s++;
 	}
-	return (count);
+	return (size);
 }
 
 char	**ft_free_split(char **result)
@@ -49,17 +49,17 @@ char	**ft_free_split(char **result)
 
 char	**ft_split(char const *s, char c)
 {
-	int			word_count;
+	int			size;
 	char		**result;
 	int			i;
 	const char	*start;
 
-	word_count = count_words(s, c);
-	result = (char **)malloc((word_count + 1) * sizeof(char *));
+	size = ft_split_size(s, c);
+	result = (char **)malloc((size + 1) * sizeof(char *));
 	if (!result)
 		return (NULL);
 	i = 0;
-	while (*s && i < word_count)
+	while (*s && i < size)
 	{
 		while (*s == c)
 			s++;

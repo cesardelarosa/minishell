@@ -96,6 +96,34 @@ void	setup_signal_handlers(void)
 	signal(SIGQUIT, SIG_IGN);
 }
 
+char	*read_input(void)
+{
+	char	*input;
+
+	input = readline("minishell> ");
+	if (input == NULL)
+		exit(EXIT_SUCCESS);
+	if (ft_strlen(input) > 0)
+		add_history(input);
+	return (input);
+}
+
+char	**parse_command(char *input)
+{
+	char	**args;
+
+	args = ft_split(input, ' ');
+	free(input);
+	return (args);
+}
+
+void	handle_command(char **args)
+{
+	if (args != NULL && args[0] != NULL)
+		execute_command(args);
+	ft_free_split(args);
+}
+
 int	main(void)
 {
 	char	*input;
@@ -104,20 +132,9 @@ int	main(void)
 	setup_signal_handlers();
 	while (1)
 	{
-		input = readline("minishell> ");
-		if (input == NULL)
-			break ;
-		if (ft_strlen(input) > 0)
-			add_history(input);
-		args = ft_split(input, ' ');
-		free(input);
-		if (args == NULL || args[0] == NULL)
-		{
-			ft_free_split(args);
-			continue ;
-		}
-		execute_command(args);
-		ft_free_split(args);
+		input = read_input();
+		args = parse_command(input);
+		handle_command(args);
 	}
 	return (0);
 }
