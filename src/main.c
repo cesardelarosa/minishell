@@ -126,15 +126,8 @@ void	handle_command(char **args)
 
 int	main(void)
 {
-	char	*input;
-	char	**args;
-
 	setup_signal_handlers();
 	while (1)
-	{
-		input = read_input();
-		args = parse_command(input);
-		handle_command(args);
-	}
+		handle_command(parse_command(read_input()));
 	return (0);
 }
