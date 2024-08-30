@@ -28,8 +28,8 @@ char	*which(const char *cmd)
 {
 	char	*path;
 	char	*dir;
-	size_t	cmd_len;
 	char *full_path;
+	size_t	cmd_len;
 
 	path = getenv("PATH");
 	cmd_len = ft_strlen(cmd);
@@ -48,7 +48,7 @@ char	*which(const char *cmd)
 		if (access(full_path, X_OK) == 0)
 			return (full_path);
 		free(full_path);
-		path += *path == '\0';
+		path += *path != '\0';
 	}
 	return (NULL);
 }
