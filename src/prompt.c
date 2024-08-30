@@ -1,22 +1,29 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   minishell.h                                        :+:      :+:    :+:   */
+/*   prompt.c                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: cde-la-r <cde-la-r@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/08/26 22:18:26 by cde-la-r          #+#    #+#             */
-/*   Updated: 2024/08/26 22:18:43 by cde-la-r         ###   ########.fr       */
+/*   Created: 2024/08/30 17:56:41 by cde-la-r          #+#    #+#             */
+/*   Updated: 2024/08/30 17:56:41 by cde-la-r         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef MINISHELL_H
-# define MINISHELL_H
+#include <stdio.h>
+#include <stdlib.h>
+#include "libft.h"
+#include <readline/readline.h>
+#include <readline/history.h>
 
-char	**ft_free_split(char **result);
-char	**parse_command(char *input);
-void	setup_signal_handlers(void);
-void	handle_command(char **args);
-char	*read_input(void);
+char	*read_input(void)
+{
+	char	*input;
 
-#endif
+	input = readline("minishell> ");
+	if (input == NULL)
+		exit(EXIT_SUCCESS);
+	if (ft_strlen(input) > 0)
+		add_history(input);
+	return (input);
+}

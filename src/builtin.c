@@ -72,18 +72,3 @@ void	builtin_exit(char **args)
 	ft_free_split(args);
 	exit(exit_status);
 }
-
-int	handle_builtin(char **args)
-{
-	if (!ft_strncmp(args[0], "cd", 3))
-		builtin_cd(args);
-	else if (!ft_strncmp(args[0], "pwd", 4))
-		builtin_pwd();
-	else if (!ft_strncmp(args[0], "echo", 5))
-		builtin_echo(args);
-	else if (!ft_strncmp(args[0], "exit", 5))
-		builtin_exit(args);
-	else
-		return (0);
-	return (1);
-}

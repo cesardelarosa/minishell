@@ -13,8 +13,10 @@
 #include <stdlib.h>
 #include <unistd.h>
 #include <stdio.h>
+#include <sys/wait.h>
 #include "libft.h"
 #include "minishell.h"
+#include "builtins.h"
 
 extern char				**environ;
 
@@ -62,4 +64,38 @@ void	handle_extern(char **args)
 	}
 	perror("minishell");
 	exit(EXIT_FAILURE);
+}
+
+int	handle_builtin(char **args)
+{
+	if (!ft_strncmp(args[0], "cd", 3))
+		builtin_cd(args);
+	else if (!ft_strncmp(args[0], "pwd", 4))
+		builtin_pwd();
+	else if (!ft_strncmp(args[0], "echo", 5))
+		builtin_echo(args);
+	else if (!ft_strncmp(args[0], "exit", 5))
+		builtin_exit(args);
+	else
+		return (0);
+	return (1);
+}
+
+void	handle_command(char **args)
+{
+	pid_t	pid;
+	int		status;
+
+	if (args == NULL)
+		return ;
+	if (args[0] != NULL && handle_builtin(args) == 0)
+	{
+		pid = fork();
+		if (pid == 0)
+			handle_extern(args);
+		else if (pid < 0)
+			perror("minishell");
+		waitpid(pid, &status, 0);
+	}
+	ft_free_split(args);
 }

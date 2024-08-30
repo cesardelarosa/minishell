@@ -1,22 +1,21 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   minishell.h                                        :+:      :+:    :+:   */
+/*   builtins.h                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: cde-la-r <cde-la-r@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/08/26 22:18:26 by cde-la-r          #+#    #+#             */
-/*   Updated: 2024/08/26 22:18:43 by cde-la-r         ###   ########.fr       */
+/*   Created: 2024/08/30 17:50:20 by cde-la-r          #+#    #+#             */
+/*   Updated: 2024/08/30 17:50:20 by cde-la-r         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef MINISHELL_H
-# define MINISHELL_H
+#ifndef BUILTINS_H
+# define BUILTINS_H
 
-char	**ft_free_split(char **result);
-char	**parse_command(char *input);
-void	setup_signal_handlers(void);
-void	handle_command(char **args);
-char	*read_input(void);
+void	builtin_exit(char **args);
+void	builtin_echo(char **args);
+void	builtin_pwd(void);
+void	builtin_cd(char **args);
 
 #endif
