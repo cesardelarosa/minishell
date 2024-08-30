@@ -53,30 +53,41 @@ char	*which(const char *cmd)
 	return (NULL);
 }
 
+void	handle_extern(char **args)
+{
+	char	*exec_path;
+
+	if (access(args[0], X_OK) == 0)
+		execve(args[0], args, environ);
+	exec_path = which(args[0]);
+	if (exec_path != NULL)
+		execve(exec_path, args, environ);
+	free(exec_path);
+	perror("minishell");
+	exit(EXIT_FAILURE);
+}
+
 void	execute_command(char **args)
 {
 	pid_t	pid;
 	int		status;
-	char	*exec_path;
 
 	if (handle_builtin(args) == 0)
 	{
 		pid = fork();
 		if (pid == 0)
-		{
-			if (access(args[0], X_OK) == 0)
-				execve(args[0], args, environ);
-			exec_path = which(args[0]);
-			if (exec_path != NULL)
-				execve(exec_path, args, environ);
-			free(exec_path);
-			perror("minishell");
-			exit(EXIT_FAILURE);
-		}
+			handle_extern(args);
 		else if (pid < 0)
 			perror("minishell");
 		waitpid(pid, &status, 0);
 	}
+}
+
+void	handle_command(char **args)
+{
+	if (args != NULL && args[0] != NULL)
+		execute_command(args);
+	ft_free_split(args);
 }
 
 void	sigquit_handler(int sign)
@@ -115,13 +126,6 @@ char	**parse_command(char *input)
 	args = ft_split(input, ' ');
 	free(input);
 	return (args);
-}
-
-void	handle_command(char **args)
-{
-	if (args != NULL && args[0] != NULL)
-		execute_command(args);
-	ft_free_split(args);
 }
 
 int	main(void)
