@@ -19,16 +19,32 @@
 char	*get_prompt(void)
 {
 	char	*prompt;
+	char	*cwd;
 
-	prompt = "minishell> ";
+	cwd = getcwd(NULL, 0);
+	if (cwd == NULL)
+	{
+		perror("minishell: getcwd()");
+		exit(EXIT_FAILURE);
+	}
+	prompt = ft_strjoin(cwd, "$ ");
+	if (prompt == NULL)
+	{
+		perror("minishell: ft_strjoin");
+		exit(EXIT_FAILURE);
+	}
+	free(cwd);
 	return (prompt);
 }
 
 char	*read_input(void)
 {
 	char	*input;
+	char	*prompt;
 
-	input = readline(get_prompt());
+	prompt = get_prompt();
+	input = readline(prompt);
+	free(prompt);
 	if (input == NULL)
 		exit(EXIT_SUCCESS);
 	if (ft_strlen(input) > 0)
