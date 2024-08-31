@@ -21,15 +21,8 @@ int	ft_split_size(const char *s, char c)
 	in_word = 0;
 	while (*s)
 	{
-		if (*s != c)
-		{
-			if (!in_word)
-				size++;
-			in_word = 1;
-		}
-		else
-			in_word = 0;
-		s++;
+		size += *s != c && !in_word;
+		in_word = *s++ != c;
 	}
 	return (size);
 }
