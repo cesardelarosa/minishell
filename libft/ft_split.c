@@ -44,6 +44,8 @@ char	**ft_split(char const *s, char c)
 	int			i;
 	const char	*start;
 
+	if (s == NULL)
+		return (NULL);
 	size = ft_split_size(s, c);
 	result = (char **)malloc((size + 1) * sizeof(char *));
 	if (!result)
