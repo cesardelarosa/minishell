@@ -15,15 +15,12 @@
 int	ft_split_size(const char *s, char c)
 {
 	int	size;
-	int	in_word;
 
+	if (s == NULL)
+		return (0);
 	size = 0;
-	in_word = 0;
-	while (*s)
-	{
-		size += *s != c && !in_word;
-		in_word = *s++ != c;
-	}
+	while (*s++)
+		size += (size == 0 || *(s - 2) == c) && *(s - 1) != c;
 	return (size);
 }
 
