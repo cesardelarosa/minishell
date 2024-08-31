@@ -19,20 +19,17 @@
 
 void	builtin_cd(char **args)
 {
-	if (args[1] == NULL)
+	if (!args[1])
 		perror("minishell: cd: expected argument");
-	else
-	{
-		if (chdir(args[1]) != 0)
-			perror("minishell: cd: failed to change directory");
-	}
+	else if (chdir(args[1]))
+		perror("minishell: cd: failed to change directory");
 }
 
 void	builtin_pwd(void)
 {
 	char	cwd[1024];
 
-	if (getcwd(cwd, sizeof(cwd)) != NULL)
+	if (getcwd(cwd, sizeof(cwd)))
 		printf("%s\n", cwd);
 	else
 		perror("minishell: pwd: failed to get current directory");
@@ -43,19 +40,13 @@ void	builtin_echo(char **args)
 	int	newline;
 	int	i;
 
-	newline = 1;
-	i = 1;
-	if (args[1] && ft_strncmp(args[1], "-n", 3) == 0)
-	{
-		newline = 0;
-		i++;
-	}
+	newline = !args[1] || ft_strncmp(args[1], "-n", 3);
+	i = 2 - newline;
 	while (args[i])
 	{
 		printf("%s", args[i]);
-		if (args[i + 1])
+		if (args[++i])
 			printf(" ");
-		i++;
 	}
 	if (newline)
 		printf("\n");
@@ -66,7 +57,7 @@ void	builtin_exit(char **args)
 	int	exit_status;
 
 	exit_status = 0;
-	if (args[1] != NULL)
+	if (args[1])
 		exit_status = ft_atoi(args[1]);
 	printf("Exiting minishell...\n");
 	ft_free_split(args);

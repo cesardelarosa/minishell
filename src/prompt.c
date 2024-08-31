@@ -16,11 +16,19 @@
 #include <readline/readline.h>
 #include <readline/history.h>
 
+char	*get_prompt(void)
+{
+	char	*prompt;
+
+	prompt = "minishell> ";
+	return (prompt);
+}
+
 char	*read_input(void)
 {
 	char	*input;
 
-	input = readline("minishell> ");
+	input = readline(get_prompt());
 	if (input == NULL)
 		exit(EXIT_SUCCESS);
 	if (ft_strlen(input) > 0)
