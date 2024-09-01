@@ -3,7 +3,7 @@
 - [x] Mostrar entrada mientras espera un comando nuevo
 - [x] Manejo de un historial funcional
 - [x] Buscar y ejecutar el ejecutable correcto
-- [ ] Interfaz bonita
+- [x] Interfaz bonita
 - [ ] Manejo de entrada de texto:
 	- [ ] No interpretar comillas sin cerrar o carácteres especificados en el enunciado como \ o ;
 	- [ ] Gestional la ’ para evitar que se interpreten los metacaracteres en la secuencia entrecomillada
