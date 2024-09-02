@@ -8,11 +8,29 @@ on:
 
 jobs:
   build:
-
     runs-on: ubuntu-latest
 
     steps:
-    - name: checkout
+    - name: Checkout code
       uses: actions/checkout@v4
-    - name: make
+
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.x'
+
+    - name: Install Norminette
+      run: |
+        python3 -m pip install --upgrade pip setuptools
+        python3 -m pip install norminette
+
+    - name: Check code with Norminette
+      run: norminette
+
+    - name: Set up C/C++ environment
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y build-essential clang-format
+
+    - name: Build project
       run: make
