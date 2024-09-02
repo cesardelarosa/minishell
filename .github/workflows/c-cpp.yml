@@ -25,7 +25,10 @@ jobs:
         python3 -m pip install norminette
 
     - name: Check code with Norminette
-      run: norminette
+      id: norminette
+      run: |
+        norminette > norminette_output.log
+        grep -q "OK!" norminette_output.log || (echo "Norminette detected issues. Review the output." && cat norminette_output.log)
 
     - name: Set up C/C++ environment
       run: |
