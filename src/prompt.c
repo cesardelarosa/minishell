@@ -45,6 +45,7 @@ static char	*build_colored_prompt(char *user, char *host, char *cwd)
 	prompt = ft_strjoin_free(prompt, CYAN);
 	prompt = ft_strjoin_free(prompt, cwd);
 	prompt = ft_strjoin_free(prompt, RESET "\n$ ");
+	free(host);
 	return (prompt);
 }
 
@@ -57,6 +58,7 @@ static char	*build_plain_prompt(char *user, char *host, char *cwd)
 	prompt = ft_strjoin_free(prompt, " in ");
 	prompt = ft_strjoin_free(prompt, cwd);
 	prompt = ft_strjoin_free(prompt, "\n$ ");
+	free(host);
 	return (prompt);
 }
 
@@ -64,8 +66,6 @@ char	*get_prompt(void)
 {
 	char	*prompt;
 	char	*cwd;
-	char	*user;
-	char	*host;
 
 	cwd = getcwd(NULL, 0);
 	if (cwd == NULL)
@@ -73,19 +73,16 @@ char	*get_prompt(void)
 		perror("minishell: getcwd()");
 		exit(EXIT_FAILURE);
 	}
-	user = get_user();
-	host = get_host();
 	if (colors_supported())
-		prompt = build_colored_prompt(user, host, cwd);
+		prompt = build_colored_prompt(get_user(), get_host(), cwd);
 	else
-		prompt = build_plain_prompt(user, host, cwd);
+		prompt = build_plain_prompt(get_user(), get_host(), cwd);
 	if (prompt == NULL)
 	{
 		perror("minishell: ft_strjoin");
 		exit(EXIT_FAILURE);
 	}
 	free(cwd);
-	free(host);
 	return (prompt);
 }
 
