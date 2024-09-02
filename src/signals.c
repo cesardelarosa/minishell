@@ -14,9 +14,8 @@
 #include <signal.h>
 #include <unistd.h>
 #include <readline/readline.h>
-#include <readline/readline.h>
 
-void	sigquit_handler(int sign)
+void	sigint_handler(int sign)
 {
 	if (sign == SIGINT)
 	{
@@ -29,6 +28,6 @@ void	sigquit_handler(int sign)
 
 void	setup_signal_handlers(void)
 {
-	signal(SIGINT, sigquit_handler);
+	signal(SIGINT, sigint_handler);
 	signal(SIGQUIT, SIG_IGN);
 }
