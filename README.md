@@ -33,4 +33,4 @@
 # Funcionalidades bonus
 
 - [ ] Uso de && y || con paréntesis para prioridades
-- [x] Uso de wildcars en el directorio actual
+- [x] Uso de wildcard \* en el directorio actual
