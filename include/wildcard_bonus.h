@@ -1,21 +1,18 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   main.c                                             :+:      :+:    :+:   */
+/*   wildcard_bonus.h                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: cde-la-r <cde-la-r@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/08/27 17:48:49 by cde-la-r          #+#    #+#             */
-/*   Updated: 2024/08/27 17:48:50 by cde-la-r         ###   ########.fr       */
+/*   Created: 2024/09/10 13:50:44 by cde-la-r          #+#    #+#             */
+/*   Updated: 2024/09/10 13:50:44 by cde-la-r         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "minishell.h"
+#ifndef WILDCARD_BONUS_H
+# define WILDCARD_BONUS_H
 
-int	main(void)
-{
-	setup_signal_handlers();
-	while (42)
-		handle_command(parse_command(read_input()));
-	return (0);
-}
+void	expand_wildcards(char ***args);
+
+#endif

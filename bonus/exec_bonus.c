@@ -17,6 +17,7 @@
 #include "libft.h"
 #include "minishell.h"
 #include "builtins.h"
+#include "wildcard_bonus.h"
 
 extern char	**environ;
 
@@ -88,6 +89,7 @@ void	handle_command(char **args)
 
 	if (args == NULL)
 		return ;
+	expand_wildcards(&args);
 	if (args[0] != NULL && handle_builtin(args) == 0)
 	{
 		pid = fork();

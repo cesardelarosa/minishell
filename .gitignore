@@ -4,6 +4,7 @@
 *.so
 *.out
 minishell
+minishell_bonus
 
 # Archivos de configuración de compilador y generados por el sistema
 *.log
