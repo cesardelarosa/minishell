@@ -6,7 +6,7 @@
 /*   By: cde-la-r <cde-la-r@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/30 17:56:41 by cde-la-r          #+#    #+#             */
-/*   Updated: 2024/09/19 12:27:31 by cde-la-r         ###   ########.fr       */
+/*   Updated: 2024/09/19 13:26:21 by cde-la-r         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,22 +16,6 @@
 #include <readline/history.h>
 #include "libft.h"
 #include "prompt.h"
-
-int	colors_supported(void)
-{
-	char	*term;
-
-	term = getenv("TERM");
-	if (term == NULL)
-		return (0);
-	return (!ft_strncmp(term, "xterm", 6)
-		|| !ft_strncmp(term, "xterm-color", 12)
-		|| !ft_strncmp(term, "xterm-256color", 15)
-		|| !ft_strncmp(term, "screen", 7)
-		|| !ft_strncmp(term, "screen-256color", 16)
-		|| !ft_strncmp(term, "tmux", 5)
-		|| !ft_strncmp(term, "tmux-256color", 14));
-}
 
 static char	*build_colored_prompt(char *user, char *host, char *cwd)
 {
@@ -68,19 +52,11 @@ static char	*build_plain_prompt(char *user, char *host, char *cwd)
 char	*get_prompt(void)
 {
 	char	*prompt;
-	char	*cwd;
 
-	cwd = getcwd(NULL, 0);
-	if (cwd == NULL)
-	{
-		perror("minishell: getcwd()");
-		exit(EXIT_FAILURE);
-	}
-	shorten_cwd(cwd);
-	if (colors_supported())
-		prompt = build_colored_prompt(get_user(), get_host(), cwd);
+	if (ft_strncmp(getenv("COLORTERM"), "truecolor", 10) == 0)
+		prompt = build_colored_prompt(get_user(), get_host(), get_cwd());
 	else
-		prompt = build_plain_prompt(get_user(), get_host(), cwd);
+		prompt = build_plain_prompt(get_user(), get_host(), get_cwd());
 	if (prompt == NULL)
 	{
 		perror("minishell: ft_strjoin");

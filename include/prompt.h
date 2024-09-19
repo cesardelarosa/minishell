@@ -6,7 +6,7 @@
 /*   By: cde-la-r <cde-la-r@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/01 20:45:46 by cde-la-r          #+#    #+#             */
-/*   Updated: 2024/09/19 12:30:48 by cde-la-r         ###   ########.fr       */
+/*   Updated: 2024/09/19 13:19:29 by cde-la-r         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,6 +27,7 @@
 char	*ft_strjoin_free(char *s1, const char *s2);
 char	*get_user(void);
 char	*get_host(void);
-void	shorten_cwd(char *cwd);
+char	*get_cwd(void);
+char	*get_git_branch(void);
 
 #endif

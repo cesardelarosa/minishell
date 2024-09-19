@@ -6,7 +6,7 @@
 /*   By: cde-la-r <cde-la-r@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/30 17:56:41 by cde-la-r          #+#    #+#             */
-/*   Updated: 2024/09/19 12:31:05 by cde-la-r         ###   ########.fr       */
+/*   Updated: 2024/09/19 13:19:35 by cde-la-r         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,19 +26,26 @@ char	*ft_strjoin_free(char *s1, const char *s2)
 	return (result);
 }
 
-void	shorten_cwd(char *cwd)
+char	*get_cwd(void)
 {
+	char	*cwd;
 	char	*home;
-	char	*short_cwd;
 	size_t	home_len;
 
+	cwd = getcwd(NULL, 0);
+	if (cwd == NULL)
+	{
+		perror("minishell: getcwd()");
+		exit(EXIT_FAILURE);
+	}
 	home = getenv("HOME");
 	home_len = ft_strlen(home);
-	if (!home || ft_strncmp(cwd, home, home_len) != 0)
-		return ;
-	short_cwd = cwd + home_len;
-	ft_memmove(cwd + 1, short_cwd, ft_strlen(cwd) + 1);
-	cwd[0] = '~';
+	if (home && ft_strncmp(cwd, home, home_len) == 0)
+	{
+		ft_memmove(cwd + 1, cwd + home_len, ft_strlen(cwd) + 1);
+		cwd[0] = '~';
+	}
+	return (cwd);
 }
 
 char	*get_user(void)
