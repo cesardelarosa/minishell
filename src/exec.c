@@ -6,7 +6,7 @@
 /*   By: cde-la-r <cde-la-r@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/30 13:45:46 by cde-la-r          #+#    #+#             */
-/*   Updated: 2024/09/19 18:16:04 by cde-la-r         ###   ########.fr       */
+/*   Updated: 2024/09/19 19:27:50 by cde-la-r         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -85,11 +85,7 @@ void	handle_command(char **args)
 {
 	pid_t	pid;
 	int		status;
-/*	int		i;
 
-	i = 0;
-	while(args[i])
-		printf("%s\n",args[i++]);*/
 	if (args == NULL)
 		return ;
 	if (args[0] != NULL && handle_builtin(args) == 0)

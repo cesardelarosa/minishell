@@ -6,7 +6,7 @@
 /*   By: cde-la-r <cde-la-r@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/27 09:20:41 by cde-la-r          #+#    #+#             */
-/*   Updated: 2024/08/27 09:20:43 by cde-la-r         ###   ########.fr       */
+/*   Updated: 2024/09/19 19:33:10 by cde-la-r         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,7 +40,7 @@ void	builtin_echo(char **args)
 	int	newline;
 	int	i;
 
-	newline = !args[1] || ft_strncmp(args[1], "-n", 3);
+	newline = (!args[1] || ft_strncmp(args[1], "-n", 3));
 	i = 2 - newline;
 	while (args[i])
 	{
