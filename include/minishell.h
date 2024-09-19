@@ -6,12 +6,15 @@
 /*   By: cde-la-r <cde-la-r@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/26 22:18:26 by cde-la-r          #+#    #+#             */
-/*   Updated: 2024/08/26 22:18:43 by cde-la-r         ###   ########.fr       */
+/*   Updated: 2024/09/19 15:59:55 by cde-la-r         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef MINISHELL_H
 # define MINISHELL_H
+
+# define WELCOME_MSG \
+    "\nWelcome to Minishell! by adpedrer & cde-la-r.\nType 'exit' to quit.\n\n"
 
 char	**ft_free_split(char **result);
 char	**parse_command(char *input);
