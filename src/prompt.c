@@ -6,7 +6,7 @@
 /*   By: cde-la-r <cde-la-r@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/30 17:56:41 by cde-la-r          #+#    #+#             */
-/*   Updated: 2024/09/19 13:58:54 by cde-la-r         ###   ########.fr       */
+/*   Updated: 2024/09/19 14:58:14 by cde-la-r         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,7 +28,7 @@ static char	*build_colored_prompt(void)
 	prompt = ft_strjoin_free(prompt, BOLD_WHITE " in ");
 	prompt = ft_strjoin_free(prompt, BOLD_GREEN);
 	prompt = ft_strjoin_free(prompt, get_path());
-	prompt = ft_strjoin_free(prompt, BOLD_WHITE "\n$ ");
+	prompt = ft_strjoin_free(prompt, BOLD_WHITE " $ ");
 	prompt = ft_strjoin_free(prompt, RESET);
 	return (prompt);
 }
@@ -41,7 +41,7 @@ static char	*build_plain_prompt(void)
 	prompt = ft_strjoin_free(prompt, get_host());
 	prompt = ft_strjoin_free(prompt, " in ");
 	prompt = ft_strjoin_free(prompt, get_path());
-	prompt = ft_strjoin_free(prompt, "\n$ ");
+	prompt = ft_strjoin_free(prompt, " $ ");
 	return (prompt);
 }
 
