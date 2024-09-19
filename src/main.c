@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   main.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: cde-la-r <cde-la-r@student.42.fr>          +#+  +:+       +#+        */
+/*   By: adrian <adrian@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/27 17:48:49 by cde-la-r          #+#    #+#             */
-/*   Updated: 2024/09/19 15:49:37 by cde-la-r         ###   ########.fr       */
+/*   Updated: 2024/09/19 16:13:09 by adrian           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,6 +16,7 @@
 int	main(void)
 {
 	printf(WELCOME_MSG);
+	printf("hola paco");
 	setup_signal_handlers();
 	while (42)
 		handle_command(parse_command(read_input()));
