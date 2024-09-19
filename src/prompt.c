@@ -6,7 +6,7 @@
 /*   By: cde-la-r <cde-la-r@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/30 17:56:41 by cde-la-r          #+#    #+#             */
-/*   Updated: 2024/08/30 17:56:41 by cde-la-r         ###   ########.fr       */
+/*   Updated: 2024/09/19 12:27:31 by cde-la-r         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,15 +37,17 @@ static char	*build_colored_prompt(char *user, char *host, char *cwd)
 {
 	char	*prompt;
 
-	prompt = ft_strjoin_free(ft_strdup(RED), user);
-	prompt = ft_strjoin_free(prompt, RESET " at ");
-	prompt = ft_strjoin_free(prompt, BLUE);
+	prompt = ft_strjoin_free(ft_strdup(BOLD_CYAN), user);
+	prompt = ft_strjoin_free(prompt, BOLD_WHITE " at ");
+	prompt = ft_strjoin_free(prompt, BOLD_YELLOW);
 	prompt = ft_strjoin_free(prompt, host);
-	prompt = ft_strjoin_free(prompt, RESET " in ");
-	prompt = ft_strjoin_free(prompt, CYAN);
+	prompt = ft_strjoin_free(prompt, BOLD_WHITE " in ");
+	prompt = ft_strjoin_free(prompt, BOLD_GREEN);
 	prompt = ft_strjoin_free(prompt, cwd);
-	prompt = ft_strjoin_free(prompt, RESET "\n$ ");
+	prompt = ft_strjoin_free(prompt, BOLD_WHITE "\n$ ");
+	prompt = ft_strjoin_free(prompt, RESET);
 	free(host);
+	free(cwd);
 	return (prompt);
 }
 
@@ -59,6 +61,7 @@ static char	*build_plain_prompt(char *user, char *host, char *cwd)
 	prompt = ft_strjoin_free(prompt, cwd);
 	prompt = ft_strjoin_free(prompt, "\n$ ");
 	free(host);
+	free(cwd);
 	return (prompt);
 }
 
@@ -73,6 +76,7 @@ char	*get_prompt(void)
 		perror("minishell: getcwd()");
 		exit(EXIT_FAILURE);
 	}
+	shorten_cwd(cwd);
 	if (colors_supported())
 		prompt = build_colored_prompt(get_user(), get_host(), cwd);
 	else
@@ -82,7 +86,6 @@ char	*get_prompt(void)
 		perror("minishell: ft_strjoin");
 		exit(EXIT_FAILURE);
 	}
-	free(cwd);
 	return (prompt);
 }
 

@@ -1,25 +1,14 @@
-# Compilados
-*.o
-*.a
-*.so
-*.out
-minishell
-minishell_bonus
-
-# Archivos de configuración de compilador y generados por el sistema
-*.log
-*.tmp
-*.swp
-*.swo
-*.DS_Store
-
-# Archivos específicos de editor
-.vscode/
-*.code-workspace
-
-# Informacion en notas o subject
-*.pdf
-*.txt
-*.md
-
+*
+!.gitignore
+!/.github/*
+!Makefile
+!/libft/Makefile
+!/libft/libft.h
+!/libft/ft_*.c
+!/src/*.c
+!/include/*.h
+!/bonus/*_bonus.c
 !README.md
+!/doc/*.pdf
+!/doc/*.txt
+!/doc/*.md
