@@ -6,7 +6,7 @@
 /*   By: cde-la-r <cde-la-r@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/30 17:56:41 by cde-la-r          #+#    #+#             */
-/*   Updated: 2024/09/19 13:26:21 by cde-la-r         ###   ########.fr       */
+/*   Updated: 2024/09/19 13:58:54 by cde-la-r         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,35 +17,31 @@
 #include "libft.h"
 #include "prompt.h"
 
-static char	*build_colored_prompt(char *user, char *host, char *cwd)
+static char	*build_colored_prompt(void)
 {
 	char	*prompt;
 
-	prompt = ft_strjoin_free(ft_strdup(BOLD_CYAN), user);
+	prompt = ft_strjoin_free(ft_strdup(BOLD_CYAN), get_user());
 	prompt = ft_strjoin_free(prompt, BOLD_WHITE " at ");
 	prompt = ft_strjoin_free(prompt, BOLD_YELLOW);
-	prompt = ft_strjoin_free(prompt, host);
+	prompt = ft_strjoin_free(prompt, get_host());
 	prompt = ft_strjoin_free(prompt, BOLD_WHITE " in ");
 	prompt = ft_strjoin_free(prompt, BOLD_GREEN);
-	prompt = ft_strjoin_free(prompt, cwd);
+	prompt = ft_strjoin_free(prompt, get_path());
 	prompt = ft_strjoin_free(prompt, BOLD_WHITE "\n$ ");
 	prompt = ft_strjoin_free(prompt, RESET);
-	free(host);
-	free(cwd);
 	return (prompt);
 }
 
-static char	*build_plain_prompt(char *user, char *host, char *cwd)
+static char	*build_plain_prompt(void)
 {
 	char	*prompt;
 
-	prompt = ft_strjoin_free(ft_strdup(user), " at ");
-	prompt = ft_strjoin_free(prompt, host);
+	prompt = ft_strjoin_free(get_user(), " at ");
+	prompt = ft_strjoin_free(prompt, get_host());
 	prompt = ft_strjoin_free(prompt, " in ");
-	prompt = ft_strjoin_free(prompt, cwd);
+	prompt = ft_strjoin_free(prompt, get_path());
 	prompt = ft_strjoin_free(prompt, "\n$ ");
-	free(host);
-	free(cwd);
 	return (prompt);
 }
 
@@ -54,9 +50,9 @@ char	*get_prompt(void)
 	char	*prompt;
 
 	if (ft_strncmp(getenv("COLORTERM"), "truecolor", 10) == 0)
-		prompt = build_colored_prompt(get_user(), get_host(), get_cwd());
+		prompt = build_colored_prompt();
 	else
-		prompt = build_plain_prompt(get_user(), get_host(), get_cwd());
+		prompt = build_plain_prompt();
 	if (prompt == NULL)
 	{
 		perror("minishell: ft_strjoin");
