@@ -37,7 +37,7 @@ static char	*build_plain_prompt(void)
 {
 	char	*prompt;
 
-	prompt = ft_strjoin_free(get_user(), " at ");
+	prompt = ft_strjoin_free(ft_strdup(get_user()), " at ");
 	prompt = ft_strjoin_free(prompt, get_host());
 	prompt = ft_strjoin_free(prompt, " in ");
 	prompt = ft_strjoin_free(prompt, get_path());
@@ -48,8 +48,10 @@ static char	*build_plain_prompt(void)
 char	*get_prompt(void)
 {
 	char	*prompt;
+	char	*color;
 
-	if (ft_strncmp(getenv("COLORTERM"), "truecolor", 10) == 0)
+	color = getenv("COLORTERM");
+	if (color && ft_strncmp(color, "truecolor", 10) == 0)
 		prompt = build_colored_prompt();
 	else
 		prompt = build_plain_prompt();
