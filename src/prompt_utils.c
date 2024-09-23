@@ -59,16 +59,17 @@ char	*get_user(void)
 char	*get_host(void)
 {
 	char	*host;
-	int		i;
+	int	i;
 
-	host = getenv("HOSTNAME");
+	host = getenv("NAME");
 	if (host == NULL)
 		return ("host");
-	i = -1;
-	while (host[++i])
+	i = 0;
+	while (host[i])
 	{
 		if (host[i] == '.')
 			host[i] = '\0';
+		i++;
 	}
 	return (host);
 }
