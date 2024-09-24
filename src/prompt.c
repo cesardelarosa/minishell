@@ -45,13 +45,30 @@ static char	*build_plain_prompt(void)
 	return (prompt);
 }
 
+static int	supports_colors(void)
+{
+	char	*term;
+	char	*colorterm;
+
+	term = getenv("TERM");
+	if (term && (ft_strnstr(term, "xterm", 5) ||
+		ft_strnstr(term, "screen", 6) ||
+		ft_strnstr(term, "color", 5) ||
+		ft_strnstr(term, "linux", 5) ||
+		ft_strnstr(term, "ansi", 4)))
+		return (1);
+	colorterm = getenv("COLORTERM");
+	if (colorterm && (ft_strncmp(colorterm, "truecolor", 9) == 0 ||
+		ft_strncmp(colorterm, "24bit", 5) == 0))
+		return (1);
+	return (0);
+}
+
 char	*get_prompt(void)
 {
 	char	*prompt;
-	char	*color;
 
-	color = getenv("COLORTERM");
-	if (color && ft_strncmp(color, "truecolor", 10) == 0)
+	if (supports_colors())
 		prompt = build_colored_prompt();
 	else
 		prompt = build_plain_prompt();
