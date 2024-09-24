@@ -59,7 +59,7 @@ char	*get_user(void)
 char	*get_host(void)
 {
 	char	*host;
-	int	i;
+	int		i;
 
 	host = getenv("NAME");
 	if (host == NULL)
