@@ -6,13 +6,19 @@
 /*   By: cde-la-r <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/01 14:51:46 by cde-la-r          #+#    #+#             */
-/*   Updated: 2024/10/01 15:03:54 by cde-la-r         ###   ########.fr       */
+/*   Updated: 2024/10/01 17:49:18 by cde-la-r         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 #include "libft.h"
 
+/*
+** Checks if the provided token is a recognized operator in the shell.
+**
+** @param token: The token to check.
+** @return: 1 if the token is an operator, 0 otherwise.
+*/
 int	is_operator(const char *token)
 {
 	return (!ft_strncmp(token, "|", 2)
@@ -24,6 +30,12 @@ int	is_operator(const char *token)
 		|| !ft_strncmp(token, "||", 3));
 }
 
+/*
+** Determines the node type corresponding to a given operator token.
+**
+** @param token: The operator token to evaluate.
+** @return: The corresponding node type.
+*/
 t_node_type	get_operator_type(const char *token)
 {
 	if (!ft_strncmp(token, "|", 2))
@@ -43,6 +55,14 @@ t_node_type	get_operator_type(const char *token)
 	return (NODE_UNKNOWN);
 }
 
+/*
+** Updates the operator priority based on the provided token. If the token
+** is an operator, it updates the priority and returns the new priority.
+**
+** @param token: The operator token to evaluate.
+** @param priority: A pointer to the current priority level.
+** @return: The new priority level if updated, otherwise 0.
+*/
 int	update_operator_priority(const char *token, int *priority)
 {
 	if (!ft_strncmp(token, "&&", 3) || !ft_strncmp(token, "||", 3))
@@ -60,6 +80,16 @@ int	update_operator_priority(const char *token, int *priority)
 	return (0);
 }
 
+/*
+** Finds the index of the highest priority operator in the token array
+** within the specified range. Returns the index of the operator if found,
+** or the index of the last encountered operator with a lower priority.
+**
+** @param tokens: The array of token strings.
+** @param start: The starting index to search.
+** @param end: The ending index to search.
+** @return: The index of the highest priority operator, or -1 if none found.
+*/
 int	find_highest_operator(char **tokens, int start, int end)
 {
 	int	i;
@@ -83,6 +113,15 @@ int	find_highest_operator(char **tokens, int start, int end)
 	return (index);
 }
 
+/*
+** Duplicates a range of tokens from the tokens array and returns a new
+** array of strings. Memory for the new array is allocated dynamically.
+**
+** @param tokens: The array of token strings.
+** @param start: The starting index for duplication.
+** @param end: The ending index for duplication.
+** @return: A new array of duplicated strings, or NULL on failure.
+*/
 char	**dup_args_range(char **tokens, int start, int end)
 {
 	int		arg_count;

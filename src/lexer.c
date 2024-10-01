@@ -6,13 +6,21 @@
 /*   By: cde-la-r <cde-la-r@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/30 13:39:56 by cde-la-r          #+#    #+#             */
-/*   Updated: 2024/10/01 16:38:38 by cde-la-r         ###   ########.fr       */
+/*   Updated: 2024/10/01 17:46:43 by cde-la-r         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "libft.h"
 #include "minishell.h"
 
+/*
+** Checks if all quotes in the input string are properly closed.
+** Counts the number of single and double quotes and returns true
+** if both are even, indicating that they are closed.
+**
+** @param input: The string to check for closed quotes.
+** @return: 1 if quotes are closed, 0 otherwise.
+*/
 int	are_quotes_closed(char *input)
 {
 	int	i;

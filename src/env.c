@@ -6,7 +6,7 @@
 /*   By: cde-la-r <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/01 16:35:10 by cde-la-r          #+#    #+#             */
-/*   Updated: 2024/10/01 16:58:36 by cde-la-r         ###   ########.fr       */
+/*   Updated: 2024/10/01 17:45:54 by cde-la-r         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,6 +15,13 @@
 #include "minishell.h"
 #include "builtins.h"
 
+/*
+** Retrieves the value of the specified environment variable.
+** If the variable is not found, it prints an error message.
+**
+** @param var: The name of the environment variable to retrieve.
+** @return: The value of the variable, or NULL if not found.
+*/
 char	*get_env_var(char *var)
 {
 	char	*value;
@@ -28,6 +35,16 @@ char	*get_env_var(char *var)
 	return (value);
 }
 
+/*
+** Replaces a substring in the original string with a new substring.
+** Allocates memory for the new string and returns it.
+**
+** @param str: The original string in which to replace the substring.
+** @param start: A pointer to the start of the substring to replace.
+** @param end: A pointer to the end of the substring to replace.
+** @param replacement: The substring to insert in place of the original.
+** @return: The newly allocated string with the replacement, or exits on failure.
+*/
 char	*ft_strreplace(char *str, char *start, char *end, char *replacement)
 {
 	char	*new_str;
@@ -52,6 +69,13 @@ char	*ft_strreplace(char *str, char *start, char *end, char *replacement)
 	return (new_str);
 }
 
+/*
+** Expands environment variables in the input string.
+** For each variable found, it replaces it with its value.
+**
+** @param input: The input string that may contain environment variables.
+** @return: A new string with the variables expanded, or NULL on failure.
+*/
 char	*expand_env_vars(char *input)
 {
 	char	*expanded;
@@ -100,6 +124,12 @@ char	*expand_env_vars(char *input)
 	return (expanded);
 }
 
+/*
+** Expands all environment variables in the given array of arguments.
+** Each argument in args is replaced with its expanded version.
+**
+** @param args: The array of strings (arguments) to expand.
+*/
 void	expand_all_vars(char **args)
 {
 	int		i;

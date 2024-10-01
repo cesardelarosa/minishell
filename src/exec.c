@@ -6,7 +6,7 @@
 /*   By: cde-la-r <cde-la-r@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/30 13:45:46 by cde-la-r          #+#    #+#             */
-/*   Updated: 2024/10/01 14:55:40 by cde-la-r         ###   ########.fr       */
+/*   Updated: 2024/10/01 17:43:04 by cde-la-r         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,7 +17,6 @@
 #include "libft.h"
 #include "minishell.h"
 #include "builtins.h"
-#include "ast.h"
 
 extern char	**environ;
 
@@ -25,6 +24,9 @@ extern char	**environ;
 ** Searches for the full path of a command by checking each directory
 ** in the PATH environment variable. If found, returns the full path.
 ** Otherwise, returns NULL.
+**
+** @param cmd: The command to search for in the PATH directories.
+** @return: The full path of the command if found, NULL otherwise.
 */
 char	*which(const char *cmd)
 {
@@ -58,6 +60,8 @@ char	*which(const char *cmd)
 /*
 ** Handles the execution of external commands. If the command is found,
 ** it runs execve. If not, it tries to find the command using 'which'.
+**
+** @param args: Command and arguments to execute.
 */
 void	handle_extern(char **args)
 {
@@ -84,6 +88,9 @@ void	handle_extern(char **args)
 /*
 ** Checks if the command is a built-in. If it is, it calls the corresponding
 ** function. Returns 1 if the command is a built-in, 0 otherwise.
+**
+** @param args: The arguments of the command to check.
+** @return: 1 if the command is a built-in, 0 otherwise.
 */
 int	handle_builtin(char **args)
 {
@@ -103,6 +110,8 @@ int	handle_builtin(char **args)
 /*
 ** Handles the execution of a single command. If the command is not a built-in,
 ** it forks a new process to execute the external command.
+**
+** @param node: The AST node representing the command to execute.
 */
 void	handle_command(t_ast_node *node)
 {
@@ -126,6 +135,8 @@ void	handle_command(t_ast_node *node)
 /*
 ** Recursively executes the AST tree. It checks if the current node is a command
 ** and handles it. Then it continues to the left and right nodes.
+**
+** @param root: The root node of the AST to execute.
 */
 void	exec(t_ast_node *root)
 {

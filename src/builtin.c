@@ -6,7 +6,7 @@
 /*   By: cde-la-r <cde-la-r@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/27 09:20:41 by cde-la-r          #+#    #+#             */
-/*   Updated: 2024/09/26 15:25:12 by cde-la-r         ###   ########.fr       */
+/*   Updated: 2024/10/01 17:44:03 by cde-la-r         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,9 +17,12 @@
 #include "libft.h"
 #include "minishell.h"
 
-/* 
+/*
 ** Changes the current working directory to the one specified in args[1].
 ** If no directory is provided, it prints an error message.
+**
+** @param args: The arguments passed to the cd command.
+**              args[1] should contain the target directory.
 */
 void	builtin_cd(char **args)
 {
@@ -29,7 +32,7 @@ void	builtin_cd(char **args)
 		perror("minishell: cd: failed to change directory");
 }
 
-/* 
+/*
 ** Prints the current working directory to standard output.
 ** If an error occurs, it prints an error message.
 */
@@ -43,9 +46,12 @@ void	builtin_pwd(void)
 		perror("minishell: pwd: failed to get current directory");
 }
 
-/* 
+/*
 ** Echoes the given arguments to standard output.
 ** If "-n" is passed as the first argument, it suppresses the newline.
+**
+** @param args: The arguments to echo.
+**              args[1] may be "-n" to suppress the newline.
 */
 void	builtin_echo(char **args)
 {
@@ -64,9 +70,12 @@ void	builtin_echo(char **args)
 		printf("\n");
 }
 
-/* 
+/*
 ** Exits the shell with the specified exit status.
 ** If no status is provided, it exits with status 0.
+**
+** @param args: The arguments passed to the exit command.
+**              args[1] may contain the exit status.
 */
 void	builtin_exit(char **args)
 {
