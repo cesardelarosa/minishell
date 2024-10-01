@@ -6,7 +6,7 @@
 /*   By: cde-la-r <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/01 14:29:16 by cde-la-r          #+#    #+#             */
-/*   Updated: 2024/10/01 15:07:51 by cde-la-r         ###   ########.fr       */
+/*   Updated: 2024/10/01 16:24:50 by cde-la-r         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -57,8 +57,10 @@ void	print_node_recursive(t_ast_node *node, int depth, char *branch)
 	}
 	else
 		print_node_type(node->type);
-	print_node_recursive(node->left, depth + 1, "L- ");
-	print_node_recursive(node->right, depth + 1, "R- ");
+	if (node->left)
+		print_node_recursive(node->left, depth + 1, "L- ");
+	if (node->right)
+		print_node_recursive(node->right, depth + 1, "R- ");
 }
 
 void	print_node(t_ast_node *root)
