@@ -6,7 +6,7 @@
 /*   By: cde-la-r <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/01 14:29:16 by cde-la-r          #+#    #+#             */
-/*   Updated: 2024/10/01 16:24:50 by cde-la-r         ###   ########.fr       */
+/*   Updated: 2024/10/01 16:32:41 by cde-la-r         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,19 +18,19 @@ void	print_node_type(int type)
 	if (type == NODE_COMMAND)
 		printf("Command\n");
 	else if (type == NODE_PIPE)
-		printf("Pipe\n");
+		printf("| (PIPE)\n");
 	else if (type == NODE_REDIRECTION_IN)
-		printf("Redirection Input\n");
+		printf("< (REDIRECTION INPUT)\n");
 	else if (type == NODE_REDIRECTION_OUT)
-		printf("Redirection Output\n");
+		printf("> (REDIRECTION OUTPUT)\n");
 	else if (type == NODE_REDIRECTION_APPEND)
-		printf("Redirection Append\n");
+		printf(">> (REDIRECTION APPEND)\n");
 	else if (type == NODE_AND)
-		printf("And\n");
+		printf("&& (AND)\n");
 	else if (type == NODE_OR)
-		printf("Or\n");
+		printf("|| (OR)\n");
 	else if (type == NODE_HEREDOC)
-		printf("Heredoc\n");
+		printf("<< (HEREDOC)\n");
 	else
 		printf("Unknown\n");
 }
