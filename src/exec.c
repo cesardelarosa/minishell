@@ -6,7 +6,7 @@
 /*   By: cde-la-r <cde-la-r@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/30 13:45:46 by cde-la-r          #+#    #+#             */
-/*   Updated: 2024/08/30 13:45:46 by cde-la-r         ###   ########.fr       */
+/*   Updated: 2024/10/01 14:55:40 by cde-la-r         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,9 +17,15 @@
 #include "libft.h"
 #include "minishell.h"
 #include "builtins.h"
+#include "ast.h"
 
 extern char	**environ;
 
+/*
+** Searches for the full path of a command by checking each directory
+** in the PATH environment variable. If found, returns the full path.
+** Otherwise, returns NULL.
+*/
 char	*which(const char *cmd)
 {
 	char	*path;
@@ -49,6 +55,10 @@ char	*which(const char *cmd)
 	return (NULL);
 }
 
+/*
+** Handles the execution of external commands. If the command is found,
+** it runs execve. If not, it tries to find the command using 'which'.
+*/
 void	handle_extern(char **args)
 {
 	char	*exec_path;
@@ -59,13 +69,22 @@ void	handle_extern(char **args)
 	{
 		exec_path = which(args[0]);
 		if (exec_path != NULL)
+		{
 			execve(exec_path, args, environ);
-		free(exec_path);
+			free(exec_path);
+		}
+		else
+			perror("minishell: command not found");
 	}
-	perror("minishell: execution failed");
+	else
+		perror("minishell: execution failed");
 	exit(EXIT_FAILURE);
 }
 
+/*
+** Checks if the command is a built-in. If it is, it calls the corresponding
+** function. Returns 1 if the command is a built-in, 0 otherwise.
+*/
 int	handle_builtin(char **args)
 {
 	if (!ft_strncmp(args[0], "cd", 3))
@@ -81,22 +100,41 @@ int	handle_builtin(char **args)
 	return (1);
 }
 
-void	handle_command(char **args)
+/*
+** Handles the execution of a single command. If the command is not a built-in,
+** it forks a new process to execute the external command.
+*/
+void	handle_command(t_ast_node *node)
 {
 	pid_t	pid;
 	int		status;
 
-	if (args == NULL)
+	if (node == NULL || node->args == NULL)
 		return ;
-	if (args[0] != NULL && handle_builtin(args) == 0)
+	if (node->args[0] != NULL && handle_builtin(node->args) == 0)
 	{
 		pid = fork();
 		if (pid == 0)
-			handle_extern(args);
+			handle_extern(node->args);
 		else if (pid < 0)
 			perror("minishell: fork error");
 		else if (waitpid(pid, &status, 0) == -1)
 			perror("minishell: waitpid error");
 	}
-	ft_free_split(args);
+}
+
+/*
+** Recursively executes the AST tree. It checks if the current node is a command
+** and handles it. Then it continues to the left and right nodes.
+*/
+void	exec(t_ast_node *root)
+{
+	print_node(root);
+	if (root == NULL)
+		return ;
+	if (root->type == NODE_COMMAND)
+		handle_command(root);
+	else
+		printf("minishell: unsupported node type\n");
+	free_node(root);
 }
