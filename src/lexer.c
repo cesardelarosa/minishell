@@ -6,11 +6,12 @@
 /*   By: cde-la-r <cde-la-r@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/30 13:39:56 by cde-la-r          #+#    #+#             */
-/*   Updated: 2024/10/01 15:32:26 by cde-la-r         ###   ########.fr       */
+/*   Updated: 2024/10/01 16:38:38 by cde-la-r         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "libft.h"
+#include "minishell.h"
 
 int	are_quotes_closed(char *input)
 {
@@ -48,5 +49,6 @@ char	**lexer(char *input)
 		return (NULL);
 	tokens = ft_split(input, ' ');
 	free(input);
+	expand_all_vars(tokens);
 	return (tokens);
 }

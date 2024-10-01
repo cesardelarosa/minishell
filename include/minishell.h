@@ -6,7 +6,7 @@
 /*   By: cde-la-r <cde-la-r@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/26 22:18:26 by cde-la-r          #+#    #+#             */
-/*   Updated: 2024/10/01 14:23:42 by cde-la-r         ###   ########.fr       */
+/*   Updated: 2024/10/01 16:37:34 by cde-la-r         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,5 +26,7 @@ char		*read_input(void);
 char		**lexer(char *input);
 t_ast_node	*parser(char **tokens);
 void		exec(t_ast_node *root);
+
+void		expand_all_vars(char **args);
 
 #endif
