@@ -6,18 +6,25 @@
 /*   By: adrian <adrian@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/27 17:48:49 by cde-la-r          #+#    #+#             */
-/*   Updated: 2024/09/19 17:10:46 by cde-la-r         ###   ########.fr       */
+/*   Updated: 2024/10/01 14:54:58 by cde-la-r         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include <stdio.h>
 #include "minishell.h"
 
+/*
+** Main entry point of the minishell program.
+** It displays a welcome message, sets up signal handlers, and then enters
+** an infinite loop to handle user input, parse it, and execute commands.
+**
+** @return: Always returns 0 (although the loop theoretically never ends).
+*/
 int	main(void)
 {
 	printf(WELCOME_MSG);
 	setup_signal_handlers();
 	while (42)
-		handle_command(parse_command(read_input()));
+		exec(parser(lexer(read_input())));
 	return (0);
 }

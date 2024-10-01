@@ -6,7 +6,7 @@
 /*   By: cde-la-r <cde-la-r@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/30 17:56:41 by cde-la-r          #+#    #+#             */
-/*   Updated: 2024/09/19 14:58:14 by cde-la-r         ###   ########.fr       */
+/*   Updated: 2024/09/26 15:28:40 by cde-la-r         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,6 +17,11 @@
 #include "libft.h"
 #include "prompt.h"
 
+/*
+** Builds a colored prompt string including user, host, and current path.
+**
+** @return: The constructed colored prompt string.
+*/
 static char	*build_colored_prompt(void)
 {
 	char	*prompt;
@@ -33,11 +38,16 @@ static char	*build_colored_prompt(void)
 	return (prompt);
 }
 
+/*
+** Builds a plain prompt string including user, host, and current path.
+**
+** @return: The constructed plain prompt string.
+*/
 static char	*build_plain_prompt(void)
 {
 	char	*prompt;
 
-	prompt = ft_strjoin_free(get_user(), " at ");
+	prompt = ft_strjoin_free(ft_strdup(get_user()), " at ");
 	prompt = ft_strjoin_free(prompt, get_host());
 	prompt = ft_strjoin_free(prompt, " in ");
 	prompt = ft_strjoin_free(prompt, get_path());
@@ -45,11 +55,41 @@ static char	*build_plain_prompt(void)
 	return (prompt);
 }
 
+/*
+** Checks if the terminal supports colors based on the TERM and COLORTERM
+** environment variables.
+**
+** @return: 1 if colors are supported, 0 otherwise.
+*/
+static int	supports_colors(void)
+{
+	char	*term;
+	char	*colorterm;
+
+	term = getenv("TERM");
+	if (term && (ft_strnstr(term, "xterm", 5)
+			|| ft_strnstr(term, "screen", 6)
+			|| ft_strnstr(term, "color", 5)
+			|| ft_strnstr(term, "linux", 5)
+			|| ft_strnstr(term, "ansi", 4)))
+		return (1);
+	colorterm = getenv("COLORTERM");
+	if (colorterm && (ft_strncmp(colorterm, "truecolor", 9) == 0
+			|| ft_strncmp(colorterm, "24bit", 5) == 0))
+		return (1);
+	return (0);
+}
+
+/*
+** Gets the prompt string based on terminal color support.
+**
+** @return: The constructed prompt string, either colored or plain.
+*/
 char	*get_prompt(void)
 {
 	char	*prompt;
 
-	if (ft_strncmp(getenv("COLORTERM"), "truecolor", 10) == 0)
+	if (supports_colors())
 		prompt = build_colored_prompt();
 	else
 		prompt = build_plain_prompt();
@@ -61,6 +101,12 @@ char	*get_prompt(void)
 	return (prompt);
 }
 
+/*
+** Reads user input from the command line using readline, handling prompt 
+** display and history.
+**
+** @return: The input string entered by the user.
+*/
 char	*read_input(void)
 {
 	char	*input;
