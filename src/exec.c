@@ -17,6 +17,7 @@
 #include "libft.h"
 #include "minishell.h"
 #include "builtins.h"
+#include "operators_bonus.h"
 
 extern char	**environ;
 
@@ -140,11 +141,15 @@ void	handle_command(t_ast_node *node)
 */
 void	exec(t_ast_node *root)
 {
-	print_node(root);
+	print_node(root);	//DEBUGGIN UTILITY
 	if (root == NULL)
 		return ;
 	if (root->type == NODE_COMMAND)
 		handle_command(root);
+	else if (root->type == NODE_OR)
+		printf("or"), handle_or(root);
+	else if (root->type == NODE_AND)
+		printf("and"), handle_and(root);
 	else
 		printf("minishell: unsupported node type\n");
 	free_node(root);
