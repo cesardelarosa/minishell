@@ -163,10 +163,6 @@ void	exec(t_ast_node *root)
 		handle_redirection_append(root);
 	else if (root->type == NODE_HEREDOC)
 		handle_heredoc(root);
-	else if (root->type == NODE_AND)
-		handle_and(root);
-	else if (root->type == NODE_OR)
-		handle_or(root);
 	else
 		printf("minishell: unsupported node type\n");
 }
