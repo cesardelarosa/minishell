@@ -106,6 +106,12 @@ int	handle_builtin(char **args)
 		builtin_echo(args);
 	else if (!ft_strncmp(args[0], "exit", 5))
 		builtin_exit(args);
+	else if (!ft_strncmp(args[0], "export", 7))
+		builtin_export(args);
+	else if (!ft_strncmp(args[0], "unset", 6))
+		builtin_unset(args);
+	else if (!ft_strncmp(args[0], "env", 4))
+		builtin_env(args);
 	else
 		return (0);
 	return (1);

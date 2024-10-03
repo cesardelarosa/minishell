@@ -15,9 +15,23 @@ SANITIZE = -fsanitize=address -g
 
 LIBFT = $(LIBFT_DIR)/libft.a
 
-COMMON_SRC = builtin.c main.c prompt.c prompt_utils.c signals.c parser.c lexer.c nodes.c print_node.c parser_utils.c env.c operators.c
+COMMON_SRC = builtin1.c \
+	     builtin2.c \
+	     main.c \
+	     prompt.c \
+	     prompt_utils.c \
+	     signals.c \
+	     parser.c \
+	     lexer.c \
+	     nodes.c \
+	     print_node.c \
+	     parser_utils.c \
+	     env.c \
+	     operators.c
 NO_BONUS_SRC = exec.c
-BONUS_SRC = exec_bonus.c wildcards_bonus.c operators_bonus.c
+BONUS_SRC = exec_bonus.c \
+	    wildcards_bonus.c \
+	    operators_bonus.c
 
 SRC_FILES = $(COMMON_SRC) $(NO_BONUS_SRC)
 OBJ_FILES = $(SRC_FILES:%.c=$(OBJ_DIR)/%.o)
