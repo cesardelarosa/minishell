@@ -14,9 +14,11 @@
 #include <unistd.h>
 #include <stdio.h>
 #include <sys/wait.h>
+#include <fcntl.h>
 #include "libft.h"
 #include "minishell.h"
 #include "builtins.h"
+#include "operators.h"
 #include "operators_bonus.h"
 
 extern char	**environ;
@@ -151,10 +153,20 @@ void	exec(t_ast_node *root)
 		return ;
 	if (root->type == NODE_COMMAND)
 		handle_command(root);
-	else if (root->type == NODE_OR)
-		handle_or(root);
+	else if (root->type == NODE_PIPE)
+		handle_pipe(root);
+	else if (root->type == NODE_REDIRECTION_IN)
+		handle_redirection_in(root);
+	else if (root->type == NODE_REDIRECTION_OUT)
+		handle_redirection_out(root);
+	else if (root->type == NODE_REDIRECTION_APPEND)
+		handle_redirection_append(root);
+	else if (root->type == NODE_HEREDOC)
+		handle_heredoc(root);
 	else if (root->type == NODE_AND)
 		handle_and(root);
+	else if (root->type == NODE_OR)
+		handle_or(root);
 	else
 		printf("minishell: unsupported node type\n");
 }

@@ -15,7 +15,7 @@ SANITIZE = -fsanitize=address -g
 
 LIBFT = $(LIBFT_DIR)/libft.a
 
-COMMON_SRC = builtin.c main.c prompt.c prompt_utils.c signals.c parser.c lexer.c nodes.c print_node.c parser_utils.c env.c operators_bonus.c
+COMMON_SRC = builtin.c main.c prompt.c prompt_utils.c signals.c parser.c lexer.c nodes.c print_node.c parser_utils.c env.c operators.c operators_bonus.c
 NO_BONUS_SRC = exec.c
 BONUS_SRC = exec_bonus.c wildcards_bonus.c
 
