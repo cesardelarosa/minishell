@@ -158,11 +158,11 @@ void	exec(t_ast_node *root)
 	else if (root->type == NODE_PIPE)
 		handle_pipe(root);
 	else if (root->type == NODE_REDIRECTION_IN)
-		handle_redirection_in(root);
+		handle_redirection(root, O_RDONLY);
 	else if (root->type == NODE_REDIRECTION_OUT)
-		handle_redirection_out(root);
+		handle_redirection(root, O_WRONLY | O_CREAT | O_TRUNC);
 	else if (root->type == NODE_REDIRECTION_APPEND)
-		handle_redirection_append(root);
+		handle_redirection(root, O_WRONLY | O_CREAT | O_APPEND);
 	else if (root->type == NODE_HEREDOC)
 		handle_heredoc(root);
 	else if (root->type == NODE_AND)
