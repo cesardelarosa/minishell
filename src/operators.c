@@ -73,85 +73,33 @@ void	handle_pipe(t_ast_node *node)
 	waitpid(pid2, &status, 0);
 }
 
-/*
-** Handle input redirection ('<'). Redirects input from a file.
-*/
-void	handle_redirection_in(t_ast_node *node)
+void	handle_redirection(t_ast_node *node, int mode)
 {
 	int	fd;
-	int	stdin_backup;
-
-	if (!node || !node->right || !node->right->args || !node->right->args[0])
-	{
-		printf("minishell: missing file for input redirection\n");
-		return ;
-	}
-	stdin_backup = dup(STDIN_FILENO);
-	fd = open(node->right->args[0], O_RDONLY);
-	if (fd == -1)
-	{
-		perror("minishell: open error");
-		return ;
-	}
-	dup2(fd, STDIN_FILENO);
-	close(fd);
-	exec(node->left);
-	dup2(stdin_backup, STDIN_FILENO);
-	close(stdin_backup);
-}
-
-/*
-** Handle output redirection ('>'). Redirects output to a file, overwriting it.
-*/
-void	handle_redirection_out(t_ast_node *node)
-{
-	int	fd;
-	int	stdout_backup;
-
-	if (!node || !node->right || !node->right->args || !node->right->args[0])
-	{
-		printf("minishell: missing file for output redirection\n");
-		return ;
-	}
-	stdout_backup = dup(STDOUT_FILENO);
-	fd = open(node->right->args[0], O_WRONLY | O_CREAT | O_TRUNC, 0644);
-	if (fd == -1)
-	{
-		perror("minishell: open error");
-		return ;
-	}
-	dup2(fd, STDOUT_FILENO);
-	close(fd);
-	exec(node->left);
-	dup2(stdout_backup, STDOUT_FILENO);
-	close(stdout_backup);
-}
-
-/*
-** Handle output redirection ('>>'). Redirects output to a file, appending to it.
-*/
-void	handle_redirection_append(t_ast_node *node)
-{
-	int	fd;
-	int	stdout_backup;
+	int	backup;
+	int	fileno;
 
 	if (!node || !node->right || !node->right->args || !node->right->args[0])
 	{
 		printf("minishell: missing file for append redirection\n");
 		return ;
 	}
-	stdout_backup = dup(STDOUT_FILENO);
-	fd = open(node->right->args[0], O_WRONLY | O_CREAT | O_APPEND, 0644);
+	if (mode == O_RDONLY)
+		fileno = STDIN_FILENO;
+	else
+		fileno = STDOUT_FILENO;
+	backup = dup(fileno);
+	fd = open(node->right->args[0], mode, 0644);
 	if (fd == -1)
 	{
 		perror("minishell: open error");
 		return ;
 	}
-	dup2(fd, STDOUT_FILENO);
+	dup2(fd, fileno);
 	close(fd);
 	exec(node->left);
-	dup2(stdout_backup, STDOUT_FILENO);
-	close(stdout_backup);
+	dup2(backup, fileno);
+	close(backup);
 }
 
 /*

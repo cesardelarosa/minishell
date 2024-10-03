@@ -16,9 +16,7 @@
 # include "ast.h"
 
 void	handle_pipe(t_ast_node *node);
-void	handle_redirection_in(t_ast_node *node);
-void	handle_redirection_out(t_ast_node *node);
-void	handle_redirection_append(t_ast_node *node);
+void	handle_redirection(t_ast_node *node, int mode);
 void	handle_heredoc(t_ast_node *node);
 
 #endif
