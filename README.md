@@ -20,17 +20,17 @@
 	- [ ] unset
 	- [ ] env
 	- [x] exit
-- [ ] Manejo de pipes y redirecciones:
-	- [ ] pipe |
-	- [ ] < redirige a input
-	- [ ] > redirige a output
-	- [ ] << recibe delimitador con el que leer el input
-	- [ ] >> redirige el output en modo append
+- [x] Manejo de pipes y redirecciones:
+	- [x] pipe |
+	- [x] < redirige a input
+	- [x] > redirige a output
+	- [x] << recibe delimitador con el que leer el input
+	- [x] >> redirige el output en modo append
 - [ ] Variables de entorno ($):
 	- [x] Variables se expanden a sus valores
 	- [ ] $? se expande al estado de salida del comando mas reciente en la pipeline
 
 # Funcionalidades bonus
 
-- [ ] Uso de && y || con paréntesis para prioridades
+- [x] Uso de && y || con paréntesis para prioridades
 - [x] Uso de wildcard \* en el directorio actual
