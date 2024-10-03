@@ -16,20 +16,18 @@
 
 void	handle_and(t_ast_node *node)
 {
-	int	status;
-
+	if (node == NULL)
+		return ;
 	exec(node->left);
-	wait(&status);
-	if (WIFEXITED(status) && WEXITSTATUS(status) == 0)
+	if (g_exit_status == 0)
 		exec(node->right);
 }
 
 void	handle_or(t_ast_node *node)
 {
-	int	status;
-
+	if (node == NULL)
+		return ;
 	exec(node->left);
-	wait(&status);
-	if (WIFEXITED(status) && WEXITSTATUS(status) != 0)
+	if (g_exit_status != 0)
 		exec(node->right);
 }

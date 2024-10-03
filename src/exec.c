@@ -128,8 +128,13 @@ void	handle_command(t_ast_node *node)
 			handle_extern(node->args);
 		else if (pid < 0)
 			perror("minishell: fork error");
-		else if (waitpid(pid, &status, 0) == -1)
-			perror("minishell: waitpid error");
+		else
+		{
+			if (waitpid(pid, &status, 0) == -1)
+				perror("minishell: waitpid error");
+			if (WIFEXITED(status))
+				g_exit_status = WEXITSTATUS(status);
+		}
 	}
 }
 
@@ -141,16 +146,15 @@ void	handle_command(t_ast_node *node)
 */
 void	exec(t_ast_node *root)
 {
-	print_node(root);	//DEBUGGIN UTILITY
+//	print_node(root);	//DEBUGGIN UTILITY
 	if (root == NULL)
 		return ;
 	if (root->type == NODE_COMMAND)
 		handle_command(root);
 	else if (root->type == NODE_OR)
-		printf("or"), handle_or(root);
+		handle_or(root);
 	else if (root->type == NODE_AND)
-		printf("and"), handle_and(root);
+		handle_and(root);
 	else
 		printf("minishell: unsupported node type\n");
-	free_node(root);
 }

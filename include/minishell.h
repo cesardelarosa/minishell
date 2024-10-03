@@ -18,6 +18,8 @@
 # define WELCOME_MSG \
     "\nWelcome to Minishell! by adpedrer & cde-la-r.\nType 'exit' to quit.\n\n"
 
+extern int	g_exit_status;
+
 char		**ft_free_split(char **result);
 char		*ft_strjoin_free(char *s1, const char *s2);
 

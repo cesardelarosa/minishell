@@ -13,6 +13,8 @@
 #include <stdio.h>
 #include "minishell.h"
 
+int	g_exit_status = 0;
+
 /*
 ** Main entry point of the minishell program.
 ** It displays a welcome message, sets up signal handlers, and then enters
@@ -22,9 +24,15 @@
 */
 int	main(void)
 {
+	t_ast_node	*root;
+
 	printf(WELCOME_MSG);
 	setup_signal_handlers();
 	while (42)
-		exec(parser(lexer(read_input())));
+	{
+		root = parser(lexer(read_input()));
+		exec(root);
+		free_node(root);
+	}
 	return (0);
 }
