@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   parser.c                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: cde-la-r <marvin@42.fr>                    +#+  +:+       +#+        */
+/*   By: adrian <adrian@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/26 13:14:30 by cde-la-r          #+#    #+#             */
-/*   Updated: 2024/10/01 17:37:59 by cde-la-r         ###   ########.fr       */
+/*   Updated: 2024/10/04 17:11:01 by adrian           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -77,7 +77,9 @@ t_ast_node	*parser(char **tokens)
 {
 	int			len;
 	t_ast_node	*root;
-
+	
+	if (!tokens)
+		return (NULL);
 	len = 0;
 	while (tokens[len])
 		len++;

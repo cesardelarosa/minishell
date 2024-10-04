@@ -6,7 +6,7 @@
 /*   By: adrian <adrian@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/30 13:39:56 by cde-la-r          #+#    #+#             */
-/*   Updated: 2024/10/04 17:07:42 by adrian           ###   ########.fr       */
+/*   Updated: 2024/10/04 17:12:57 by adrian           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,29 +18,37 @@
 ** Checks if all quotes in the input string are properly closed.
 ** Returns 1 if all are closed, otherwise returns 0.
 */
-int	are_quotes_closed(const char *str)
-{
-	int		i;
-	char	quote_char;
 
-	i = 0;
-	while (str[i])
-	{
-		if (str[i] == '\'' || str[i] == '\"')
-		{
-			quote_char = str[i];
-			i++;
-			while (str[i] && str[i] != quote_char)
-				i++;
-			if (str[i] == '\0')
-			{
-				perror("minishell: unclosed quotes");
-				return (0);
-			}
-		}
-		i++;
-	}
-	return (1);
+int is_quotes(char c)
+{
+    return (c == '\'' || c == '\"');
+}
+
+int are_quotes_closed(const char *str)
+{
+    int i = 0;
+    char quote_char;
+
+    if (str == NULL)
+    {
+        fprintf(stderr, "Error: Cadena nula\n");
+        return (0);
+    }
+    while (str[i])
+    {
+        if (is_quotes(str[i]))
+        {
+            quote_char = str[i];
+            i++;
+
+            while (str[i] && str[i] != quote_char)
+                i++;
+            if (str[i] == '\0')
+                return (0); 
+        }
+        i++;
+    }
+    return (1); 
 }
 
 /*
