@@ -102,39 +102,56 @@ void	handle_redirection(t_ast_node *node, int mode)
 	close(backup);
 }
 
-/*
-** Handle heredoc ('<<'). Simulates the heredoc by writing input to a pipe.
-*/
 void	handle_heredoc(t_ast_node *node)
 {
 	char	*line;
-	char	*delimiter;
-	int		fd;
+	int		pipefd[2];
+	int		status;
+	pid_t	pid;
 
-	delimiter = ft_strdup(node->right->args[0]);
-	if (!delimiter)
+	if (!node->delimiter)
 		return ;
-	fd = open("heredoc_tmp", O_WRONLY | O_CREAT | O_TRUNC, 0644);
-	if (fd == -1)
+	if (pipe(pipefd) == -1)
 	{
-		perror("minishell: open error");
-		free(delimiter);
+		perror("minishell: pipe error");
 		return ;
 	}
-	while (1)
+	pid = fork();
+	if (pid == -1)
 	{
-		line = readline("> ");
-		if (!line)
-			break ;
-		if (ft_strncmp(line, delimiter, ft_strlen(delimiter) + 1) == 0)
+		perror("minishell: fork error");
+		return ;
+	}
+	if (pid == 0)
+	{
+		while (1)
 		{
+			line = readline("> ");
+			if (!line)
+			{
+				close(pipefd[1]);
+				break ;
+			}
+			if (ft_strncmp(line, node->delimiter, ft_strlen(node->delimiter) + 1) == 0)
+			{
+				free(line);
+				close(pipefd[1]);
+				break ;
+			}
+			write(pipefd[1], line, ft_strlen(line));
+			write(pipefd[1], "\n", 1);
 			free(line);
-			break ;
 		}
-		write(fd, line, ft_strlen(line));
-		write(fd, "\n", 1);
-		free(line);
+		close(pipefd[1]);
+		dup2(pipefd[0], STDIN_FILENO);
+		close(pipefd[0]);
+		exec(node->left);
+		exit(0);
 	}
-	close(fd);
-	free(delimiter);
+	else
+	{
+		close(pipefd[0]);
+		close(pipefd[1]);
+		waitpid(pid, &status, 0);
+	}
 }

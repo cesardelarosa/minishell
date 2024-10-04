@@ -33,11 +33,18 @@ t_ast_node	*create_node(t_node_type type, char **args)
 	if (!new_node)
 		return (NULL);
 	new_node->type = type;
-	new_node->args = args;
-	if (args && !new_node->args)
+	if (type == NODE_HEREDOC)
 	{
-		free(new_node);
-		return (NULL);
+		if (args && *args)
+			new_node->delimiter = ft_strdup(*args);
+		else
+			new_node->delimiter = NULL;
+		new_node->args = NULL;
+	}
+	else
+	{
+		new_node->args = args;
+		new_node->delimiter = NULL;
 	}
 	new_node->left = NULL;
 	new_node->right = NULL;
@@ -60,6 +67,11 @@ void	free_node(t_ast_node *node)
 	{
 		ft_free_split(node->args);
 		node->args = NULL;
+	}
+	if (node->delimiter)
+	{
+		free(node->delimiter);
+		node->delimiter = NULL;
 	}
 	free(node);
 }

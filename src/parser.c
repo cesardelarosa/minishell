@@ -13,6 +13,7 @@
 #include <stdlib.h>
 #include "minishell.h"
 #include "parser_utils.h"
+#include <stdio.h>
 
 /*
 ** Parses an array of tokens into an abstract syntax tree (AST).
@@ -38,9 +39,24 @@ t_ast_node	*parse_tokens(char **tokens, int start, int end)
 	if (op_pos != -1 && op_pos >= start && op_pos <= end)
 	{
 		op_type = get_operator_type(tokens[op_pos]);
-		node = create_node(op_type, NULL);
-		node->left = parse_tokens(tokens, start, op_pos - 1);
-		node->right = parse_tokens(tokens, op_pos + 1, end);
+		if (op_type == NODE_HEREDOC)
+		{
+			if (op_pos + 1 <= end)
+				node = create_node(op_type, &tokens[op_pos + 1]);
+			else
+			{
+				perror("minishell: syntax error near unexpected token 'newline'\n");
+				return (NULL);
+			}
+				node->left = parse_tokens(tokens, start, op_pos - 1);
+			node->right = parse_tokens(tokens, op_pos + 2, end);
+		}
+		else
+		{
+			node = create_node(op_type, NULL);
+			node->left = parse_tokens(tokens, start, op_pos - 1);
+			node->right = parse_tokens(tokens, op_pos + 1, end);
+		}
 	}
 	else
 		node = create_node(NODE_COMMAND, dup_args_range(tokens, start, end));
