@@ -12,39 +12,41 @@
 
 #include "libft.h"
 #include "minishell.h"
+#include <stdio.h>
 
 /*
 ** Checks if all quotes in the input string are properly closed.
-** Counts the number of single and double quotes and returns true
-** if both are even, indicating that they are closed.
-**
-** @param input: The string to check for closed quotes.
-** @return: 1 if quotes are closed, 0 otherwise.
+** Returns 1 if all are closed, otherwise returns 0.
 */
-int	are_quotes_closed(char *input)
+int	are_quotes_closed(const char *str)
 {
-	int	i;
-	int	i_quotes;
-	int	j_quotes;
+	int		i;
+	char	quote_char;
 
 	i = 0;
-	i_quotes = 0;
-	j_quotes = 0;
-	while (input[i])
+	while (str[i])
 	{
-		if (input[i] == '\'')
-			i_quotes++;
-		else if (input[i] == '\"')
-			j_quotes++;
+		if (str[i] == '\'' || str[i] == '\"')
+		{
+			quote_char = str[i];
+			i++;
+			while (str[i] && str[i] != quote_char)
+				i++;
+			if (str[i] == '\0')
+			{
+				perror("minishell: unclosed quotes");
+				return (0);
+			}
+		}
 		i++;
 	}
-	return (i_quotes % 2 == 0 && j_quotes % 2 == 0);
+	return (1);
 }
 
 /*
 ** The lexer function splits the input string into an array of tokens.
-** It uses whitespace (' ') as the delimiter. After tokenization, the
-** input string is freed since it's no longer needed.
+** It uses whitespace (' ') as the delimiter. After tokenization,
+** the input string is freed since it's no longer needed.
 **
 ** @param input: The input string to be tokenized.
 ** @return: A NULL-terminated array of strings (tokens).
@@ -55,8 +57,17 @@ char	**lexer(char *input)
 
 	if (!input)
 		return (NULL);
+	if (!are_quotes_closed(input))
+	{
+		perror("minishell: syntax error: unclosed quotes");
+		free(input);
+		g_exit_status = 1;
+		return (NULL);
+	}
 	tokens = ft_split(input, ' ');
 	free(input);
+	if (!tokens)
+		return (NULL);
 	expand_all_vars(tokens);
 	return (tokens);
 }
