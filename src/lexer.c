@@ -15,40 +15,48 @@
 #include <stdio.h>
 
 /*
-** Checks if all quotes in the input string are properly closed.
-** Returns 1 if all are closed, otherwise returns 0.
+** Checks if a character is a quote.
+**
+** @param c: The character to check.
+** @return: 1 if it's a quote, 0 otherwise.
 */
-
-int is_quotes(char c)
+int	is_quotes(char c)
 {
-    return (c == '\'' || c == '\"');
+	return (c == '\'' || c == '\"');
 }
 
-int are_quotes_closed(const char *str)
+/*
+** Checks if all quotes in the input string are properly closed.
+** Returns 1 if all are closed, otherwise returns 0.
+**
+** @param str: The string to check for closed quotes.
+** @return: 1 if quotes are closed, 0 otherwise.
+*/
+int	are_quotes_closed(const char *str)
 {
-    int i = 0;
-    char quote_char;
+	int		i;
+	char	quote_char;
 
-    if (str == NULL)
-    {
-        fprintf(stderr, "Error: Cadena nula\n");
-        return (0);
-    }
-    while (str[i])
-    {
-        if (is_quotes(str[i]))
-        {
-            quote_char = str[i];
-            i++;
-
-            while (str[i] && str[i] != quote_char)
-                i++;
-            if (str[i] == '\0')
-                return (0); 
-        }
-        i++;
-    }
-    return (1); 
+	i = 0;
+	if (str == NULL)
+	{
+		fprintf(stderr, "Error: Null string\n");
+		return (0);
+	}
+	while (str[i])
+	{
+		if (is_quotes(str[i]))
+		{
+			quote_char = str[i];
+			i++;
+			while (str[i] && str[i] != quote_char)
+				i++;
+			if (str[i] == '\0')
+				return (0);
+		}
+		i++;
+	}
+	return (1);
 }
 
 /*
