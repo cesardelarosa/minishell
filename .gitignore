@@ -2,15 +2,15 @@
 *
 
 # Permitir .gitignore y otros archivos específicos
-!.gitignore
+#!.gitignore
 !/.github/*
 !Makefile
 
 # Permitir la carpeta libft y archivos específicos dentro de ella
-!/libft/
-!/libft/Makefile
-!/libft/libft.h
-!/libft/ft_*.c
+#!/libft/
+#!/libft/Makefile
+#!/libft/libft.h
+#!/libft/ft_*.c
 
 # Permitir la carpeta src y archivos .c en ella
 !/src/
