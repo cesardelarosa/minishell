@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: cde-la-r <cde-la-r@student.42.fr>          +#+  +:+       +#+        */
+/*   By: adrian <adrian@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/26 22:18:26 by cde-la-r          #+#    #+#             */
-/*   Updated: 2024/10/01 16:37:34 by cde-la-r         ###   ########.fr       */
+/*   Updated: 2024/10/01 21:58:36 by adrian           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,6 +14,11 @@
 # define MINISHELL_H
 
 # include "ast.h"
+#include <sys/types.h>
+#include <sys/wait.h>
+
+extern int g_exit_err_val;
+
 
 # define WELCOME_MSG \
     "\nWelcome to Minishell! by adpedrer & cde-la-r.\nType 'exit' to quit.\n\n"

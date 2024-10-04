@@ -11,7 +11,7 @@ CC = gcc
 CFLAGS = -Wall -Wextra -Werror
 INCLUDE = -I./$(INCLUDE_DIR) -I./$(LIBFT_DIR)
 LDFLAGS = -lreadline -L$(LIBFT_DIR) -lft
-SANITIZE = -fsanitize=address -g
+SANITIZE = #-fsanitize=address -g
 
 LIBFT = $(LIBFT_DIR)/libft.a
 
