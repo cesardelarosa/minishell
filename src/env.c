@@ -83,6 +83,7 @@ char	*expand_env_vars(char *input)
 	char	*end;
 	char	*var;
 	char	*value;
+	char	*exit_status_str;
 
 	expanded = ft_strdup(input);
 	if (!expanded)
@@ -97,6 +98,20 @@ char	*expand_env_vars(char *input)
 		if (!start)
 			break ;
 		end = start + 1;
+		if (*end == '?')
+		{
+			exit_status_str = ft_itoa(g_exit_status);
+			if (!exit_status_str)
+			{
+				perror("minishell: ft_itoa");
+				free(expanded);
+				return (NULL);
+			}
+			expanded = ft_strreplace(expanded, start, end + 1, exit_status_str);
+			start += ft_strlen(exit_status_str);
+			free(exit_status_str);
+			continue ;
+		}
 		while (ft_isalnum(*end) || *end == '_')
 			end++;
 		var = ft_substr(start, 1, end - start - 1);
@@ -144,3 +159,4 @@ void	expand_all_vars(char **args)
 		i++;
 	}
 }
+
