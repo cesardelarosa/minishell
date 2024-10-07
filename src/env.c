@@ -159,4 +159,3 @@ void	expand_all_vars(char **args)
 		i++;
 	}
 }
-
