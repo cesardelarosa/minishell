@@ -22,11 +22,37 @@
 /*
 ** Handle pipe ('|'). Redirects output of one command to input of another.
 */
+void	fork_and_exec(t_ast_node *node, int *pipe_fd, int is_right)
+{
+	int	pid;
+	int	fileno;
+
+	if (is_right)
+		fileno = STDIN_FILENO;
+	else
+		fileno = STDOUT_FILENO;
+	pid = fork();
+	if (pid == -1)
+	{
+		perror("minishell: fork error");
+		return ;
+	}
+	if (pid == 0)
+	{
+		dup2(pipe_fd[!is_right], fileno);
+		close(pipe_fd[0]);
+		close(pipe_fd[1]);
+		if (is_right)
+			exec(node->right);
+		else
+			exec(node->left);
+		exit(EXIT_FAILURE);
+	}
+}
+
 void	handle_pipe(t_ast_node *node)
 {
 	int	pipe_fd[2];
-	int	pid1;
-	int	pid2;
 	int	status;
 
 	if (!node || !node->left || !node->right)
@@ -39,38 +65,12 @@ void	handle_pipe(t_ast_node *node)
 		perror("minishell: pipe error");
 		return ;
 	}
-	pid1 = fork();
-	if (pid1 == -1)
-	{
-		perror("minishell: fork error");
-		return ;
-	}
-	if (pid1 == 0)
-	{
-		dup2(pipe_fd[1], STDOUT_FILENO);
-		close(pipe_fd[0]);
-		close(pipe_fd[1]);
-		exec(node->left);
-		exit(EXIT_FAILURE);
-	}
-	pid2 = fork();
-	if (pid2 == -1)
-	{
-		perror("minishell: fork error");
-		return ;
-	}
-	if (pid2 == 0)
-	{
-		dup2(pipe_fd[0], STDIN_FILENO);
-		close(pipe_fd[0]);
-		close(pipe_fd[1]);
-		exec(node->right);
-		exit(EXIT_FAILURE);
-	}
+	fork_and_exec(node, pipe_fd, 1);
+	fork_and_exec(node, pipe_fd, 0);
 	close(pipe_fd[0]);
 	close(pipe_fd[1]);
-	waitpid(pid1, &status, 0);
-	waitpid(pid2, &status, 0);
+	waitpid(-1, &status, 0);
+	waitpid(-1, &status, 0);
 }
 
 void	handle_redirection(t_ast_node *node, int mode)
@@ -102,9 +102,33 @@ void	handle_redirection(t_ast_node *node, int mode)
 	close(backup);
 }
 
-void	handle_heredoc(t_ast_node *node)
+void	read_heredoc_input(t_ast_node *node, int *pipefd)
 {
 	char	*line;
+
+	while (1)
+	{
+		line = readline("> ");
+		if (!line || ft_strncmp(line, node->delimiter
+				, ft_strlen(node->delimiter) + 1) == 0)
+		{
+			free(line);
+			close(pipefd[1]);
+			break ;
+		}
+		write(pipefd[1], line, ft_strlen(line));
+		write(pipefd[1], "\n", 1);
+		free(line);
+	}
+	close(pipefd[1]);
+	dup2(pipefd[0], STDIN_FILENO);
+	close(pipefd[0]);
+	exec(node->left);
+	exit(0);
+}
+
+void	handle_heredoc(t_ast_node *node)
+{
 	int		pipefd[2];
 	int		status;
 	pid_t	pid;
@@ -123,31 +147,7 @@ void	handle_heredoc(t_ast_node *node)
 		return ;
 	}
 	if (pid == 0)
-	{
-		while (1)
-		{
-			line = readline("> ");
-			if (!line)
-			{
-				close(pipefd[1]);
-				break ;
-			}
-			if (ft_strncmp(line, node->delimiter, ft_strlen(node->delimiter) + 1) == 0)
-			{
-				free(line);
-				close(pipefd[1]);
-				break ;
-			}
-			write(pipefd[1], line, ft_strlen(line));
-			write(pipefd[1], "\n", 1);
-			free(line);
-		}
-		close(pipefd[1]);
-		dup2(pipefd[0], STDIN_FILENO);
-		close(pipefd[0]);
-		exec(node->left);
-		exit(0);
-	}
+		read_heredoc_input(node, pipefd);
 	else
 	{
 		close(pipefd[0]);

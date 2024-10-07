@@ -156,7 +156,6 @@ void	handle_command(t_ast_node *node)
 */
 void	exec(t_ast_node *root)
 {
-//	print_node(root);	//DEBUGGIN UTILITY
 	if (root == NULL)
 		return ;
 	if (root->type == NODE_COMMAND)
