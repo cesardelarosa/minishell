@@ -1,24 +1,30 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   builtins.h                                         :+:      :+:    :+:   */
+/*   ft_strjoin.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: cde-la-r <cde-la-r@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/08/30 17:50:20 by cde-la-r          #+#    #+#             */
-/*   Updated: 2024/08/30 17:50:20 by cde-la-r         ###   ########.fr       */
+/*   Created: 2023/08/14 19:48:21 by cde-la-r          #+#    #+#             */
+/*   Updated: 2023/08/16 19:08:22 by cde-la-r         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef BUILTINS_H
-# define BUILTINS_H
+#include "libft.h"
+#include <stdlib.h>
 
-void	builtin_exit(char **args);
-void	builtin_echo(char **args);
-void	builtin_pwd(void);
-void	builtin_cd(char **args);
-void	builtin_export(char **args);
-void	builtin_unset(char **args);
-void	builtin_env(char **args);
+char	*ft_strjoin(char const *s1, char const *s2)
+{
+	char	*r;
+	size_t	len1;
+	size_t	len2;
 
-#endif
+	len1 = ft_strlen(s1);
+	len2 = ft_strlen(s2);
+	r = (char *)malloc((len1 + len2 + 1) * sizeof(char));
+	if (!r)
+		return (NULL);
+	ft_strlcpy(r, s1, len1 + 1);
+	ft_strlcat(r, s2, len1 + len2 + 1);
+	return (r);
+}

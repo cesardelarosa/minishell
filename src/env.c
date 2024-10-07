@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   env.c                                              :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: adrian <adrian@student.42.fr>              +#+  +:+       +#+        */
+/*   By: cde-la-r <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/01 16:35:10 by cde-la-r          #+#    #+#             */
-/*   Updated: 2024/10/01 20:38:46 by adrian           ###   ########.fr       */
+/*   Updated: 2024/10/01 17:45:54 by cde-la-r         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -83,6 +83,7 @@ char	*expand_env_vars(char *input)
 	char	*end;
 	char	*var;
 	char	*value;
+	char	*exit_status_str;
 
 	expanded = ft_strdup(input);
 	if (!expanded)
@@ -97,34 +98,20 @@ char	*expand_env_vars(char *input)
 		if (!start)
 			break ;
 		end = start + 1;
-
-		// Si detecta $? (expansión de último código de salida)
 		if (*end == '?')
 		{
-			char *exit_status_str;
-
-			// Convierte el g_exit_status en string
-			exit_status_str = ft_itoa(g_exit_err_val);
+			exit_status_str = ft_itoa(g_exit_status);
 			if (!exit_status_str)
 			{
 				perror("minishell: ft_itoa");
 				free(expanded);
 				return (NULL);
 			}
-			
-			// Reemplaza $? por el valor de g_exit_status
 			expanded = ft_strreplace(expanded, start, end + 1, exit_status_str);
-			if (!expanded)
-			{
-				perror("minishell: ft_strreplace");
-				return (NULL);
-			}
 			start += ft_strlen(exit_status_str);
 			free(exit_status_str);
 			continue ;
 		}
-
-		// Si no es $?, procesa las variables de entorno como antes
 		while (ft_isalnum(*end) || *end == '_')
 			end++;
 		var = ft_substr(start, 1, end - start - 1);
@@ -151,7 +138,6 @@ char	*expand_env_vars(char *input)
 	}
 	return (expanded);
 }
-
 
 /*
 ** Expands all environment variables in the given array of arguments.

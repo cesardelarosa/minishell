@@ -1,24 +1,30 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   builtins.h                                         :+:      :+:    :+:   */
+/*   ft_strtrim.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: cde-la-r <cde-la-r@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/08/30 17:50:20 by cde-la-r          #+#    #+#             */
-/*   Updated: 2024/08/30 17:50:20 by cde-la-r         ###   ########.fr       */
+/*   Created: 2023/08/14 20:00:19 by cde-la-r          #+#    #+#             */
+/*   Updated: 2023/08/16 19:09:13 by cde-la-r         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef BUILTINS_H
-# define BUILTINS_H
+#include "libft.h"
 
-void	builtin_exit(char **args);
-void	builtin_echo(char **args);
-void	builtin_pwd(void);
-void	builtin_cd(char **args);
-void	builtin_export(char **args);
-void	builtin_unset(char **args);
-void	builtin_env(char **args);
+char	*ft_strtrim(char const *s1, char const *set)
+{
+	size_t	len;
+	char	*r;
 
-#endif
+	while (*s1 && ft_strchr(set, *s1))
+		s1++;
+	len = ft_strlen(s1);
+	while (len > 0 && ft_strchr(set, s1[len - 1]))
+		len--;
+	r = (char *)malloc((len + 1) * sizeof(char));
+	if (!r)
+		return (NULL);
+	ft_strlcpy(r, s1, len + 1);
+	return (r);
+}

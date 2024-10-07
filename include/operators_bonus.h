@@ -1,24 +1,21 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   builtins.h                                         :+:      :+:    :+:   */
+/*   operators_bonus.h                                  :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: cde-la-r <cde-la-r@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/08/30 17:50:20 by cde-la-r          #+#    #+#             */
-/*   Updated: 2024/08/30 17:50:20 by cde-la-r         ###   ########.fr       */
+/*   Created: 2024/10/02 15:40:35 by cde-la-r          #+#    #+#             */
+/*   Updated: 2024/10/02 15:40:38 by cde-la-r         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef BUILTINS_H
-# define BUILTINS_H
+#ifndef OPERATORS_BONUS_H
+# define OPERATORS_BONUS_H
 
-void	builtin_exit(char **args);
-void	builtin_echo(char **args);
-void	builtin_pwd(void);
-void	builtin_cd(char **args);
-void	builtin_export(char **args);
-void	builtin_unset(char **args);
-void	builtin_env(char **args);
+# include "ast.h"
+
+void	handle_and(t_ast_node *node);
+void	handle_or(t_ast_node *node);
 
 #endif

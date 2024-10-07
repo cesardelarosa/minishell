@@ -1,24 +1,23 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   builtins.h                                         :+:      :+:    :+:   */
+/*   ft_memset.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: cde-la-r <cde-la-r@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/08/30 17:50:20 by cde-la-r          #+#    #+#             */
-/*   Updated: 2024/08/30 17:50:20 by cde-la-r         ###   ########.fr       */
+/*   Created: 2023/08/07 11:47:33 by cde-la-r          #+#    #+#             */
+/*   Updated: 2023/08/16 17:00:26 by cde-la-r         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef BUILTINS_H
-# define BUILTINS_H
+#include "libft.h"
 
-void	builtin_exit(char **args);
-void	builtin_echo(char **args);
-void	builtin_pwd(void);
-void	builtin_cd(char **args);
-void	builtin_export(char **args);
-void	builtin_unset(char **args);
-void	builtin_env(char **args);
+void	*ft_memset(void *s, int c, size_t n)
+{
+	void	*r;
 
-#endif
+	r = s;
+	while (n--)
+		*(unsigned char *) s++ = (unsigned char) c;
+	return (r);
+}

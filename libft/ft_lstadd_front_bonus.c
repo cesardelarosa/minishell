@@ -1,24 +1,26 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   builtins.h                                         :+:      :+:    :+:   */
+/*   ft_lstadd_front_bonus.c                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: cde-la-r <cde-la-r@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/08/30 17:50:20 by cde-la-r          #+#    #+#             */
-/*   Updated: 2024/08/30 17:50:20 by cde-la-r         ###   ########.fr       */
+/*   Created: 2023/09/14 19:56:18 by cde-la-r          #+#    #+#             */
+/*   Updated: 2023/09/21 19:46:06 by cde-la-r         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef BUILTINS_H
-# define BUILTINS_H
+#include "libft.h"
 
-void	builtin_exit(char **args);
-void	builtin_echo(char **args);
-void	builtin_pwd(void);
-void	builtin_cd(char **args);
-void	builtin_export(char **args);
-void	builtin_unset(char **args);
-void	builtin_env(char **args);
-
-#endif
+void	ft_lstadd_front(t_list **lst, t_list *new)
+{
+	if (!lst || !new)
+		return ;
+	if (!*lst)
+	{
+		*lst = new;
+		return ;
+	}
+	new->next = *lst;
+	*lst = new;
+}

@@ -77,6 +77,8 @@ void	print_node_recursive(t_ast_node *node, int depth, char *branch)
 		return ;
 	}
 	printf("%*s%s", depth * 4, "", branch);
+	if (node->type == NODE_HEREDOC)
+		printf("delimiter: %s ", node->delimiter);
 	if (node->type == NODE_COMMAND)
 	{
 		printf("Command: ");

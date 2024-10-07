@@ -1,24 +1,32 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   builtins.h                                         :+:      :+:    :+:   */
+/*   ft_strlcat.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: cde-la-r <cde-la-r@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/08/30 17:50:20 by cde-la-r          #+#    #+#             */
-/*   Updated: 2024/08/30 17:50:20 by cde-la-r         ###   ########.fr       */
+/*   Created: 2023/08/07 16:52:20 by cde-la-r          #+#    #+#             */
+/*   Updated: 2023/08/16 17:43:54 by cde-la-r         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef BUILTINS_H
-# define BUILTINS_H
+#include "libft.h"
 
-void	builtin_exit(char **args);
-void	builtin_echo(char **args);
-void	builtin_pwd(void);
-void	builtin_cd(char **args);
-void	builtin_export(char **args);
-void	builtin_unset(char **args);
-void	builtin_env(char **args);
+size_t	ft_strlcat(char *dest, const char *src, size_t n)
+{
+	size_t	d_len;
+	size_t	s_len;
 
-#endif
+	d_len = ft_strlen(dest);
+	s_len = ft_strlen(src);
+	if (d_len >= n)
+		return (s_len + n);
+	if (d_len + s_len < n)
+		ft_memcpy(dest + d_len, src, s_len + 1);
+	else
+	{
+		ft_memcpy(dest + d_len, src, n - d_len - 1);
+		dest[n - 1] = '\0';
+	}
+	return (d_len + s_len);
+}

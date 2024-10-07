@@ -52,7 +52,7 @@ t_node_type	get_operator_type(const char *token)
 		return (NODE_OR);
 	else if (!ft_strncmp(token, "<<", 3))
 		return (NODE_HEREDOC);
-	return (NODE_UNKNOWN);
+	return (NODE_COMMAND);
 }
 
 /*
@@ -97,7 +97,7 @@ int	find_highest_operator(char **tokens, int start, int end)
 	int	priority;
 
 	i = start;
-	index = -1;
+	index = start;
 	priority = 0;
 	while (i <= end)
 	{

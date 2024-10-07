@@ -1,24 +1,26 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   builtins.h                                         :+:      :+:    :+:   */
+/*   ft_atoi.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: cde-la-r <cde-la-r@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/08/30 17:50:20 by cde-la-r          #+#    #+#             */
-/*   Updated: 2024/08/30 17:50:20 by cde-la-r         ###   ########.fr       */
+/*   Created: 2023/08/10 19:01:20 by cde-la-r          #+#    #+#             */
+/*   Updated: 2023/09/20 13:13:55 by cde-la-r         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef BUILTINS_H
-# define BUILTINS_H
+int	ft_atoi(const char *nptr)
+{
+	unsigned int	n;
+	int				sgn;
 
-void	builtin_exit(char **args);
-void	builtin_echo(char **args);
-void	builtin_pwd(void);
-void	builtin_cd(char **args);
-void	builtin_export(char **args);
-void	builtin_unset(char **args);
-void	builtin_env(char **args);
-
-#endif
+	while (*nptr == ' ' || (*nptr >= '\t' && *nptr <= '\r'))
+		nptr++;
+	sgn = (*nptr != '-') - (*nptr == '-');
+	nptr += (*nptr == '-' || *nptr == '+');
+	n = 0;
+	while (*nptr >= '0' && *nptr <= '9')
+		n = n * 10 + (*nptr++ - '0');
+	return (sgn * n);
+}

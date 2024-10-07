@@ -1,24 +1,33 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   builtins.h                                         :+:      :+:    :+:   */
+/*   operators_bonus.c                                  :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: cde-la-r <cde-la-r@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/08/30 17:50:20 by cde-la-r          #+#    #+#             */
-/*   Updated: 2024/08/30 17:50:20 by cde-la-r         ###   ########.fr       */
+/*   Created: 2024/10/02 15:38:21 by cde-la-r          #+#    #+#             */
+/*   Updated: 2024/10/02 15:38:23 by cde-la-r         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef BUILTINS_H
-# define BUILTINS_H
+#include <unistd.h>
+#include <sys/wait.h>
+#include "minishell.h"
 
-void	builtin_exit(char **args);
-void	builtin_echo(char **args);
-void	builtin_pwd(void);
-void	builtin_cd(char **args);
-void	builtin_export(char **args);
-void	builtin_unset(char **args);
-void	builtin_env(char **args);
+void	handle_and(t_ast_node *node)
+{
+	if (node == NULL)
+		return ;
+	exec(node->left);
+	if (g_exit_status == 0)
+		exec(node->right);
+}
 
-#endif
+void	handle_or(t_ast_node *node)
+{
+	if (node == NULL)
+		return ;
+	exec(node->left);
+	if (g_exit_status != 0)
+		exec(node->right);
+}

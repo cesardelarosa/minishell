@@ -6,12 +6,14 @@
 /*   By: adrian <adrian@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/27 17:48:49 by cde-la-r          #+#    #+#             */
-/*   Updated: 2024/10/04 09:19:39 by adrian           ###   ########.fr       */
+/*   Updated: 2024/10/01 14:54:58 by cde-la-r         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include <stdio.h>
 #include "minishell.h"
+
+int	g_exit_status = 0;
 
 /*
 ** Main entry point of the minishell program.
@@ -22,9 +24,15 @@
 */
 int	main(void)
 {
+	t_ast_node	*root;
+
 	printf(WELCOME_MSG);
 	setup_signal_handlers();
 	while (42)
-		exec(parser(lexer(read_input())));
+	{
+		root = parser(lexer(read_input()));
+		exec(root);
+		free_node(root);
+	}
 	return (0);
 }

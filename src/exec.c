@@ -14,9 +14,12 @@
 #include <unistd.h>
 #include <stdio.h>
 #include <sys/wait.h>
+#include <fcntl.h>
 #include "libft.h"
 #include "minishell.h"
 #include "builtins.h"
+#include "operators.h"
+#include "operators_bonus.h"
 
 extern char	**environ;
 
@@ -102,6 +105,12 @@ int	handle_builtin(char **args)
 		builtin_echo(args);
 	else if (!ft_strncmp(args[0], "exit", 5))
 		builtin_exit(args);
+	else if (!ft_strncmp(args[0], "export", 7))
+		builtin_export(args);
+	else if (!ft_strncmp(args[0], "unset", 6))
+		builtin_unset(args);
+	else if (!ft_strncmp(args[0], "env", 4))
+		builtin_env(args);
 	else
 		return (0);
 	return (1);
@@ -127,8 +136,13 @@ void	handle_command(t_ast_node *node)
 			handle_extern(node->args);
 		else if (pid < 0)
 			perror("minishell: fork error");
-		else if (waitpid(pid, &status, 0) == -1)
-			perror("minishell: waitpid error");
+		else
+		{
+			if (waitpid(pid, &status, 0) == -1)
+				perror("minishell: waitpid error");
+			if (WIFEXITED(status))
+				g_exit_status = WEXITSTATUS(status);
+		}
 	}
 }
 
@@ -140,12 +154,20 @@ void	handle_command(t_ast_node *node)
 */
 void	exec(t_ast_node *root)
 {
-	print_node(root);
 	if (root == NULL)
 		return ;
 	if (root->type == NODE_COMMAND)
 		handle_command(root);
+	else if (root->type == NODE_PIPE)
+		handle_pipe(root);
+	else if (root->type == NODE_REDIRECTION_IN)
+		handle_redirection(root, O_RDONLY);
+	else if (root->type == NODE_REDIRECTION_OUT)
+		handle_redirection(root, O_WRONLY | O_CREAT | O_TRUNC);
+	else if (root->type == NODE_REDIRECTION_APPEND)
+		handle_redirection(root, O_WRONLY | O_CREAT | O_APPEND);
+	else if (root->type == NODE_HEREDOC)
+		handle_heredoc(root);
 	else
 		printf("minishell: unsupported node type\n");
-	free_node(root);
 }

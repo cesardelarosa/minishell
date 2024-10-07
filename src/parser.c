@@ -3,16 +3,17 @@
 /*                                                        :::      ::::::::   */
 /*   parser.c                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: cde-la-r <marvin@42.fr>                    +#+  +:+       +#+        */
+/*   By: adrian <adrian@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/26 13:14:30 by cde-la-r          #+#    #+#             */
-/*   Updated: 2024/10/01 17:37:59 by cde-la-r         ###   ########.fr       */
+/*   Updated: 2024/10/04 17:11:01 by adrian           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include <stdlib.h>
 #include "minishell.h"
 #include "parser_utils.h"
+#include <stdio.h>
 
 /*
 ** Parses an array of tokens into an abstract syntax tree (AST).
@@ -35,15 +36,23 @@ t_ast_node	*parse_tokens(char **tokens, int start, int end)
 	if (start > end)
 		return (NULL);
 	op_pos = find_highest_operator(tokens, start, end);
-	if (op_pos != -1 && op_pos >= start && op_pos <= end)
+	op_type = get_operator_type(tokens[op_pos]);
+	if (op_type == NODE_COMMAND)
+		node = create_node(NODE_COMMAND, dup_args_range(tokens, start, end));
+	else if (op_type == NODE_HEREDOC)
 	{
-		op_type = get_operator_type(tokens[op_pos]);
-		node = create_node(op_type, NULL);
-		node->left = parse_tokens(tokens, start, op_pos - 1);
-		node->right = parse_tokens(tokens, op_pos + 1, end);
+		if (op_pos + 1 > end)
+		{
+			perror("minishell: syntax error near unexpected token 'newline'");
+			return (NULL);
+		}
+		node = create_node(op_type, &tokens[op_pos + 1]);
 	}
 	else
-		node = create_node(NODE_COMMAND, dup_args_range(tokens, start, end));
+		node = create_node(op_type, NULL);
+	node->left = parse_tokens(tokens, start, op_pos - 1);
+	node->right = parse_tokens(tokens,
+			op_pos + 1 + (op_type == NODE_HEREDOC), end);
 	return (node);
 }
 
@@ -62,6 +71,8 @@ t_ast_node	*parser(char **tokens)
 	int			len;
 	t_ast_node	*root;
 
+	if (!tokens)
+		return (NULL);
 	len = 0;
 	while (tokens[len])
 		len++;

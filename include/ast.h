@@ -22,14 +22,14 @@ typedef enum e_node_type
 	NODE_REDIRECTION_APPEND,
 	NODE_HEREDOC,
 	NODE_AND,
-	NODE_OR,
-	NODE_UNKNOWN
+	NODE_OR
 }	t_node_type;
 
 typedef struct s_ast_node
 {
 	t_node_type			type;
 	char				**args;
+	char				*delimiter;
 	struct s_ast_node	*left;
 	struct s_ast_node	*right;
 }	t_ast_node;
