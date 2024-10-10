@@ -16,7 +16,6 @@
 #include <readline/history.h>
 #include "libft.h"
 #include "prompt.h"
-
 /*
 ** Builds a colored prompt string including user, host, and current path.
 **
@@ -27,14 +26,14 @@ static char	*build_colored_prompt(void)
 	char	*prompt;
 
 	prompt = ft_strjoin_free(ft_strdup(BOLD_CYAN), get_user());
-	prompt = ft_strjoin_free(prompt, BOLD_WHITE " at ");
-	prompt = ft_strjoin_free(prompt, BOLD_YELLOW);
+	prompt = ft_strjoin_free(prompt, ft_strdup(BOLD_WHITE " at "));
+	prompt = ft_strjoin_free(prompt, ft_strdup(BOLD_YELLOW));
 	prompt = ft_strjoin_free(prompt, get_host());
-	prompt = ft_strjoin_free(prompt, BOLD_WHITE " in ");
-	prompt = ft_strjoin_free(prompt, BOLD_GREEN);
+	prompt = ft_strjoin_free(prompt, ft_strdup(BOLD_WHITE " in "));
+	prompt = ft_strjoin_free(prompt, ft_strdup(BOLD_GREEN));
 	prompt = ft_strjoin_free(prompt, get_path());
-	prompt = ft_strjoin_free(prompt, BOLD_WHITE " $ ");
-	prompt = ft_strjoin_free(prompt, RESET);
+	prompt = ft_strjoin_free(prompt, ft_strdup(BOLD_WHITE " $ "));
+	prompt = ft_strjoin_free(prompt, ft_strdup(RESET));
 	return (prompt);
 }
 
@@ -47,11 +46,11 @@ static char	*build_plain_prompt(void)
 {
 	char	*prompt;
 
-	prompt = ft_strjoin_free(ft_strdup(get_user()), " at ");
-	prompt = ft_strjoin_free(prompt, get_host());
-	prompt = ft_strjoin_free(prompt, " in ");
+	prompt = ft_strjoin_free(get_user(), ft_strdup(" at "));
+	prompt = ft_strjoin_free(prompt, ft_strdup(get_host()));
+	prompt = ft_strjoin_free(prompt, ft_strdup(" in "));
 	prompt = ft_strjoin_free(prompt, get_path());
-	prompt = ft_strjoin_free(prompt, " $ ");
+	prompt = ft_strjoin_free(prompt, ft_strdup(" $ "));
 	return (prompt);
 }
 
