@@ -26,7 +26,7 @@ char		*ft_strjoin_free(char *s1, const char *s2);
 void		setup_signal_handlers(void);
 char		*read_input(void);
 char		**lexer(char *input);
-t_ast_node	*parser(char **tokens);
+t_ast_node	*parser(char **tokens, char **envp);
 void		exec(t_ast_node *root);
 
 void		expand_all_vars(char **args);

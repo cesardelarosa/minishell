@@ -21,8 +21,6 @@
 #include "operators.h"
 #include "operators_bonus.h"
 
-extern char	**environ;
-
 /*
 ** Searches for the full path of a command by checking each directory
 ** in the PATH environment variable. If found, returns the full path.
@@ -66,18 +64,18 @@ char	*which(const char *cmd)
 **
 ** @param args: Command and arguments to execute.
 */
-void	handle_extern(char **args)
+void	handle_extern(char **args, char **envp)
 {
 	char	*exec_path;
 
 	if (access(args[0], X_OK) == 0)
-		execve(args[0], args, environ);
+		execve(args[0], args, envp);
 	else if (access(args[0], F_OK) != 0)
 	{
 		exec_path = which(args[0]);
 		if (exec_path != NULL)
 		{
-			execve(exec_path, args, environ);
+			execve(exec_path, args, envp);
 			free(exec_path);
 		}
 		else
@@ -133,7 +131,7 @@ void	handle_command(t_ast_node *node)
 	{
 		pid = fork();
 		if (pid == 0)
-			handle_extern(node->args);
+			handle_extern(node->args, node->envp);
 		else if (pid < 0)
 			perror("minishell: fork error");
 		else
@@ -156,17 +154,17 @@ void	exec(t_ast_node *root)
 {
 	if (root == NULL)
 		return ;
-	if (root->type == NODE_COMMAND)
+	if (root->type == COMMAND)
 		handle_command(root);
-	else if (root->type == NODE_PIPE)
+	else if (root->type == PIPE)
 		handle_pipe(root);
-	else if (root->type == NODE_REDIRECTION_IN)
+	else if (root->type == REDIR_IN)
 		handle_redirection(root, O_RDONLY);
-	else if (root->type == NODE_REDIRECTION_OUT)
+	else if (root->type == REDIR_OUT)
 		handle_redirection(root, O_WRONLY | O_CREAT | O_TRUNC);
-	else if (root->type == NODE_REDIRECTION_APPEND)
+	else if (root->type == REDIR_APPEND)
 		handle_redirection(root, O_WRONLY | O_CREAT | O_APPEND);
-	else if (root->type == NODE_HEREDOC)
+	else if (root->type == HEREDOC)
 		handle_heredoc(root);
 	else
 		printf("minishell: unsupported node type\n");

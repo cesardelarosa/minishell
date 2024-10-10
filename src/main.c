@@ -22,15 +22,17 @@ int	g_exit_status = 0;
 **
 ** @return: Always returns 0 (although the loop theoretically never ends).
 */
-int	main(void)
+int	main(int argc, char **argv, char **envp)
 {
 	t_ast_node	*root;
 
+	(void)argc;
+	(void)argv;
 	printf(WELCOME_MSG);
 	setup_signal_handlers();
 	while (42)
 	{
-		root = parser(lexer(read_input()));
+		root = parser(lexer(read_input()), envp);
 		exec(root);
 		free_node(root);
 	}
