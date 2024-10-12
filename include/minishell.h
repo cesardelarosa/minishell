@@ -6,7 +6,7 @@
 /*   By: cde-la-r <cde-la-r@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/26 22:18:26 by cde-la-r          #+#    #+#             */
-/*   Updated: 2024/10/01 16:37:34 by cde-la-r         ###   ########.fr       */
+/*   Updated: 2024/10/12 12:06:56 by cde-la-r         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,5 +30,7 @@ t_ast_node	*parser(char **tokens, char **envp);
 void		exec(t_ast_node *root);
 
 void		expand_all_vars(char **args);
+
+void		print_prompt(void);
 
 #endif

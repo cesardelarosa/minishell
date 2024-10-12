@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   exec.c                                             :+:      :+:    :+:   */
+/*   exec_bonus.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: cde-la-r <cde-la-r@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/30 13:45:46 by cde-la-r          #+#    #+#             */
-/*   Updated: 2024/10/01 17:43:04 by cde-la-r         ###   ########.fr       */
+/*   Updated: 2024/10/12 11:00:34 by cde-la-r         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -158,21 +158,21 @@ void	exec(t_ast_node *root)
 {
 	if (root == NULL)
 		return ;
-	if (root->type == NODE_COMMAND)
+	if (root->type == COMMAND)
 		handle_command(root);
-	else if (root->type == NODE_PIPE)
+	else if (root->type == PIPE)
 		handle_pipe(root);
-	else if (root->type == NODE_REDIRECTION_IN)
+	else if (root->type == REDIR_IN)
 		handle_redirection(root, O_RDONLY);
-	else if (root->type == NODE_REDIRECTION_OUT)
+	else if (root->type == REDIR_OUT)
 		handle_redirection(root, O_WRONLY | O_CREAT | O_TRUNC);
-	else if (root->type == NODE_REDIRECTION_APPEND)
+	else if (root->type == REDIR_APPEND)
 		handle_redirection(root, O_WRONLY | O_CREAT | O_APPEND);
-	else if (root->type == NODE_HEREDOC)
+	else if (root->type == HEREDOC)
 		handle_heredoc(root);
-	else if (root->type == NODE_AND)
+	else if (root->type == AND)
 		handle_and(root);
-	else if (root->type == NODE_OR)
+	else if (root->type == OR)
 		handle_or(root);
 	else
 		printf("minishell: unsupported node type\n");
