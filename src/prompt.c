@@ -6,7 +6,7 @@
 /*   By: cde-la-r <cde-la-r@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/30 17:56:41 by cde-la-r          #+#    #+#             */
-/*   Updated: 2024/10/12 12:05:50 by cde-la-r         ###   ########.fr       */
+/*   Updated: 2024/10/13 13:16:37 by cde-la-r         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -59,9 +59,9 @@ void	print_prompt(void)
 	path = get_path();
 	if (supports_colors())
 		printf(BOLD_CYAN"%s"BOLD_WHITE" at "BOLD_YELLOW"%s"BOLD_WHITE
-			" in "BOLD_GREEN"%s"BOLD_WHITE"\n$ "RESET, user, host, path);
+			" in "BOLD_GREEN"%s"BOLD_WHITE"\n"RESET, user, host, path);
 	else
-		printf("%s at %s in %s \n$ ", user, host, path);
+		printf("%s at %s in %s \n", user, host, path);
 	free(user);
 	free(host);
 	free(path);
@@ -77,12 +77,16 @@ char	*read_input(void)
 {
 	char	*input;
 
-	rl_replace_line("", 0);
 	if (g_exit_status != 130)
+	{
+		rl_replace_line("", 0);
 		print_prompt();
-	input = readline("");
+	}
+	input = readline("$ ");
 	if (input == NULL)
 		exit(EXIT_SUCCESS);
+	if (*input == '\0')
+		g_exit_status = 0;
 	if (ft_strlen(input) > 0)
 		add_history(input);
 	return (input);
