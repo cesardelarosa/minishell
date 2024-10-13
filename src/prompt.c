@@ -6,7 +6,7 @@
 /*   By: cde-la-r <cde-la-r@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/30 17:56:41 by cde-la-r          #+#    #+#             */
-/*   Updated: 2024/10/13 13:16:37 by cde-la-r         ###   ########.fr       */
+/*   Updated: 2024/10/13 13:52:12 by cde-la-r         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -81,13 +81,15 @@ char	*read_input(void)
 	{
 		rl_replace_line("", 0);
 		print_prompt();
+		input = readline("$ ");
 	}
-	input = readline("$ ");
+	else
+		input = readline("");
 	if (input == NULL)
 		exit(EXIT_SUCCESS);
 	if (*input == '\0')
 		g_exit_status = 0;
-	if (ft_strlen(input) > 0)
+	else
 		add_history(input);
 	return (input);
 }
