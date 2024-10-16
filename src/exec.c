@@ -6,7 +6,7 @@
 /*   By: cde-la-r <cde-la-r@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/30 13:45:46 by cde-la-r          #+#    #+#             */
-/*   Updated: 2024/10/01 17:43:04 by cde-la-r         ###   ########.fr       */
+/*   Updated: 2024/10/17 00:46:54 by cde-la-r         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -93,7 +93,7 @@ void	handle_extern(char **args, char **envp)
 ** @param args: The arguments of the command to check.
 ** @return: 1 if the command is a built-in, 0 otherwise.
 */
-int	handle_builtin(char **args)
+int	handle_builtin(char **args, char **envp)
 {
 	if (!ft_strncmp(args[0], "cd", 3))
 		builtin_cd(args);
@@ -104,11 +104,11 @@ int	handle_builtin(char **args)
 	else if (!ft_strncmp(args[0], "exit", 5))
 		builtin_exit(args);
 	else if (!ft_strncmp(args[0], "export", 7))
-		builtin_export(args);
+		builtin_export(args, envp);
 	else if (!ft_strncmp(args[0], "unset", 6))
 		builtin_unset(args);
 	else if (!ft_strncmp(args[0], "env", 4))
-		builtin_env(args);
+		builtin_env(envp);
 	else
 		return (0);
 	return (1);
@@ -127,7 +127,7 @@ void	handle_command(t_ast_node *node)
 
 	if (node == NULL || node->args == NULL)
 		return ;
-	if (node->args[0] != NULL && handle_builtin(node->args) == 0)
+	if (node->args[0] != NULL && handle_builtin(node->args, node->envp) == 0)
 	{
 		pid = fork();
 		if (pid == 0)
