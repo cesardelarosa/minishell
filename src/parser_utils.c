@@ -39,20 +39,20 @@ int	is_operator(const char *token)
 t_node_type	get_operator_type(const char *token)
 {
 	if (!ft_strncmp(token, "|", 2))
-		return (NODE_PIPE);
+		return (PIPE);
 	else if (!ft_strncmp(token, ">", 2))
-		return (NODE_REDIRECTION_OUT);
+		return (REDIR_OUT);
 	else if (!ft_strncmp(token, ">>", 3))
-		return (NODE_REDIRECTION_APPEND);
+		return (REDIR_APPEND);
 	else if (!ft_strncmp(token, "<", 2))
-		return (NODE_REDIRECTION_IN);
+		return (REDIR_IN);
 	else if (!ft_strncmp(token, "&&", 3))
-		return (NODE_AND);
+		return (AND);
 	else if (!ft_strncmp(token, "||", 3))
-		return (NODE_OR);
+		return (OR);
 	else if (!ft_strncmp(token, "<<", 3))
-		return (NODE_HEREDOC);
-	return (NODE_COMMAND);
+		return (HEREDOC);
+	return (COMMAND);
 }
 
 /*
