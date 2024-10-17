@@ -6,7 +6,7 @@
 /*   By: cde-la-r <cde-la-r@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/30 13:38:29 by cde-la-r          #+#    #+#             */
-/*   Updated: 2024/09/26 15:29:26 by cde-la-r         ###   ########.fr       */
+/*   Updated: 2024/10/12 12:06:45 by cde-la-r         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,6 +14,7 @@
 #include <signal.h>
 #include <unistd.h>
 #include <readline/readline.h>
+#include "minishell.h"
 
 /*
 ** Handles SIGINT by writing a newline and refreshing the readline interface.
@@ -27,7 +28,9 @@ void	sigint_handler(int sign)
 		write(1, "\n", 1);
 		rl_on_new_line();
 		rl_replace_line("", 0);
+		print_prompt();
 		rl_redisplay();
+		g_exit_status = 130;
 	}
 }
 

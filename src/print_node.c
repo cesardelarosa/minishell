@@ -23,21 +23,21 @@
 */
 void	print_node_type(int type)
 {
-	if (type == NODE_COMMAND)
+	if (type == COMMAND)
 		printf("Command\n");
-	else if (type == NODE_PIPE)
+	else if (type == PIPE)
 		printf("| (PIPE)\n");
-	else if (type == NODE_REDIRECTION_IN)
+	else if (type == REDIR_IN)
 		printf("< (REDIRECTION INPUT)\n");
-	else if (type == NODE_REDIRECTION_OUT)
+	else if (type == REDIR_OUT)
 		printf("> (REDIRECTION OUTPUT)\n");
-	else if (type == NODE_REDIRECTION_APPEND)
+	else if (type == REDIR_APPEND)
 		printf(">> (REDIRECTION APPEND)\n");
-	else if (type == NODE_AND)
+	else if (type == AND)
 		printf("&& (AND)\n");
-	else if (type == NODE_OR)
+	else if (type == OR)
 		printf("|| (OR)\n");
-	else if (type == NODE_HEREDOC)
+	else if (type == HEREDOC)
 		printf("<< (HEREDOC)\n");
 	else
 		printf("Unknown\n");
@@ -77,9 +77,9 @@ void	print_node_recursive(t_ast_node *node, int depth, char *branch)
 		return ;
 	}
 	printf("%*s%s", depth * 4, "", branch);
-	if (node->type == NODE_HEREDOC)
+	if (node->type == HEREDOC)
 		printf("delimiter: %s ", node->delimiter);
-	if (node->type == NODE_COMMAND)
+	if (node->type == COMMAND)
 	{
 		printf("Command: ");
 		print_node_args(node->args);

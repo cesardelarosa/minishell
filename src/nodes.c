@@ -25,30 +25,31 @@
 ** @param args: The arguments associated with the node.
 ** @return: A pointer to the newly created node, or NULL on failure.
 */
-t_ast_node	*create_node(t_node_type type, char **args)
+t_ast_node	*create_node(t_node_type type, char **args, char **envp)
 {
-	t_ast_node	*new_node;
+	t_ast_node	*node;
 
-	new_node = (t_ast_node *)malloc(sizeof(t_ast_node));
-	if (!new_node)
+	node = (t_ast_node *)malloc(sizeof(t_ast_node));
+	if (!node)
 		return (NULL);
-	new_node->type = type;
-	if (type == NODE_HEREDOC)
+	node->type = type;
+	if (type == HEREDOC)
 	{
 		if (args && *args)
-			new_node->delimiter = ft_strdup(*args);
+			node->delimiter = ft_strdup(*args);
 		else
-			new_node->delimiter = NULL;
-		new_node->args = NULL;
+			node->delimiter = NULL;
+		node->args = NULL;
 	}
 	else
 	{
-		new_node->args = args;
-		new_node->delimiter = NULL;
+		node->args = args;
+		node->delimiter = NULL;
 	}
-	new_node->left = NULL;
-	new_node->right = NULL;
-	return (new_node);
+	node->left = NULL;
+	node->right = NULL;
+	node->envp = envp;
+	return (node);
 }
 
 /*

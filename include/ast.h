@@ -15,26 +15,27 @@
 
 typedef enum e_node_type
 {
-	NODE_COMMAND,
-	NODE_PIPE,
-	NODE_REDIRECTION_IN,
-	NODE_REDIRECTION_OUT,
-	NODE_REDIRECTION_APPEND,
-	NODE_HEREDOC,
-	NODE_AND,
-	NODE_OR
+	COMMAND,
+	PIPE,
+	REDIR_IN,
+	REDIR_OUT,
+	REDIR_APPEND,
+	HEREDOC,
+	AND,
+	OR
 }	t_node_type;
 
 typedef struct s_ast_node
 {
 	t_node_type			type;
 	char				**args;
+	char				**envp;
 	char				*delimiter;
 	struct s_ast_node	*left;
 	struct s_ast_node	*right;
 }	t_ast_node;
 
-t_ast_node	*create_node(t_node_type type, char **args);
+t_ast_node	*create_node(t_node_type type, char **args, char **envp);
 void		free_node(t_ast_node *node);
 void		print_node(t_ast_node *root);
 void		add_node(t_ast_node **root, t_ast_node *new_node);

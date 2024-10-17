@@ -16,9 +16,9 @@
 	- [x] echo con opción -n
 	- [x] cd
 	- [x] pwd
-	- [ ] export
-	- [ ] unset
-	- [ ] env
+	- [x] export
+	- [x] unset
+	- [x] env
 	- [x] exit
 - [x] Manejo de pipes y redirecciones:
 	- [x] pipe |
