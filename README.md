@@ -12,7 +12,7 @@
 	- [x] ctrl-C
 	- [x] ctrl-D
 	- [x] ctrl-\
-- [ ] Manejo de built-ins:
+- [x] Manejo de built-ins:
 	- [x] echo con opción -n
 	- [x] cd
 	- [x] pwd
