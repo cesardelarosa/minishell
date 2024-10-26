@@ -10,7 +10,7 @@ LIBFT_DIR = libft
 CC = gcc
 CFLAGS = -Wall -Wextra -Werror
 INCLUDE = -I./$(INCLUDE_DIR) -I./$(LIBFT_DIR)
-LDFLAGS = -lreadline -L$(LIBFT_DIR) -lft
+LDFLAGS = -lreadline -lncurses -L$(LIBFT_DIR) -lft
 SANITIZE = -fsanitize=address -g
 
 LIBFT = $(LIBFT_DIR)/libft.a
@@ -19,7 +19,6 @@ COMMON_SRC = builtin1.c \
 	     builtin2.c \
 	     main.c \
 	     prompt.c \
-	     prompt_utils.c \
 	     signals.c \
 	     parser.c \
 	     lexer.c \
