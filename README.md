@@ -12,13 +12,13 @@
 	- [x] ctrl-C
 	- [x] ctrl-D
 	- [x] ctrl-\
-- [ ] Manejo de built-ins:
+- [x] Manejo de built-ins:
 	- [x] echo con opción -n
 	- [x] cd
 	- [x] pwd
-	- [ ] export
-	- [ ] unset
-	- [ ] env
+	- [x] export
+	- [x] unset
+	- [x] env
 	- [x] exit
 - [x] Manejo de pipes y redirecciones:
 	- [x] pipe |

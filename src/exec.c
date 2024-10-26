@@ -6,7 +6,7 @@
 /*   By: cde-la-r <cde-la-r@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/30 13:45:46 by cde-la-r          #+#    #+#             */
-/*   Updated: 2024/10/01 17:43:04 by cde-la-r         ###   ########.fr       */
+/*   Updated: 2024/10/17 00:46:54 by cde-la-r         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,8 +20,6 @@
 #include "builtins.h"
 #include "operators.h"
 #include "operators_bonus.h"
-
-extern char	**environ;
 
 /*
 ** Searches for the full path of a command by checking each directory
@@ -66,18 +64,18 @@ char	*which(const char *cmd)
 **
 ** @param args: Command and arguments to execute.
 */
-void	handle_extern(char **args)
+void	handle_extern(char **args, char **envp)
 {
 	char	*exec_path;
 
 	if (access(args[0], X_OK) == 0)
-		execve(args[0], args, environ);
+		execve(args[0], args, envp);
 	else if (access(args[0], F_OK) != 0)
 	{
 		exec_path = which(args[0]);
 		if (exec_path != NULL)
 		{
-			execve(exec_path, args, environ);
+			execve(exec_path, args, envp);
 			free(exec_path);
 		}
 		else
@@ -95,7 +93,7 @@ void	handle_extern(char **args)
 ** @param args: The arguments of the command to check.
 ** @return: 1 if the command is a built-in, 0 otherwise.
 */
-int	handle_builtin(char **args)
+int	handle_builtin(char **args, char **envp)
 {
 	if (!ft_strncmp(args[0], "cd", 3))
 		builtin_cd(args);
@@ -106,11 +104,11 @@ int	handle_builtin(char **args)
 	else if (!ft_strncmp(args[0], "exit", 5))
 		builtin_exit(args);
 	else if (!ft_strncmp(args[0], "export", 7))
-		builtin_export(args);
+		builtin_export(args, envp);
 	else if (!ft_strncmp(args[0], "unset", 6))
 		builtin_unset(args);
 	else if (!ft_strncmp(args[0], "env", 4))
-		builtin_env(args);
+		builtin_env(envp);
 	else
 		return (0);
 	return (1);
@@ -129,11 +127,11 @@ void	handle_command(t_ast_node *node)
 
 	if (node == NULL || node->args == NULL)
 		return ;
-	if (node->args[0] != NULL && handle_builtin(node->args) == 0)
+	if (node->args[0] != NULL && handle_builtin(node->args, node->envp) == 0)
 	{
 		pid = fork();
 		if (pid == 0)
-			handle_extern(node->args);
+			handle_extern(node->args, node->envp);
 		else if (pid < 0)
 			perror("minishell: fork error");
 		else
@@ -156,17 +154,17 @@ void	exec(t_ast_node *root)
 {
 	if (root == NULL)
 		return ;
-	if (root->type == NODE_COMMAND)
+	if (root->type == COMMAND)
 		handle_command(root);
-	else if (root->type == NODE_PIPE)
+	else if (root->type == PIPE)
 		handle_pipe(root);
-	else if (root->type == NODE_REDIRECTION_IN)
+	else if (root->type == REDIR_IN)
 		handle_redirection(root, O_RDONLY);
-	else if (root->type == NODE_REDIRECTION_OUT)
+	else if (root->type == REDIR_OUT)
 		handle_redirection(root, O_WRONLY | O_CREAT | O_TRUNC);
-	else if (root->type == NODE_REDIRECTION_APPEND)
+	else if (root->type == REDIR_APPEND)
 		handle_redirection(root, O_WRONLY | O_CREAT | O_APPEND);
-	else if (root->type == NODE_HEREDOC)
+	else if (root->type == HEREDOC)
 		handle_heredoc(root);
 	else
 		printf("minishell: unsupported node type\n");

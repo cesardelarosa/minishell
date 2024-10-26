@@ -27,7 +27,7 @@
 ** @param end: The ending index of the range to parse.
 ** @return: A pointer to the root of the AST node created.
 */
-t_ast_node	*parse_tokens(char **tokens, int start, int end)
+t_ast_node	*parse_tokens(char **tokens, int start, int end, char **envp)
 {
 	int			op_pos;
 	t_ast_node	*node;
@@ -37,22 +37,22 @@ t_ast_node	*parse_tokens(char **tokens, int start, int end)
 		return (NULL);
 	op_pos = find_highest_operator(tokens, start, end);
 	op_type = get_operator_type(tokens[op_pos]);
-	if (op_type == NODE_COMMAND)
-		node = create_node(NODE_COMMAND, dup_args_range(tokens, start, end));
-	else if (op_type == NODE_HEREDOC)
+	if (op_type == COMMAND)
+		node = create_node(COMMAND, dup_args_range(tokens, start, end), envp);
+	else if (op_type == HEREDOC)
 	{
 		if (op_pos + 1 > end)
 		{
 			perror("minishell: syntax error near unexpected token 'newline'");
 			return (NULL);
 		}
-		node = create_node(op_type, &tokens[op_pos + 1]);
+		node = create_node(op_type, &tokens[op_pos + 1], envp);
 	}
 	else
-		node = create_node(op_type, NULL);
-	node->left = parse_tokens(tokens, start, op_pos - 1);
+		node = create_node(op_type, NULL, envp);
+	node->left = parse_tokens(tokens, start, op_pos - 1, envp);
 	node->right = parse_tokens(tokens,
-			op_pos + 1 + (op_type == NODE_HEREDOC), end);
+			op_pos + 1 + (op_type == HEREDOC), end, envp);
 	return (node);
 }
 
@@ -66,7 +66,7 @@ t_ast_node	*parse_tokens(char **tokens, int start, int end)
 ** @param tokens: The array of tokens to parse.
 ** @return: A pointer to the root of the AST created.
 */
-t_ast_node	*parser(char **tokens)
+t_ast_node	*parser(char **tokens, char **envp)
 {
 	int			len;
 	t_ast_node	*root;
@@ -76,7 +76,7 @@ t_ast_node	*parser(char **tokens)
 	len = 0;
 	while (tokens[len])
 		len++;
-	root = parse_tokens(tokens, 0, len - 1);
+	root = parse_tokens(tokens, 0, len - 1, envp);
 	ft_free_split(tokens);
 	return (root);
 }

@@ -13,6 +13,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <fcntl.h>
+#include <unistd.h>
 #include "libft.h"
 
 /*
@@ -22,76 +23,68 @@
 ** @param s2: The second string to join.
 ** @return: The newly allocated joined string.
 */
-char	*ft_strjoin_free(char *s1, const char *s2)
+char	*ft_strjoin_free(char *s1, char *s2)
 {
 	char	*result;
 
 	if (!s1 || !s2)
 		return (NULL);
 	result = ft_strjoin(s1, s2);
-	if (s1)
-		free(s1);
+	free(s1);
+	free(s2);
 	return (result);
 }
 
-/*
-** Gets the current working directory, replacing the home path with '~'.
-**
-** @return: The current path as a string.
-*/
-char	*get_path(void)
-{
-	char	*path;
-	char	*home;
-	size_t	home_len;
-
-	path = getenv("PWD");
-	if (path == NULL)
-		return ("path");
-	home = getenv("HOME");
-	home_len = ft_strlen(home);
-	if (home && ft_strncmp(path, home, home_len) == 0)
-	{
-		ft_memmove(path + 1, path + home_len, ft_strlen(path) + 1);
-		path[0] = '~';
-	}
-	return (path);
-}
-
-/*
-** Gets the username from the environment variables.
-**
-** @return: The username as a string.
-*/
 char	*get_user(void)
 {
 	char	*user;
 
 	user = getenv("USER");
 	if (user == NULL)
-		return ("user");
-	return (user);
+		user = getenv("LOGNAME");
+	if (user == NULL)
+		return (ft_strdup("user"));
+	return (ft_strdup(user));
 }
 
-/*
-** Gets the hostname from the environment variables, truncating at the first dot.
-**
-** @return: The hostname as a string.
-*/
 char	*get_host(void)
 {
-	char	*host;
-	int		i;
+	char	hostname[256];
+	int		fd;
+	ssize_t	len;
 
-	host = getenv("NAME");
-	if (host == NULL)
-		return ("host");
-	i = 0;
-	while (host[i])
+	fd = open("/etc/hostname", O_RDONLY);
+	if (fd == -1)
+		return (ft_strdup("host"));
+	len = read(fd, hostname, sizeof(hostname) - 1);
+	if (len <= 0)
 	{
-		if (host[i] == '.')
-			host[i] = '\0';
-		i++;
+		close(fd);
+		return (ft_strdup("host"));
 	}
-	return (host);
+	hostname[len] = '\0';
+	close(fd);
+	len = 0;
+	while (hostname[len++])
+	{
+		if (hostname[len] == '.' || hostname[len] == '\n')
+		{
+			hostname[len] = '\0';
+			break ;
+		}
+	}
+	return (ft_strdup(hostname));
+}
+
+char	*get_path(void)
+{
+	char	cwd[1024];
+	char	*home;
+
+	if (getcwd(cwd, sizeof(cwd)) == NULL)
+		return (ft_strdup("path"));
+	home = getenv("HOME");
+	if (home && ft_strncmp(cwd, home, ft_strlen(home)) == 0)
+		return (ft_strjoin("~", cwd + ft_strlen(home)));
+	return (ft_strdup(cwd));
 }
