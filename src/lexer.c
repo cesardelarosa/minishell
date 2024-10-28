@@ -84,6 +84,6 @@ char	**lexer(char *input)
 	free(input);
 	if (!tokens)
 		return (NULL);
-	expand_all_vars(tokens);
+//	expand_all_vars(tokens);
 	return (tokens);
 }

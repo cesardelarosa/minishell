@@ -75,7 +75,7 @@ int		ft_putptr(void *ptr);
 int		ft_printf(const char *str, ...);
 int		ft_split_size(const char *s, char c);
 char	**ft_free_split(char **result);
-char	**ft_strarray_dup(char **tokens, int start, int end);
+char	**ft_strarray_dup(char **tokens);
 int		ft_strcmp(char *s1, char *s2);
 int		ft_isspace(int c);
 char	*ft_strtok(char *str, const char *delim);

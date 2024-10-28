@@ -24,15 +24,14 @@ COMMON_SRC = builtin1.c \
 	     lexer.c \
 	     nodes.c \
 	     print_node.c \
-	     parser_utils.c \
-	     env.c \
-	     operators.c
+		 operators.c \
+	     env.c 
 NO_BONUS_SRC = exec.c
 BONUS_SRC = exec_bonus.c \
 	    wildcards_bonus.c \
 	    operators_bonus.c
 
-SRC_FILES = $(COMMON_SRC) $(NO_BONUS_SRC)
+SRC_FILES = $(COMMON_SRC)
 OBJ_FILES = $(SRC_FILES:%.c=$(OBJ_DIR)/%.o)
 
 BONUS_FILES = $(COMMON_SRC) $(BONUS_SRC)

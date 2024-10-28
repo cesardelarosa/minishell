@@ -16,28 +16,58 @@
 typedef enum e_node_type
 {
 	COMMAND,
+	OPERATOR
+}	t_node_type;
+
+typedef enum e_operator_type
+{
 	PIPE,
+	AND,
+	OR
+}	t_operator_type;
+
+typedef enum e_redirection_type
+{
 	REDIR_IN,
 	REDIR_OUT,
 	REDIR_APPEND,
-	HEREDOC,
-	AND,
-	OR
-}	t_node_type;
+	HEREDOC
+}	t_redirection_type;
+
+typedef struct s_file
+{
+	t_redirection_type	type;
+	int					fd;
+	char				*file;
+}	t_file;
+
+typedef struct s_command
+{
+	char		**args;
+	char		**envp;
+	t_file		input;
+	t_file		output;
+}	t_command;
+
+typedef struct s_operator
+{
+	t_operator_type		type;
+	struct s_ast_node	*left;
+	struct s_ast_node	*right;
+}	t_operator;
 
 typedef struct s_ast_node
 {
-	t_node_type			type;
-	char				**args;
-	char				**envp;
-	char				*delimiter;
-	struct s_ast_node	*left;
-	struct s_ast_node	*right;
+	t_node_type	type;
+	union
+	{
+		t_command	cmd;
+		t_operator	op;
+	}	u_data;
 }	t_ast_node;
 
-t_ast_node	*create_node(t_node_type type, char **args, char **envp);
-void		free_node(t_ast_node *node);
-void		print_node(t_ast_node *root);
-void		add_node(t_ast_node **root, t_ast_node *new_node);
+void			free_node(t_ast_node *node);
+void			print_node(t_ast_node *root);
+t_ast_node		*parser(char **tokens, char **envp);
 
 #endif

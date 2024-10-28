@@ -33,7 +33,8 @@ int	main(int argc, char **argv, char **envp)
 	while (42)
 	{
 		root = parser(lexer(read_input()), envp);
-		exec(root);
+		print_node(root);
+//		exec(root);
 		free_node(root);
 	}
 	return (0);

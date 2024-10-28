@@ -5,153 +5,74 @@
 /*                                                    +:+ +:+         +:+     */
 /*   By: cde-la-r <cde-la-r@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/10/03 10:13:31 by cde-la-r          #+#    #+#             */
-/*   Updated: 2024/10/03 10:13:36 by cde-la-r         ###   ########.fr       */
+/*   Created: 2024/10/28 16:42:48 by cde-la-r          #+#    #+#             */
+/*   Updated: 2024/10/28 16:42:49 by cde-la-r         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include <fcntl.h>
-#include <unistd.h>
-#include <stdio.h>
 #include <stdlib.h>
-#include <sys/wait.h>
+#include <unistd.h>
+#include <fcntl.h>
+#include <stdio.h>
 #include <readline/readline.h>
-#include "minishell.h"
+#include <readline/history.h>
 #include "libft.h"
+#include "minishell.h"
 
-/*
-** Handle pipe ('|'). Redirects output of one command to input of another.
-*/
-void	fork_and_exec(t_ast_node *node, int *pipe_fd, int is_right)
+void	handle_redir_in(t_file *input, const char *filename)
 {
-	int	pid;
-	int	fileno;
+	if (input->fd != -1)
+		close(input->fd);
+	input->fd = open(filename, O_RDONLY);
+	if (input->fd < 0)
+		perror("Error opening file");
+	if (input->file != NULL)
+		free(input->file);
+	input->file = ft_strdup(filename);
+	input->type = REDIR_IN;
+}
 
-	if (is_right)
-		fileno = STDIN_FILENO;
+void	handle_redir_out(t_file *output, const char *filename, int type)
+{
+	if (output->fd != -1)
+		close(output->fd);
+	output->fd = open(filename, O_WRONLY | O_CREAT | type, 0644);
+	if (output->fd < 0)
+		perror("Error opening file");
+	if (output->file != NULL)
+		free(output->file);
+	output->file = ft_strdup(filename);
+	if (type == O_TRUNC)
+		output->type = REDIR_OUT;
 	else
-		fileno = STDOUT_FILENO;
-	pid = fork();
-	if (pid == -1)
-	{
-		perror("minishell: fork error");
-		return ;
-	}
-	if (pid == 0)
-	{
-		dup2(pipe_fd[!is_right], fileno);
-		close(pipe_fd[0]);
-		close(pipe_fd[1]);
-		if (is_right)
-			exec(node->right);
-		else
-			exec(node->left);
-		exit(EXIT_FAILURE);
-	}
+		output->type = REDIR_APPEND;
 }
 
-void	handle_pipe(t_ast_node *node)
+void	handle_heredoc(t_file *input, const char *delimiter)
 {
-	int	pipe_fd[2];
-	int	status;
-
-	if (!node || !node->left || !node->right)
-	{
-		printf("minishell: missing command for pipe\n");
-		return ;
-	}
-	if (pipe(pipe_fd) == -1)
-	{
-		perror("minishell: pipe error");
-		return ;
-	}
-	fork_and_exec(node, pipe_fd, 1);
-	fork_and_exec(node, pipe_fd, 0);
-	close(pipe_fd[0]);
-	close(pipe_fd[1]);
-	waitpid(-1, &status, 0);
-	waitpid(-1, &status, 0);
-}
-
-void	handle_redirection(t_ast_node *node, int mode)
-{
-	int	fd;
-	int	backup;
-	int	fileno;
-
-	if (!node || !node->right || !node->right->args || !node->right->args[0])
-	{
-		printf("minishell: missing file for append redirection\n");
-		return ;
-	}
-	if (mode == O_RDONLY)
-		fileno = STDIN_FILENO;
-	else
-		fileno = STDOUT_FILENO;
-	backup = dup(fileno);
-	fd = open(node->right->args[0], mode, 0644);
-	if (fd == -1)
-	{
-		perror("minishell: open error");
-		return ;
-	}
-	dup2(fd, fileno);
-	close(fd);
-	exec(node->left);
-	dup2(backup, fileno);
-	close(backup);
-}
-
-void	read_heredoc_input(t_ast_node *node, int *pipefd)
-{
+	int		fd[2];
 	char	*line;
 
+	if (pipe(fd) == -1)
+		perror("Error creating pipe");
+	if (input->fd != -1)
+		close(input->fd);
+	input->fd = fd[0];
+	if (input->file != NULL)
+		free(input->file);
+	input->file = ft_strdup(delimiter);
+	input->type = HEREDOC;
 	while (1)
 	{
 		line = readline("> ");
-		if (!line || ft_strncmp(line, node->delimiter
-				, ft_strlen(node->delimiter) + 1) == 0)
+		if (line == NULL || ft_strcmp(line, (char *)delimiter) == 0)
 		{
 			free(line);
-			close(pipefd[1]);
 			break ;
 		}
-		write(pipefd[1], line, ft_strlen(line));
-		write(pipefd[1], "\n", 1);
+		write(fd[1], line, ft_strlen(line));
+		write(fd[1], "\n", 1);
 		free(line);
 	}
-	close(pipefd[1]);
-	dup2(pipefd[0], STDIN_FILENO);
-	close(pipefd[0]);
-	exec(node->left);
-	exit(0);
-}
-
-void	handle_heredoc(t_ast_node *node)
-{
-	int		pipefd[2];
-	int		status;
-	pid_t	pid;
-
-	if (!node->delimiter)
-		return ;
-	if (pipe(pipefd) == -1)
-	{
-		perror("minishell: pipe error");
-		return ;
-	}
-	pid = fork();
-	if (pid == -1)
-	{
-		perror("minishell: fork error");
-		return ;
-	}
-	if (pid == 0)
-		read_heredoc_input(node, pipefd);
-	else
-	{
-		close(pipefd[0]);
-		close(pipefd[1]);
-		waitpid(pid, &status, 0);
-	}
+	close(fd[1]);
 }

@@ -1,108 +1,116 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   print_node.c                                       :+:      :+:    :+:   */
+/*   print_ast.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: cde-la-r <marvin@42.fr>                    +#+  +:+       +#+        */
+/*   By: tu_nombre <tu_email@student.42.fr>          +#+  +:+       +#+       */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/10/01 14:29:16 by cde-la-r          #+#    #+#             */
-/*   Updated: 2024/10/01 17:39:23 by cde-la-r         ###   ########.fr       */
+/*   Created: 2024/10/05 12:00:00 by tu_nombre          #+#    #+#            */
+/*   Updated: 2024/10/05 12:00:00 by tu_nombre         ###   ########.fr      */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include <stdio.h>
 #include "ast.h"
 
-/*
-** Prints the type of the AST node based on its type.
-**
-** This function outputs a string representation of the node type 
-** to the standard output.
-**
-** @param type: The type of the AST node to print.
-*/
-void	print_node_type(int type)
+void	print_node_recursive(t_ast_node *node, int level);
+
+void	print_indentation(int level)
 {
-	if (type == COMMAND)
-		printf("Command\n");
-	else if (type == PIPE)
-		printf("| (PIPE)\n");
-	else if (type == REDIR_IN)
-		printf("< (REDIRECTION INPUT)\n");
-	else if (type == REDIR_OUT)
-		printf("> (REDIRECTION OUTPUT)\n");
-	else if (type == REDIR_APPEND)
-		printf(">> (REDIRECTION APPEND)\n");
-	else if (type == AND)
-		printf("&& (AND)\n");
-	else if (type == OR)
-		printf("|| (OR)\n");
-	else if (type == HEREDOC)
-		printf("<< (HEREDOC)\n");
-	else
-		printf("Unknown\n");
+	int	i;
+
+	i = 0;
+	while (i < level)
+	{
+		printf("  ");
+		i++;
+	}
 }
 
-/*
-** Prints the arguments of a command node.
-**
-** This function iterates over the command arguments and prints 
-** them to the standard output.
-**
-** @param args: The array of arguments to print.
-*/
-void	print_node_args(char **args)
+void	print_command_args(t_command *cmd, int level)
 {
-	while (args && *args)
-		printf("%s ", *args++);
+	int	i;
+
+	print_indentation(level);
+	printf("Arguments: ");
+	i = 0;
+	while (cmd->args[i])
+	{
+		printf("%s ", cmd->args[i]);
+		i++;
+	}
 	printf("\n");
 }
 
-/*
-** Recursively prints the AST nodes.
-**
-** This function prints the current node's type and its arguments, 
-** then recursively calls itself to print the left and right 
-** children nodes with increased depth.
-**
-** @param node: The current AST node to print.
-** @param depth: The current depth in the tree for indentation.
-** @param branch: The branch indicator for the output.
-*/
-void	print_node_recursive(t_ast_node *node, int depth, char *branch)
+void	print_input_redirection(t_file *input, int level)
 {
-	if (!node)
-	{
-		printf("%*s%sNULL\n", depth * 4, "", branch);
-		return ;
-	}
-	printf("%*s%s", depth * 4, "", branch);
-	if (node->type == HEREDOC)
-		printf("delimiter: %s ", node->delimiter);
-	if (node->type == COMMAND)
-	{
-		printf("Command: ");
-		print_node_args(node->args);
-	}
-	else
-		print_node_type(node->type);
-	if (node->left)
-		print_node_recursive(node->left, depth + 1, "L- ");
-	if (node->right)
-		print_node_recursive(node->right, depth + 1, "R- ");
+	print_indentation(level);
+	printf("Input Redirection: ");
+	if (input->type == REDIR_IN)
+		printf("< ");
+	else if (input->type == HEREDOC)
+		printf("<< ");
+	printf("%s\n", input->file);
 }
 
-/*
-** Prints the entire AST from the root.
-**
-** This function starts the printing process, indicating the start 
-** of the parsed syntax tree and the execution section.
-**
-** @param root: The root node of the AST to print.
-*/
+void	print_output_redirection(t_file *output, int level)
+{
+	print_indentation(level);
+	printf("Output Redirection: ");
+	if (output->type == REDIR_OUT)
+		printf("> ");
+	else if (output->type == REDIR_APPEND)
+		printf(">> ");
+	printf("%s\n", output->file);
+}
+
+void	print_command(t_command *cmd, int level)
+{
+	print_indentation(level);
+	printf("Command:\n");
+	if (cmd->args)
+		print_command_args(cmd, level + 1);
+	if (cmd->input.file)
+		print_input_redirection(&cmd->input, level + 1);
+	if (cmd->output.file)
+		print_output_redirection(&cmd->output, level + 1);
+}
+
+void	print_operator(t_operator *op, int level)
+{
+	print_indentation(level);
+	printf("Operator: ");
+	if (op->type == PIPE)
+		printf("|\n");
+	else if (op->type == AND)
+		printf("&&\n");
+	else if (op->type == OR)
+		printf("||\n");
+	if (op->left)
+	{
+		print_indentation(level);
+		printf("Left:\n");
+		print_node_recursive(op->left, level + 1);
+	}
+	if (op->right)
+	{
+		print_indentation(level);
+		printf("Right:\n");
+		print_node_recursive(op->right, level + 1);
+	}
+}
+
+void	print_node_recursive(t_ast_node *node, int level)
+{
+	if (!node)
+		return ;
+	if (node->type == COMMAND)
+		print_command(&node->u_data.cmd, level);
+	else if (node->type == OPERATOR)
+		print_operator(&node->u_data.op, level);
+}
+
 void	print_node(t_ast_node *root)
 {
-	printf("Árbol sintáctico parseado:\n \n");
-	print_node_recursive(root, 0, "");
-	printf("\nEjecución:\n\n");
+	print_node_recursive(root, 0);
 }
