@@ -11,9 +11,10 @@
 /* ************************************************************************** */
 
 #include <stdlib.h>
+#include <stdio.h>
+#include "libft.h"
 #include "minishell.h"
 #include "parser_utils.h"
-#include <stdio.h>
 
 /*
 ** Parses an array of tokens into an abstract syntax tree (AST).

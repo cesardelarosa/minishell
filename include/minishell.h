@@ -16,21 +16,16 @@
 # include "ast.h"
 
 # define WELCOME_MSG \
-    "\nWelcome to Minishell! by adpedrer & cde-la-r.\nType 'exit' to quit.\n\n"
+    "\nWelcome to Minishell by adpedrer & cde-la-r!\nType 'exit' to quit.\n\n"
 
 extern int	g_exit_status;
 
-char		**ft_free_split(char **result);
-char		*ft_strjoin_free(char *s1, const char *s2);
-
 void		setup_signal_handlers(void);
+void		print_prompt(void);
 char		*read_input(void);
 char		**lexer(char *input);
 t_ast_node	*parser(char **tokens, char **envp);
-void		exec(t_ast_node *root);
-
 void		expand_all_vars(char **args);
-
-void		print_prompt(void);
+void		exec(t_ast_node *root);
 
 #endif
