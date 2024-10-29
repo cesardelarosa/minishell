@@ -24,18 +24,11 @@ int	g_exit_status = 0;
 */
 int	main(int argc, char **argv, char **envp)
 {
-	t_ast_node	*root;
-
 	(void)argc;
 	(void)argv;
 	printf(WELCOME_MSG);
 	setup_signal_handlers();
 	while (42)
-	{
-		root = parser(lexer(read_input()), envp);
-		print_node(root);
-//		exec(root);
-		free_node(root);
-	}
+		exec(parser(lexer(read_input()), envp));
 	return (0);
 }

@@ -3,32 +3,22 @@
 /*                                                        :::      ::::::::   */
 /*   exec.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: cde-la-r <cde-la-r@student.42.fr>          +#+  +:+       +#+        */
+/*   By: tu_nombre <tu_email@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/08/30 13:45:46 by cde-la-r          #+#    #+#             */
-/*   Updated: 2024/10/17 00:46:54 by cde-la-r         ###   ########.fr       */
+/*   Created: 2024/08/30 13:45:46 by tu_nombre         #+#    #+#             */
+/*   Updated: 2024/10/29 17:00:00 by tu_nombre        ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include <stdlib.h>
-#include <unistd.h>
-#include <stdio.h>
-#include <sys/wait.h>
-#include <fcntl.h>
-#include "libft.h"
 #include "minishell.h"
-#include "builtins.h"
+#include "libft.h"
+#include <unistd.h>
+#include <sys/wait.h>
+#include <stdlib.h>
+#include <stdio.h>
 #include "operators.h"
-#include "operators_bonus.h"
+#include "builtins.h"
 
-/*
-** Searches for the full path of a command by checking each directory
-** in the PATH environment variable. If found, returns the full path.
-** Otherwise, returns NULL.
-**
-** @param cmd: The command to search for in the PATH directories.
-** @return: The full path of the command if found, NULL otherwise.
-*/
 char	*which(const char *cmd)
 {
 	char	*path;
@@ -43,7 +33,7 @@ char	*which(const char *cmd)
 		dir = (char *)path;
 		while (*path && *path != ':')
 			path++;
-		full_path = (char *)malloc((path - dir) + cmd_len + 2);
+		full_path = malloc((path - dir) + cmd_len + 2);
 		if (full_path == NULL)
 			return (NULL);
 		ft_memcpy(full_path, dir, path - dir);
@@ -53,85 +43,125 @@ char	*which(const char *cmd)
 		if (access(full_path, X_OK) == 0)
 			return (full_path);
 		free(full_path);
-		path += *path != '\0';
+		if (*path == ':')
+			path++;
 	}
 	return (NULL);
 }
 
-/*
-** Handles the execution of external commands. If the command is found,
-** it runs execve. If not, it tries to find the command using 'which'.
-**
-** @param args: Command and arguments to execute.
-*/
-void	handle_extern(char **args, char **envp)
+int	handle_builtin(t_command cmd)
 {
-	char	*exec_path;
-
-	if (access(args[0], X_OK) == 0)
-		execve(args[0], args, envp);
-	else if (access(args[0], F_OK) != 0)
-	{
-		exec_path = which(args[0]);
-		if (exec_path != NULL)
-		{
-			execve(exec_path, args, envp);
-			free(exec_path);
-		}
-		else
-			perror("minishell: command not found");
-	}
-	else
-		perror("minishell: execution failed");
-	exit(EXIT_FAILURE);
-}
-
-/*
-** Checks if the command is a built-in. If it is, it calls the corresponding
-** function. Returns 1 if the command is a built-in, 0 otherwise.
-**
-** @param args: The arguments of the command to check.
-** @return: 1 if the command is a built-in, 0 otherwise.
-*/
-int	handle_builtin(char **args, char **envp)
-{
-	if (!ft_strncmp(args[0], "cd", 3))
-		builtin_cd(args);
-	else if (!ft_strncmp(args[0], "pwd", 4))
+	if (!ft_strcmp(cmd.args[0], "cd"))
+		builtin_cd(cmd.args);
+	else if (!ft_strcmp(cmd.args[0], "pwd"))
 		builtin_pwd();
-	else if (!ft_strncmp(args[0], "echo", 5))
-		builtin_echo(args);
-	else if (!ft_strncmp(args[0], "exit", 5))
-		builtin_exit(args);
-	else if (!ft_strncmp(args[0], "export", 7))
-		builtin_export(args, envp);
-	else if (!ft_strncmp(args[0], "unset", 6))
-		builtin_unset(args);
-	else if (!ft_strncmp(args[0], "env", 4))
-		builtin_env(envp);
+	else if (!ft_strcmp(cmd.args[0], "echo"))
+		builtin_echo(cmd.args);
+	else if (!ft_strcmp(cmd.args[0], "exit"))
+		builtin_exit(cmd.args);
+	else if (!ft_strcmp(cmd.args[0], "export"))
+		builtin_export(cmd.args, cmd.envp);
+	else if (!ft_strcmp(cmd.args[0], "unset"))
+		builtin_unset(cmd.args);
+	else if (!ft_strcmp(cmd.args[0], "env"))
+		builtin_env(cmd.envp);
 	else
 		return (0);
 	return (1);
 }
 
-/*
-** Handles the execution of a single command. If the command is not a built-in,
-** it forks a new process to execute the external command.
-**
-** @param node: The AST node representing the command to execute.
-*/
-void	handle_command(t_ast_node *node)
+void	execute_builtin(t_command cmd)
+{
+	int	saved_stdin;
+	int	saved_stdout;
+
+	saved_stdin = -1;
+	saved_stdout = -1;
+	if (cmd.input.fd != -1)
+	{
+		saved_stdin = dup(STDIN_FILENO);
+		dup2(cmd.input.fd, STDIN_FILENO);
+		close(cmd.input.fd);
+	}
+	if (cmd.output.fd != -1)
+	{
+		saved_stdout = dup(STDOUT_FILENO);
+		dup2(cmd.output.fd, STDOUT_FILENO);
+		close(cmd.output.fd);
+	}
+	handle_builtin(cmd);
+	if (saved_stdin != -1)
+	{
+		dup2(saved_stdin, STDIN_FILENO);
+		close(saved_stdin);
+	}
+	if (saved_stdout != -1)
+	{
+		dup2(saved_stdout, STDOUT_FILENO);
+		close(saved_stdout);
+	}
+}
+
+void	execute_external(t_command cmd)
+{
+	char	*exec_path;
+
+	if (cmd.input.fd != -1)
+	{
+		if (dup2(cmd.input.fd, STDIN_FILENO) == -1)
+		{
+			perror("dup2 input failed");
+			exit(EXIT_FAILURE);
+		}
+		close(cmd.input.fd);
+	}
+	if (cmd.output.fd != -1)
+	{
+		if (dup2(cmd.output.fd, STDOUT_FILENO) == -1)
+		{
+			perror("dup2 output failed");
+			exit(EXIT_FAILURE);
+		}
+		close(cmd.output.fd);
+	}
+	if (access(cmd.args[0], X_OK) == 0)
+	{
+		execve(cmd.args[0], cmd.args, cmd.envp);
+		perror("execve failed");
+		exit(EXIT_FAILURE);
+	}
+	else
+	{
+		exec_path = which(cmd.args[0]);
+		if (exec_path != NULL)
+		{
+			execve(exec_path, cmd.args, cmd.envp);
+			perror("execve failed");
+			free(exec_path);
+			exit(EXIT_FAILURE);
+		}
+		else
+		{
+			fprintf(stderr, "minishell: %s: command not found\n", cmd.args[0]);
+			exit(EXIT_FAILURE);
+		}
+	}
+}
+
+void	handle_command(t_command cmd)
 {
 	pid_t	pid;
 	int		status;
 
-	if (node == NULL || node->args == NULL)
+	if (cmd.args == NULL || cmd.args[0] == NULL)
 		return ;
-	if (node->args[0] != NULL && handle_builtin(node->args, node->envp) == 0)
+	if (handle_builtin(cmd) == 1)
+		execute_builtin(cmd);
+	else
 	{
 		pid = fork();
 		if (pid == 0)
-			handle_extern(node->args, node->envp);
+			execute_external(cmd);
 		else if (pid < 0)
 			perror("minishell: fork error");
 		else
@@ -140,32 +170,93 @@ void	handle_command(t_ast_node *node)
 				perror("minishell: waitpid error");
 			if (WIFEXITED(status))
 				g_exit_status = WEXITSTATUS(status);
+			else if (WIFSIGNALED(status))
+				g_exit_status = 128 + WTERMSIG(status);
 		}
 	}
 }
 
-/*
-** Recursively executes the AST tree. It checks if the current node is a command
-** and handles it. Then it continues to the left and right nodes.
-**
-** @param root: The root node of the AST to execute.
-*/
-void	exec(t_ast_node *root)
+void	handle_or(t_operator op)
 {
-	if (root == NULL)
+	exec(op.left);
+	if (g_exit_status != 0)
+		exec(op.right);
+}
+
+void	handle_and(t_operator op)
+{
+	exec(op.left);
+	if (g_exit_status == 0)
+		exec(op.right);
+}
+
+void	handle_pipe(t_operator op)
+{
+	int		fd[2];
+	pid_t	pid_left;
+	pid_t	pid_right;
+	int		status_left;
+	int		status_right;
+
+	if (pipe(fd) == -1)
+	{
+		perror("pipe");
 		return ;
-	if (root->type == COMMAND)
-		handle_command(root);
-	else if (root->type == PIPE)
-		handle_pipe(root);
-	else if (root->type == REDIR_IN)
-		handle_redirection(root, O_RDONLY);
-	else if (root->type == REDIR_OUT)
-		handle_redirection(root, O_WRONLY | O_CREAT | O_TRUNC);
-	else if (root->type == REDIR_APPEND)
-		handle_redirection(root, O_WRONLY | O_CREAT | O_APPEND);
-	else if (root->type == HEREDOC)
-		handle_heredoc(root);
+	}
+	pid_left = fork();
+	if (pid_left == -1)
+	{
+		perror("fork");
+		return ;
+	}
+	if (pid_left == 0)
+	{
+		close(fd[0]);
+		dup2(fd[1], STDOUT_FILENO);
+		close(fd[1]);
+		exec(op.left);
+		exit(g_exit_status);
+	}
+	pid_right = fork();
+	if (pid_right == -1)
+	{
+		perror("fork");
+		return ;
+	}
+	if (pid_right == 0)
+	{
+		close(fd[1]);
+		dup2(fd[0], STDIN_FILENO);
+		close(fd[0]);
+		exec(op.right);
+		exit(g_exit_status);
+	}
+	close(fd[0]);
+	close(fd[1]);
+	waitpid(pid_left, &status_left, 0);
+	waitpid(pid_right, &status_right, 0);
+	g_exit_status = WEXITSTATUS(status_right);
+}
+
+void	exec(t_ast_node *node)
+{
+	if (node == NULL)
+		return ;
+	print_node(node);
+	if (node->type == COMMAND)
+		handle_command(node->u_data.cmd);
+	else if (node->type == OPERATOR)
+	{
+		if (node->u_data.op.type == PIPE)
+			handle_pipe(node->u_data.op);
+		else if (node->u_data.op.type == AND)
+			handle_and(node->u_data.op);
+		else if (node->u_data.op.type == OR)
+			handle_or(node->u_data.op);
+		else
+			perror("minishell: unsupported operator");
+	}
 	else
-		printf("minishell: unsupported node type\n");
+		perror("minishell: unsupported node type");
+	free_node(node);
 }

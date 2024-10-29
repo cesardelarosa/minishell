@@ -67,7 +67,5 @@ typedef struct s_ast_node
 }	t_ast_node;
 
 void			free_node(t_ast_node *node);
-void			print_node(t_ast_node *root);
-t_ast_node		*parser(char **tokens, char **envp);
 
 #endif

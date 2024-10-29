@@ -26,6 +26,8 @@ char		*read_input(void);
 char		**lexer(char *input);
 t_ast_node	*parser(char **tokens, char **envp);
 void		expand_all_vars(char **args);
-void		exec(t_ast_node *root);
+void		exec(t_ast_node *node);
+
+void		print_node(t_ast_node *root);
 
 #endif

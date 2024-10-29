@@ -16,6 +16,8 @@
 #include <stdio.h>
 #include <readline/readline.h>
 #include <readline/history.h>
+#include <limits.h>
+#include <stdint.h>
 #include "libft.h"
 #include "minishell.h"
 #include "operators.h"
@@ -29,8 +31,14 @@ void	init_file(t_file *file)
 
 static void	process_redirections(t_ast_node *node, char **args)
 {
-	int	i;
+	int		i;
+	int		j;
+	char	**new_args;
 
+	new_args = malloc(sizeof(char *) * (ft_strarray_len(args) + 1));
+	if (new_args == NULL)
+		return ;
+	j = 0;
 	i = -1;
 	while (args[++i])
 	{
@@ -42,7 +50,12 @@ static void	process_redirections(t_ast_node *node, char **args)
 			handle_redir_out(&node->u_data.cmd.output, args[++i], O_APPEND);
 		else if (!ft_strcmp(args[i], "<<") && args[i + 1])
 			handle_heredoc(&node->u_data.cmd.input, args[++i]);
+		else
+			new_args[j++] = ft_strdup(args[i]);
 	}
+	new_args[j] = NULL;
+	ft_free_split(node->u_data.cmd.args);
+	node->u_data.cmd.args = new_args;
 }
 
 t_ast_node	*create_command(char **tokens, char **envp)
@@ -94,9 +107,8 @@ t_ast_node	*search_and_or(char **tokens, char **envp)
 		node = create_operator(type);
 		if (!node)
 			return (NULL);
-		tokens[i] = NULL;
-		node->u_data.op.left = parser(ft_strarray_dup(tokens), envp);
-		node->u_data.op.right = parser(ft_strarray_dup(&tokens[i + 1]), envp);
+		node->u_data.op.left = parser(ft_strarray_dup(tokens, 0, i - 1), envp);
+		node->u_data.op.right = parser(ft_strarray_dup(tokens, i + 1, SIZE_MAX), envp);
 		ft_free_split(tokens);
 		return (node);
 	}
@@ -116,9 +128,8 @@ t_ast_node	*search_pipe(char **tokens, char **envp)
 		node = create_operator(PIPE);
 		if (!node)
 			return (NULL);
-		tokens[i] = NULL;
-		node->u_data.op.left = parser(ft_strarray_dup(tokens), envp);
-		node->u_data.op.right = parser(ft_strarray_dup(&tokens[i + 1]), envp);
+		node->u_data.op.left = parser(ft_strarray_dup(tokens, 0, i - 1), envp);
+		node->u_data.op.right = parser(ft_strarray_dup(tokens, i + 1, SIZE_MAX), envp);
 		ft_free_split(tokens);
 		return (node);
 	}

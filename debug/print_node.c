@@ -45,22 +45,22 @@ void	print_command_args(t_command *cmd, int level)
 void	print_input_redirection(t_file *input, int level)
 {
 	print_indentation(level);
-	printf("Input Redirection: ");
+	printf("Input Redirection ");
 	if (input->type == REDIR_IN)
-		printf("< ");
+		printf("(<): ");
 	else if (input->type == HEREDOC)
-		printf("<< ");
+		printf("(<<): ");
 	printf("%s\n", input->file);
 }
 
 void	print_output_redirection(t_file *output, int level)
 {
 	print_indentation(level);
-	printf("Output Redirection: ");
+	printf("Output Redirection ");
 	if (output->type == REDIR_OUT)
-		printf("> ");
+		printf("(>): ");
 	else if (output->type == REDIR_APPEND)
-		printf(">> ");
+		printf("(>>): ");
 	printf("%s\n", output->file);
 }
 
