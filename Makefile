@@ -6,7 +6,7 @@ SRC_DIR = src
 BONUS_DIR = bonus
 OBJ_DIR = obj
 LIBFT_DIR = libft
-
+DEBUG_DIR = debug
 CC = gcc
 CFLAGS = -Wall -Wextra -Werror
 INCLUDE = -I./$(INCLUDE_DIR) -I./$(LIBFT_DIR)
@@ -15,6 +15,7 @@ SANITIZE = -fsanitize=address -g
 
 LIBFT = $(LIBFT_DIR)/libft.a
 
+DEBUG_SRC = print_node.c
 COMMON_SRC = builtin1.c \
 	     builtin2.c \
 	     main.c \
@@ -23,7 +24,6 @@ COMMON_SRC = builtin1.c \
 	     parser.c \
 	     lexer.c \
 	     nodes.c \
-	     print_node.c \
 		 operators.c \
 	     env.c 
 NO_BONUS_SRC = exec.c
@@ -31,7 +31,7 @@ BONUS_SRC = exec_bonus.c \
 	    wildcards_bonus.c \
 	    operators_bonus.c
 
-SRC_FILES = $(COMMON_SRC)
+SRC_FILES = $(COMMON_SRC) $(DEBUG_SRC)
 OBJ_FILES = $(SRC_FILES:%.c=$(OBJ_DIR)/%.o)
 
 BONUS_FILES = $(COMMON_SRC) $(BONUS_SRC)
@@ -52,6 +52,10 @@ $(OBJ_DIR)/%.o: $(SRC_DIR)/%.c
 	$(CC) $(CFLAGS) $(INCLUDE) -c $< -o $@
 
 $(OBJ_DIR)/%.o: $(BONUS_DIR)/%.c
+	@mkdir -p $(OBJ_DIR)
+	$(CC) $(CFLAGS) $(INCLUDE) -c $< -o $@
+
+$(OBJ_DIR)/%.o: $(DEBUG_DIR)/%.c
 	@mkdir -p $(OBJ_DIR)
 	$(CC) $(CFLAGS) $(INCLUDE) -c $< -o $@
 
