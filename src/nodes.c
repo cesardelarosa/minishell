@@ -6,7 +6,7 @@
 /*   By: cde-la-r <cde-la-r@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/28 16:48:02 by cde-la-r          #+#    #+#             */
-/*   Updated: 2024/10/28 16:48:02 by cde-la-r         ###   ########.fr       */
+/*   Updated: 2024/10/30 13:20:53 by cde-la-r         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,6 +14,26 @@
 #include <unistd.h>
 #include "ast.h"
 #include "libft.h"
+
+void	ft_init_file(t_file *file)
+{
+	file->fd = -1;
+	file->file = NULL;
+}
+
+t_ast_node	*create_operator(t_operator_type type)
+{
+	t_ast_node	*node;
+
+	node = malloc(sizeof(t_ast_node));
+	if (!node)
+		return (NULL);
+	node->type = OPERATOR;
+	node->u_data.op.type = type;
+	node->u_data.op.left = NULL;
+	node->u_data.op.right = NULL;
+	return (node);
+}
 
 void	free_file(t_file *file)
 {

@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   print_ast.c                                        :+:      :+:    :+:   */
+/*   print_node.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: tu_nombre <tu_email@student.42.fr>          +#+  +:+       +#+       */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/05 12:00:00 by tu_nombre          #+#    #+#            */
-/*   Updated: 2024/10/05 12:00:00 by tu_nombre         ###   ########.fr      */
+/*   Updated: 2024/10/30 13:10:08 by cde-la-r         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,22 +45,14 @@ void	print_command_args(t_command *cmd, int level)
 void	print_input_redirection(t_file *input, int level)
 {
 	print_indentation(level);
-	printf("Input Redirection ");
-	if (input->type == REDIR_IN)
-		printf("(<): ");
-	else if (input->type == HEREDOC)
-		printf("(<<): ");
+	printf("Input Redirection: ");
 	printf("%s\n", input->file);
 }
 
 void	print_output_redirection(t_file *output, int level)
 {
 	print_indentation(level);
-	printf("Output Redirection ");
-	if (output->type == REDIR_OUT)
-		printf("(>): ");
-	else if (output->type == REDIR_APPEND)
-		printf("(>>): ");
+	printf("Output Redirection: ");
 	printf("%s\n", output->file);
 }
 

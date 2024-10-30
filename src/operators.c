@@ -6,7 +6,7 @@
 /*   By: cde-la-r <cde-la-r@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/28 16:42:48 by cde-la-r          #+#    #+#             */
-/*   Updated: 2024/10/30 12:25:20 by cde-la-r         ###   ########.fr       */
+/*   Updated: 2024/10/30 13:09:24 by cde-la-r         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,12 +27,11 @@ int	handle_redir_in(t_file *input, const char *filename)
 	if (input->fd < 0)
 	{
 		perror("Error opening file");
-		return (-1) ;
+		return (-1);
 	}
 	if (input->file != NULL)
 		free(input->file);
 	input->file = ft_strdup(filename);
-	input->type = REDIR_IN;
 	return (0);
 }
 
@@ -49,10 +48,6 @@ int	handle_redir_out(t_file *output, const char *filename, int type)
 	if (output->file != NULL)
 		free(output->file);
 	output->file = ft_strdup(filename);
-	if (type == O_TRUNC)
-		output->type = REDIR_OUT;
-	else
-		output->type = REDIR_APPEND;
 	return (0);
 }
 
@@ -72,7 +67,6 @@ int	handle_heredoc(t_file *input, const char *delimiter)
 	if (input->file != NULL)
 		free(input->file);
 	input->file = ft_strdup(delimiter);
-	input->type = HEREDOC;
 	while (1)
 	{
 		line = readline("> ");

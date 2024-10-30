@@ -6,7 +6,7 @@
 /*   By: adrian <adrian@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/26 13:14:30 by cde-la-r          #+#    #+#             */
-/*   Updated: 2024/10/30 12:44:12 by cde-la-r         ###   ########.fr       */
+/*   Updated: 2024/10/30 13:20:29 by cde-la-r         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,13 +21,6 @@
 #include "libft.h"
 #include "minishell.h"
 #include "operators.h"
-
-void	init_file(t_file *file)
-{
-	file->fd = -1;
-	file->file = NULL;
-	file->type = 0;
-}
 
 static int	process_redirections(t_ast_node *node, char **args)
 {
@@ -72,28 +65,14 @@ t_ast_node	*create_command(char **tokens, char **envp)
 	node->type = COMMAND;
 	node->u_data.cmd.args = tokens;
 	node->u_data.cmd.envp = envp;
-	init_file(&node->u_data.cmd.input);
-	init_file(&node->u_data.cmd.output);
+	ft_init_file(&node->u_data.cmd.input);
+	ft_init_file(&node->u_data.cmd.output);
 	check = process_redirections(node, node->u_data.cmd.args);
 	if (check == -1)
 	{
 		free_node(node);
 		return (NULL);
 	}
-	return (node);
-}
-
-t_ast_node	*create_operator(t_operator_type type)
-{
-	t_ast_node	*node;
-
-	node = malloc(sizeof(t_ast_node));
-	if (!node)
-		return (NULL);
-	node->type = OPERATOR;
-	node->u_data.op.type = type;
-	node->u_data.op.left = NULL;
-	node->u_data.op.right = NULL;
 	return (node);
 }
 

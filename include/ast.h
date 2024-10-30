@@ -6,7 +6,7 @@
 /*   By: cde-la-r <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/26 12:34:01 by cde-la-r          #+#    #+#             */
-/*   Updated: 2024/10/30 12:42:52 by cde-la-r         ###   ########.fr       */
+/*   Updated: 2024/10/30 13:20:00 by cde-la-r         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,17 +26,8 @@ typedef enum e_operator_type
 	OR
 }	t_operator_type;
 
-typedef enum e_redirection_type
-{
-	REDIR_IN,
-	REDIR_OUT,
-	REDIR_APPEND,
-	HEREDOC
-}	t_redirection_type;
-
 typedef struct s_file
 {
-	t_redirection_type	type;
 	int					fd;
 	char				*file;
 }	t_file;
@@ -66,6 +57,8 @@ typedef struct s_ast_node
 	}	u_data;
 }	t_ast_node;
 
-void	free_node(t_ast_node *node);
+t_ast_node	*create_operator(t_operator_type type);
+void		free_node(t_ast_node *node);
+void		ft_init_file(t_file *file);
 
 #endif
