@@ -6,7 +6,7 @@
 /*   By: adrian <adrian@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/26 13:14:30 by cde-la-r          #+#    #+#             */
-/*   Updated: 2024/10/04 17:11:01 by adrian           ###   ########.fr       */
+/*   Updated: 2024/10/30 12:44:12 by cde-la-r         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,38 +29,42 @@ void	init_file(t_file *file)
 	file->type = 0;
 }
 
-static void	process_redirections(t_ast_node *node, char **args)
+static int	process_redirections(t_ast_node *node, char **args)
 {
 	int		i;
 	int		j;
+	int		check;
 	char	**new_args;
 
+	check = 0;
 	new_args = malloc(sizeof(char *) * (ft_strarray_len(args) + 1));
 	if (new_args == NULL)
-		return ;
+		return (-1);
 	j = 0;
 	i = -1;
-	while (args[++i])
+	while (args[++i] && check != -1)
 	{
 		if (!ft_strcmp(args[i], "<") && args[i + 1])
-			handle_redir_in(&node->u_data.cmd.input, args[++i]);
+			check = handle_redir_in(&node->u_data.cmd.input, args[++i]);
 		else if (!ft_strcmp(args[i], ">") && args[i + 1])
-			handle_redir_out(&node->u_data.cmd.output, args[++i], O_TRUNC);
+			check = handle_redir_out(&node->u_data.cmd.output, args[++i], O_TRUNC);
 		else if (!ft_strcmp(args[i], ">>") && args[i + 1])
-			handle_redir_out(&node->u_data.cmd.output, args[++i], O_APPEND);
+			check = handle_redir_out(&node->u_data.cmd.output, args[++i], O_APPEND);
 		else if (!ft_strcmp(args[i], "<<") && args[i + 1])
-			handle_heredoc(&node->u_data.cmd.input, args[++i]);
+			check = handle_heredoc(&node->u_data.cmd.input, args[++i]);
 		else
 			new_args[j++] = ft_strdup(args[i]);
 	}
 	new_args[j] = NULL;
 	ft_free_split(node->u_data.cmd.args);
 	node->u_data.cmd.args = new_args;
+	return (check);
 }
 
 t_ast_node	*create_command(char **tokens, char **envp)
 {
 	t_ast_node	*node;
+	int			check;
 
 	node = malloc(sizeof(t_ast_node));
 	if (!node)
@@ -70,7 +74,12 @@ t_ast_node	*create_command(char **tokens, char **envp)
 	node->u_data.cmd.envp = envp;
 	init_file(&node->u_data.cmd.input);
 	init_file(&node->u_data.cmd.output);
-	process_redirections(node, node->u_data.cmd.args);
+	check = process_redirections(node, node->u_data.cmd.args);
+	if (check == -1)
+	{
+		free_node(node);
+		return (NULL);
+	}
 	return (node);
 }
 

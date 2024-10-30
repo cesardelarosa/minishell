@@ -6,7 +6,7 @@
 /*   By: cde-la-r <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/26 12:34:01 by cde-la-r          #+#    #+#             */
-/*   Updated: 2024/10/01 14:35:52 by cde-la-r         ###   ########.fr       */
+/*   Updated: 2024/10/30 12:42:52 by cde-la-r         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -66,6 +66,6 @@ typedef struct s_ast_node
 	}	u_data;
 }	t_ast_node;
 
-void			free_node(t_ast_node *node);
+void	free_node(t_ast_node *node);
 
 #endif

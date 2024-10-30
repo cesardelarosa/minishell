@@ -6,7 +6,7 @@
 /*   By: cde-la-r <cde-la-r@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/28 16:42:48 by cde-la-r          #+#    #+#             */
-/*   Updated: 2024/10/28 16:42:49 by cde-la-r         ###   ########.fr       */
+/*   Updated: 2024/10/30 12:25:20 by cde-la-r         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,26 +19,33 @@
 #include "libft.h"
 #include "minishell.h"
 
-void	handle_redir_in(t_file *input, const char *filename)
+int	handle_redir_in(t_file *input, const char *filename)
 {
 	if (input->fd != -1)
 		close(input->fd);
 	input->fd = open(filename, O_RDONLY);
 	if (input->fd < 0)
+	{
 		perror("Error opening file");
+		return (-1) ;
+	}
 	if (input->file != NULL)
 		free(input->file);
 	input->file = ft_strdup(filename);
 	input->type = REDIR_IN;
+	return (0);
 }
 
-void	handle_redir_out(t_file *output, const char *filename, int type)
+int	handle_redir_out(t_file *output, const char *filename, int type)
 {
 	if (output->fd != -1)
 		close(output->fd);
 	output->fd = open(filename, O_WRONLY | O_CREAT | type, 0644);
 	if (output->fd < 0)
+	{
 		perror("Error opening file");
+		return (-1);
+	}
 	if (output->file != NULL)
 		free(output->file);
 	output->file = ft_strdup(filename);
@@ -46,15 +53,19 @@ void	handle_redir_out(t_file *output, const char *filename, int type)
 		output->type = REDIR_OUT;
 	else
 		output->type = REDIR_APPEND;
+	return (0);
 }
 
-void	handle_heredoc(t_file *input, const char *delimiter)
+int	handle_heredoc(t_file *input, const char *delimiter)
 {
 	int		fd[2];
 	char	*line;
 
 	if (pipe(fd) == -1)
+	{
 		perror("Error creating pipe");
+		return (-1);
+	}
 	if (input->fd != -1)
 		close(input->fd);
 	input->fd = fd[0];
@@ -75,4 +86,5 @@ void	handle_heredoc(t_file *input, const char *delimiter)
 		free(line);
 	}
 	close(fd[1]);
+	return (0);
 }

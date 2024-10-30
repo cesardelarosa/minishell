@@ -6,13 +6,16 @@
 /*   By: cde-la-r <cde-la-r@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/28 12:02:35 by cde-la-r          #+#    #+#             */
-/*   Updated: 2024/10/28 12:02:35 by cde-la-r         ###   ########.fr       */
+/*   Updated: 2024/10/30 11:58:52 by cde-la-r         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 int	ft_strcmp(char *s1, char *s2)
 {
-	while (*s1 && (*s1 == *s2++))
+	while (*s1 && (*s1 == *s2))
+	{
 		s1++;
+		s2++;
+	}
 	return (*(unsigned char *)s1 - *(unsigned char *)s2);
 }

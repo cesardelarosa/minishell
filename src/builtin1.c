@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   builtin.c                                          :+:      :+:    :+:   */
+/*   builtin1.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: cde-la-r <cde-la-r@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/27 09:20:41 by cde-la-r          #+#    #+#             */
-/*   Updated: 2024/10/01 17:44:03 by cde-la-r         ###   ########.fr       */
+/*   Updated: 2024/10/30 13:00:38 by cde-la-r         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -53,17 +53,26 @@ void	builtin_pwd(void)
 ** @param args: The arguments to echo.
 **              args[1] may be "-n" to suppress the newline.
 */
+int	is_flag_n(char *arg)
+{
+	if (*arg++ != '-')
+		return (0);
+	while (*arg == 'n')
+		arg++;
+	return (*arg == '\0');
+}
+
 void	builtin_echo(char **args)
 {
 	int	newline;
-	int	i;
 
-	newline = !args[1] || ft_strncmp(args[1], "-n", 3);
-	i = 2 - newline;
-	while (args[i])
+	newline = 1;
+	while (*(++args) && is_flag_n(*args))
+		newline = 0;
+	while (*args)
 	{
-		printf("%s", args[i]);
-		if (args[++i])
+		printf("%s", *args);
+		if (*(++args))
 			printf(" ");
 	}
 	if (newline)
