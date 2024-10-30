@@ -6,7 +6,7 @@
 /*   By: cde-la-r <cde-la-r@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/30 17:56:41 by cde-la-r          #+#    #+#             */
-/*   Updated: 2024/10/30 13:58:20 by cde-la-r         ###   ########.fr       */
+/*   Updated: 2024/10/30 14:31:05 by cde-la-r         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -90,10 +90,10 @@ void	print_prompt(void)
 	if (term != NULL && (tgetent(NULL, term) > 0 && tgetnum("colors") >= 0))
 	{
 		printf(TEXT_CYAN"%s"RESET_COLOR" at "TEXT_YELLOW"%s"RESET_COLOR" in "
-			TEXT_GREEN"%s "RESET_COLOR"\n", user, host, path);
+			TEXT_GREEN"%s\n"RESET_COLOR, user, host, path);
 	}
 	else
-		printf("%s at %s in %s \n", user, host, path);
+		printf("%s at %s in %s\n", user, host, path);
 	free(user);
 	free(host);
 	free(path);

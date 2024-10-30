@@ -6,7 +6,7 @@
 /*   By: cde-la-r <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/30 13:02:35 by cde-la-r          #+#    #+#             */
-/*   Updated: 2024/10/30 13:02:40 by cde-la-r         ###   ########.fr       */
+/*   Updated: 2024/10/30 15:32:50 by cde-la-r         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,8 +42,7 @@ char	*which(const char *cmd)
 		if (access(full_path, X_OK) == 0)
 			return (full_path);
 		free(full_path);
-		if (*path == ':')
-			path++;
+		path += *path != '\0';
 	}
 	return (NULL);
 }

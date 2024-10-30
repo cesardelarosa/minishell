@@ -6,7 +6,7 @@
 /*   By: adrian <adrian@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/27 17:48:49 by cde-la-r          #+#    #+#             */
-/*   Updated: 2024/10/01 14:54:58 by cde-la-r         ###   ########.fr       */
+/*   Updated: 2024/10/30 15:27:55 by cde-la-r         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,6 +29,9 @@ int	main(int argc, char **argv, char **envp)
 	printf(WELCOME_MSG);
 	setup_signal_handlers();
 	while (42)
+	{
 		exec(parser(lexer(read_input()), envp));
+		printf("\nexit: %d\n", g_exit_status);
+	}
 	return (0);
 }
