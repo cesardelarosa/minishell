@@ -6,7 +6,7 @@
 /*   By: cde-la-r <cde-la-r@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/28 16:42:48 by cde-la-r          #+#    #+#             */
-/*   Updated: 2024/10/30 13:09:24 by cde-la-r         ###   ########.fr       */
+/*   Updated: 2024/10/30 20:23:23 by cde-la-r         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,8 +16,70 @@
 #include <stdio.h>
 #include <readline/readline.h>
 #include <readline/history.h>
+#include <sys/wait.h>
 #include "libft.h"
 #include "minishell.h"
+
+void	handle_pipe(t_operator op)
+{
+	int		fd[2];
+	pid_t	pid_left;
+	pid_t	pid_right;
+
+	if (pipe(fd) == -1)
+	{
+		perror("pipe failed");
+		return ;
+	}
+	pid_left = fork();
+	if (pid_left == -1)
+	{
+		perror("fork failed");
+		return ;
+	}
+	if (pid_left == 0)
+	{
+		close(fd[0]);
+		if (dup2(fd[1], STDOUT_FILENO) == -1)
+			exit(EXIT_FAILURE);
+		close(fd[1]);
+		exec(op.left);
+		exit(g_exit_status);
+	}
+	pid_right = fork();
+	if (pid_right == -1)
+	{
+		perror("fork failed");
+		return ;
+	}
+	if (pid_right == 0)
+	{
+		close(fd[1]);
+		if (dup2(fd[0], STDIN_FILENO) == -1)
+			exit(EXIT_FAILURE);
+		close(fd[0]);
+		exec(op.right);
+		exit(g_exit_status);
+	}
+	close(fd[0]);
+	close(fd[1]);
+	waitpid(pid_left, NULL, 0);
+	waitpid(pid_right, NULL, 0);
+}
+
+void	handle_and(t_operator op)
+{
+	exec(op.left);
+	if (g_exit_status == 0)
+		exec(op.right);
+}
+
+void	handle_or(t_operator op)
+{
+	exec(op.left);
+	if (g_exit_status != 0)
+		exec(op.right);
+}
 
 int	handle_redir_in(t_file *input, const char *filename)
 {

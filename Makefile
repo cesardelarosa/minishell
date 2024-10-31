@@ -44,6 +44,9 @@ $(NAME): $(OBJ_FILES) $(LIBFT)
 
 bonus: $(BONUS_NAME)
 
+debug: CFLAGS += -DDEBUG=1 -g
+debug: all
+
 $(BONUS_NAME): $(BONUS_OBJ_FILES) $(LIBFT)
 	$(CC) $(CFLAGS) $(SANITIZE) $(BONUS_OBJ_FILES) $(LDFLAGS) -o $(BONUS_NAME)
 
@@ -77,4 +80,4 @@ double: all bonus
 
 simple: double clean
 
-.PHONY: all bonus clean fclean re double simple
+.PHONY: all bonus clean fclean re double simple debug

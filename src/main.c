@@ -6,7 +6,7 @@
 /*   By: adrian <adrian@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/27 17:48:49 by cde-la-r          #+#    #+#             */
-/*   Updated: 2024/10/30 15:27:55 by cde-la-r         ###   ########.fr       */
+/*   Updated: 2024/10/30 21:46:31 by cde-la-r         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,14 +24,24 @@ int	g_exit_status = 0;
 */
 int	main(int argc, char **argv, char **envp)
 {
+	t_ast_node	*root;
 	(void)argc;
 	(void)argv;
 	printf(WELCOME_MSG);
 	setup_signal_handlers();
 	while (42)
 	{
-		exec(parser(lexer(read_input()), envp));
-		printf("\nexit: %d\n", g_exit_status);
+		root = parser(lexer(read_input()), envp);
+#if DEBUG == 1
+		print_node(root);
+		printf("\033[38;2;255;105;180mEXECUTION:\033[0m\n");
+#endif
+		exec(root);
+		free_node(root);
+#if DEBUG == 1
+		printf("\033[38;2;255;105;180mEND EXECUTION\033[0m\n");
+		printf("\n\033[38;2;255;165;0mERROR DEBUGGING:\n\t\033[38;2;255;0;0mexit:\033[0m %d\n", g_exit_status);
+#endif
 	}
 	return (0);
 }

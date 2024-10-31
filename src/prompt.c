@@ -6,7 +6,7 @@
 /*   By: cde-la-r <cde-la-r@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/30 17:56:41 by cde-la-r          #+#    #+#             */
-/*   Updated: 2024/10/30 14:31:05 by cde-la-r         ###   ########.fr       */
+/*   Updated: 2024/10/30 21:01:12 by cde-la-r         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -89,7 +89,7 @@ void	print_prompt(void)
 	path = get_path();
 	if (term != NULL && (tgetent(NULL, term) > 0 && tgetnum("colors") >= 0))
 	{
-		printf(TEXT_CYAN"%s"RESET_COLOR" at "TEXT_YELLOW"%s"RESET_COLOR" in "
+		printf(TEXT_CYAN"%s"TEXT_WHITE" at "TEXT_YELLOW"%s"TEXT_WHITE" in "
 			TEXT_GREEN"%s\n"RESET_COLOR, user, host, path);
 	}
 	else

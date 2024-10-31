@@ -6,7 +6,7 @@
 /*   By: adrian <adrian@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/26 13:14:30 by cde-la-r          #+#    #+#             */
-/*   Updated: 2024/10/30 13:20:29 by cde-la-r         ###   ########.fr       */
+/*   Updated: 2024/10/30 20:17:27 by cde-la-r         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,7 +25,6 @@
 static int	process_redirections(t_ast_node *node, char **args)
 {
 	int		i;
-	int		j;
 	int		check;
 	char	**new_args;
 
@@ -33,22 +32,21 @@ static int	process_redirections(t_ast_node *node, char **args)
 	new_args = malloc(sizeof(char *) * (ft_strarray_len(args) + 1));
 	if (new_args == NULL)
 		return (-1);
-	j = 0;
-	i = -1;
-	while (args[++i] && check != -1)
+	i = 0;
+	while (*args && check != -1)
 	{
-		if (!ft_strcmp(args[i], "<") && args[i + 1])
-			check = handle_redir_in(&node->u_data.cmd.input, args[++i]);
-		else if (!ft_strcmp(args[i], ">") && args[i + 1])
-			check = handle_redir_out(&node->u_data.cmd.output, args[++i], O_TRUNC);
-		else if (!ft_strcmp(args[i], ">>") && args[i + 1])
-			check = handle_redir_out(&node->u_data.cmd.output, args[++i], O_APPEND);
-		else if (!ft_strcmp(args[i], "<<") && args[i + 1])
-			check = handle_heredoc(&node->u_data.cmd.input, args[++i]);
+		if (!ft_strcmp(*args, "<") && *(++args))
+			check = handle_redir_in(&node->u_data.cmd.input, *(args++));
+		else if (!ft_strcmp(*args, ">") && *(++args))
+			check = handle_redir_out(&node->u_data.cmd.output, *(args++), O_TRUNC);
+		else if (!ft_strcmp(*args, ">>") && *(++args))
+			check = handle_redir_out(&node->u_data.cmd.output, *(args++), O_APPEND);
+		else if (!ft_strcmp(*args, "<<") && *(++args))
+			check = handle_heredoc(&node->u_data.cmd.input, *(args++));
 		else
-			new_args[j++] = ft_strdup(args[i]);
+			new_args[i++] = ft_strdup(*args++);
 	}
-	new_args[j] = NULL;
+	new_args[i] = NULL;
 	ft_free_split(node->u_data.cmd.args);
 	node->u_data.cmd.args = new_args;
 	return (check);
