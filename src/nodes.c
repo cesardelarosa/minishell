@@ -3,76 +3,66 @@
 /*                                                        :::      ::::::::   */
 /*   nodes.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: cde-la-r <marvin@42.fr>                    +#+  +:+       +#+        */
+/*   By: cde-la-r <cde-la-r@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/09/26 14:08:36 by cde-la-r          #+#    #+#             */
-/*   Updated: 2024/10/01 17:47:17 by cde-la-r         ###   ########.fr       */
+/*   Created: 2024/10/28 16:48:02 by cde-la-r          #+#    #+#             */
+/*   Updated: 2024/10/30 13:20:53 by cde-la-r         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include <stdlib.h>
-#include <stdio.h>
-#include "libft.h"
-#include "minishell.h"
+#include <unistd.h>
 #include "ast.h"
+#include "libft.h"
 
-/*
-** Creates a new AST node of the specified type, initializing its
-** arguments and left/right child pointers. Returns a pointer to the
-** newly created node, or NULL if memory allocation fails.
-**
-** @param type: The type of the node to create.
-** @param args: The arguments associated with the node.
-** @return: A pointer to the newly created node, or NULL on failure.
-*/
-t_ast_node	*create_node(t_node_type type, char **args, char **envp)
+void	ft_init_file(t_file *file)
+{
+	file->fd = -1;
+	file->file = NULL;
+}
+
+t_ast_node	*create_operator(t_operator_type type)
 {
 	t_ast_node	*node;
 
-	node = (t_ast_node *)malloc(sizeof(t_ast_node));
+	node = malloc(sizeof(t_ast_node));
 	if (!node)
 		return (NULL);
-	node->type = type;
-	if (type == HEREDOC)
-	{
-		if (args && *args)
-			node->delimiter = ft_strdup(*args);
-		else
-			node->delimiter = NULL;
-		node->args = NULL;
-	}
-	else
-	{
-		node->args = args;
-		node->delimiter = NULL;
-	}
-	node->left = NULL;
-	node->right = NULL;
-	node->envp = envp;
+	node->type = OPERATOR;
+	node->u_data.op.type = type;
+	node->u_data.op.left = NULL;
+	node->u_data.op.right = NULL;
 	return (node);
 }
 
-/*
-** Frees the memory allocated for the specified AST node and its children.
-** If the node has associated arguments, they are also freed.
-**
-** @param node: The AST node to free.
-*/
+void	free_file(t_file *file)
+{
+	if (file->fd != -1)
+		close(file->fd);
+	if (file->file)
+		free(file->file);
+}
+
+void	free_command(t_command *cmd)
+{
+	if (cmd->args)
+		ft_free_split(cmd->args);
+	free_file(&cmd->input);
+	free_file(&cmd->output);
+}
+
 void	free_node(t_ast_node *node)
 {
 	if (!node)
 		return ;
-	free_node(node->left);
-	free_node(node->right);
-	if (node->args)
+	if (node->type == COMMAND)
+		free_command(&node->u_data.cmd);
+	else if (node->type == OPERATOR)
 	{
-		ft_free_split(node->args);
-		node->args = NULL;
-	}
-	if (node->delimiter)
-	{
-		free(node->delimiter);
-		node->delimiter = NULL;
+		if (node->u_data.op.left)
+			free_node(node->u_data.op.left);
+		if (node->u_data.op.right)
+			free_node(node->u_data.op.right);
 	}
 	free(node);
 }

@@ -12,160 +12,125 @@
 
 #include <stdlib.h>
 #include <unistd.h>
-#include <stdio.h>
-#include <sys/wait.h>
 #include <fcntl.h>
+#include <stdio.h>
+#include <readline/readline.h>
+#include <readline/history.h>
+#include <limits.h>
+#include <stdint.h>
 #include "libft.h"
 #include "minishell.h"
-#include "builtins.h"
 #include "operators.h"
-#include "operators_bonus.h"
 
-/*
-** Searches for the full path of a command by checking each directory
-** in the PATH environment variable. If found, returns the full path.
-** Otherwise, returns NULL.
-**
-** @param cmd: The command to search for in the PATH directories.
-** @return: The full path of the command if found, NULL otherwise.
-*/
-char	*which(const char *cmd)
+static int	process_redirections(t_ast_node *node, char **args)
 {
-	char	*path;
-	char	*dir;
-	char	*full_path;
-	size_t	cmd_len;
+	int		i;
+	int		check;
+	char	**new_args;
 
-	path = getenv("PATH");
-	cmd_len = ft_strlen(cmd);
-	while (path && *path)
+	check = 0;
+	new_args = malloc(sizeof(char *) * (ft_strarray_len(args) + 1));
+	if (new_args == NULL)
+		return (-1);
+	i = 0;
+	while (*args && check != -1)
 	{
-		dir = (char *)path;
-		while (*path && *path != ':')
-			path++;
-		full_path = (char *)malloc((path - dir) + cmd_len + 2);
-		if (full_path == NULL)
+		if (!ft_strcmp(*args, "<") && *(++args))
+			check = handle_redir_in(&node->u_data.cmd.input, *(args++));
+		else if (!ft_strcmp(*args, ">") && *(++args))
+			check = handle_redir_out(&node->u_data.cmd.output, *(args++), O_TRUNC);
+		else if (!ft_strcmp(*args, ">>") && *(++args))
+			check = handle_redir_out(&node->u_data.cmd.output, *(args++), O_APPEND);
+		else if (!ft_strcmp(*args, "<<") && *(++args))
+			check = handle_heredoc(&node->u_data.cmd.input, *(args++));
+		else
+			new_args[i++] = ft_strdup(*args++);
+	}
+	new_args[i] = NULL;
+	ft_free_split(node->u_data.cmd.args);
+	node->u_data.cmd.args = new_args;
+	return (check);
+}
+
+t_ast_node	*create_command(char **tokens, char **envp)
+{
+	t_ast_node	*node;
+	int			check;
+
+	node = malloc(sizeof(t_ast_node));
+	if (!node)
+		return (NULL);
+	node->type = COMMAND;
+	node->u_data.cmd.args = tokens;
+	node->u_data.cmd.envp = envp;
+	ft_init_file(&node->u_data.cmd.input);
+	ft_init_file(&node->u_data.cmd.output);
+	check = process_redirections(node, node->u_data.cmd.args);
+	if (check == -1)
+	{
+		free_node(node);
+		return (NULL);
+	}
+	return (node);
+}
+
+t_ast_node	*search_and_or(char **tokens, char **envp)
+{
+	int				i;
+	t_ast_node		*node;
+	t_operator_type	type;
+
+	type = -1;
+	i = -1;
+	while (tokens[++i])
+	{
+		if (ft_strncmp(tokens[i], "&&", 3) == 0)
+			type = AND;
+		else if (ft_strncmp(tokens[i], "||", 3) == 0)
+			type = OR;
+		else
+			continue ;
+		node = create_operator(type);
+		if (!node)
 			return (NULL);
-		ft_memcpy(full_path, dir, path - dir);
-		full_path[path - dir] = '/';
-		ft_memcpy(full_path + (path - dir) + 1, cmd, cmd_len);
-		full_path[(path - dir) + cmd_len + 1] = '\0';
-		if (access(full_path, X_OK) == 0)
-			return (full_path);
-		free(full_path);
-		path += *path != '\0';
+		node->u_data.op.left = parser(ft_strarray_dup(tokens, 0, i - 1), envp);
+		node->u_data.op.right = parser(ft_strarray_dup(tokens, i + 1, SIZE_MAX), envp);
+		ft_free_split(tokens);
+		return (node);
 	}
 	return (NULL);
 }
 
-/*
-** Handles the execution of external commands. If the command is found,
-** it runs execve. If not, it tries to find the command using 'which'.
-**
-** @param args: Command and arguments to execute.
-*/
-void	handle_extern(char **args, char **envp)
+t_ast_node	*search_pipe(char **tokens, char **envp)
 {
-	char	*exec_path;
+	int			i;
+	t_ast_node	*node;
 
-	if (access(args[0], X_OK) == 0)
-		execve(args[0], args, envp);
-	else if (access(args[0], F_OK) != 0)
+	i = -1;
+	while (tokens[++i])
 	{
-		exec_path = which(args[0]);
-		if (exec_path != NULL)
-		{
-			execve(exec_path, args, envp);
-			free(exec_path);
-		}
-		else
-			perror("minishell: command not found");
+		if (ft_strncmp(tokens[i], "|", 2) != 0)
+			continue ;
+		node = create_operator(PIPE);
+		if (!node)
+			return (NULL);
+		node->u_data.op.left = parser(ft_strarray_dup(tokens, 0, i - 1), envp);
+		node->u_data.op.right = parser(ft_strarray_dup(tokens, i + 1, SIZE_MAX), envp);
+		ft_free_split(tokens);
+		return (node);
 	}
-	else
-		perror("minishell: execution failed");
-	exit(EXIT_FAILURE);
+	return (NULL);
 }
 
-/*
-** Checks if the command is a built-in. If it is, it calls the corresponding
-** function. Returns 1 if the command is a built-in, 0 otherwise.
-**
-** @param args: The arguments of the command to check.
-** @return: 1 if the command is a built-in, 0 otherwise.
-*/
-int	handle_builtin(char **args, char **envp)
+t_ast_node	*parser(char **tokens, char **envp)
 {
-	if (!ft_strncmp(args[0], "cd", 3))
-		builtin_cd(args);
-	else if (!ft_strncmp(args[0], "pwd", 4))
-		builtin_pwd();
-	else if (!ft_strncmp(args[0], "echo", 5))
-		builtin_echo(args);
-	else if (!ft_strncmp(args[0], "exit", 5))
-		builtin_exit(args);
-	else if (!ft_strncmp(args[0], "export", 7))
-		builtin_export(args, envp);
-	else if (!ft_strncmp(args[0], "unset", 6))
-		builtin_unset(args);
-	else if (!ft_strncmp(args[0], "env", 4))
-		builtin_env(envp);
-	else
-		return (0);
-	return (1);
-}
+	t_ast_node	*node;
 
-/*
-** Handles the execution of a single command. If the command is not a built-in,
-** it forks a new process to execute the external command.
-**
-** @param node: The AST node representing the command to execute.
-*/
-void	handle_command(t_ast_node *node)
-{
-	pid_t	pid;
-	int		status;
-
-	if (node == NULL || node->args == NULL)
-		return ;
-	if (node->args[0] != NULL && handle_builtin(node->args, node->envp) == 0)
-	{
-		pid = fork();
-		if (pid == 0)
-			handle_extern(node->args, node->envp);
-		else if (pid < 0)
-			perror("minishell: fork error");
-		else
-		{
-			if (waitpid(pid, &status, 0) == -1)
-				perror("minishell: waitpid error");
-			if (WIFEXITED(status))
-				g_exit_status = WEXITSTATUS(status);
-		}
-	}
-}
-
-/*
-** Recursively executes the AST tree. It checks if the current node is a command
-** and handles it. Then it continues to the left and right nodes.
-**
-** @param root: The root node of the AST to execute.
-*/
-void	exec(t_ast_node *root)
-{
-	if (root == NULL)
-		return ;
-	if (root->type == COMMAND)
-		handle_command(root);
-	else if (root->type == PIPE)
-		handle_pipe(root);
-	else if (root->type == REDIR_IN)
-		handle_redirection(root, O_RDONLY);
-	else if (root->type == REDIR_OUT)
-		handle_redirection(root, O_WRONLY | O_CREAT | O_TRUNC);
-	else if (root->type == REDIR_APPEND)
-		handle_redirection(root, O_WRONLY | O_CREAT | O_APPEND);
-	else if (root->type == HEREDOC)
-		handle_heredoc(root);
-	else
-		printf("minishell: unsupported node type\n");
+	node = search_and_or(tokens, envp);
+	if (node != NULL)
+		return (node);
+	node = search_pipe(tokens, envp);
+	if (node != NULL)
+		return (node);
+	return (create_command(tokens, envp));
 }

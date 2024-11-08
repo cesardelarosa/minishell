@@ -10,69 +10,107 @@
 /*                                                                            */
 /* ************************************************************************** */
 
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   prompt.c                                           :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: cde-la-r <cde-la-r@student.42.fr>          +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2024/08/30 17:56:41 by cde-la-r          #+#    #+#             */
+/*   Updated: 2024/10/30 21:01:12 by cde-la-r         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include <stdio.h>
 #include <stdlib.h>
+#include <curses.h>
+#include <term.h>
+#include <fcntl.h>
+#include <unistd.h>
 #include <readline/readline.h>
 #include <readline/history.h>
 #include "libft.h"
-#include "prompt.h"
 #include "minishell.h"
+#include "colors.h"
 
-/*
-** Checks if the terminal supports colors based on the TERM and COLORTERM
-** environment variables.
-**
-** @return: 1 if colors are supported, 0 otherwise.
-*/
-static int	supports_colors(void)
+static char	*get_user(void)
 {
-	char	*term;
-	char	*colorterm;
+	char	*user;
 
-	term = getenv("TERM");
-	if (term && (ft_strnstr(term, "xterm", 5)
-			|| ft_strnstr(term, "screen", 6)
-			|| ft_strnstr(term, "color", 5)
-			|| ft_strnstr(term, "linux", 5)
-			|| ft_strnstr(term, "ansi", 4)))
-		return (1);
-	colorterm = getenv("COLORTERM");
-	if (colorterm && (ft_strncmp(colorterm, "truecolor", 9) == 0
-			|| ft_strncmp(colorterm, "24bit", 5) == 0))
-		return (1);
-	return (0);
+	user = getenv("USER");
+	if (user == NULL)
+		user = getenv("LOGNAME");
+	if (user == NULL)
+		return (ft_strdup("user"));
+	return (ft_strdup(user));
 }
 
-/*
-** Gets the prompt string based on terminal color support.
-**
-** @return: The constructed prompt string, either colored or plain.
-*/
+static char	*get_host(void)
+{
+	char	hostname[256];
+	int		fd;
+	ssize_t	len;
+
+	fd = open("/etc/hostname", O_RDONLY);
+	if (fd == -1)
+		return (ft_strdup("host"));
+	len = read(fd, hostname, sizeof(hostname) - 1);
+	if (len <= 0)
+	{
+		close(fd);
+		return (ft_strdup("host"));
+	}
+	hostname[len] = '\0';
+	close(fd);
+	len = 0;
+	while (hostname[len++])
+	{
+		if (hostname[len] == '.' || hostname[len] == '\n')
+		{
+			hostname[len] = '\0';
+			break ;
+		}
+	}
+	return (ft_strdup(hostname));
+}
+
+static char	*get_path(void)
+{
+	char	cwd[1024];
+	char	*home;
+
+	if (getcwd(cwd, sizeof(cwd)) == NULL)
+		return (ft_strdup("path"));
+	home = getenv("HOME");
+	if (home && ft_strncmp(cwd, home, ft_strlen(home)) == 0)
+		return (ft_strjoin("~", cwd + ft_strlen(home)));
+	return (ft_strdup(cwd));
+}
+
 void	print_prompt(void)
 {
+	char	*term;
 	char	*user;
 	char	*host;
 	char	*path;
 
+	term = getenv("TERM");
 	user = get_user();
 	host = get_host();
 	path = get_path();
-	if (supports_colors())
-		printf(BOLD_CYAN"%s"BOLD_WHITE" at "BOLD_YELLOW"%s"BOLD_WHITE
-			" in "BOLD_GREEN"%s"BOLD_WHITE"\n"RESET, user, host, path);
+	if (term != NULL && (tgetent(NULL, term) > 0 && tgetnum("colors") >= 0))
+	{
+		printf(TEXT_CYAN"%s"TEXT_WHITE" at "TEXT_YELLOW"%s"TEXT_WHITE" in "
+			TEXT_GREEN"%s\n"RESET_COLOR, user, host, path);
+	}
 	else
-		printf("%s at %s in %s \n", user, host, path);
+		printf("%s at %s in %s\n", user, host, path);
 	free(user);
 	free(host);
 	free(path);
 }
 
-/*
-** Reads user input from the command line using readline, handling prompt 
-** display and history.
-**
-** @return: The input string entered by the user.
-*/
 char	*read_input(void)
 {
 	char	*input;

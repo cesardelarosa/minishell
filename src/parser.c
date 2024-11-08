@@ -11,72 +11,126 @@
 /* ************************************************************************** */
 
 #include <stdlib.h>
-#include "minishell.h"
-#include "parser_utils.h"
+#include <unistd.h>
+#include <fcntl.h>
 #include <stdio.h>
+#include <readline/readline.h>
+#include <readline/history.h>
+#include <limits.h>
+#include <stdint.h>
+#include "libft.h"
+#include "minishell.h"
+#include "operators.h"
 
-/*
-** Parses an array of tokens into an abstract syntax tree (AST).
-**
-** This function recursively processes the tokens to create nodes
-** based on the highest precedence operator found within the specified
-** range of tokens.
-**
-** @param tokens: The array of tokens to parse.
-** @param start: The starting index of the range to parse.
-** @param end: The ending index of the range to parse.
-** @return: A pointer to the root of the AST node created.
-*/
-t_ast_node	*parse_tokens(char **tokens, int start, int end, char **envp)
+static int	process_redirections(t_ast_node *node, char **args)
 {
-	int			op_pos;
-	t_ast_node	*node;
-	t_node_type	op_type;
+	int		i;
+	int		check;
+	char	**new_args;
 
-	if (start > end)
-		return (NULL);
-	op_pos = find_highest_operator(tokens, start, end);
-	op_type = get_operator_type(tokens[op_pos]);
-	if (op_type == COMMAND)
-		node = create_node(COMMAND, dup_args_range(tokens, start, end), envp);
-	else if (op_type == HEREDOC)
+	check = 0;
+	new_args = malloc(sizeof(char *) * (ft_strarray_len(args) + 1));
+	if (new_args == NULL)
+		return (-1);
+	i = 0;
+	while (*args && check != -1)
 	{
-		if (op_pos + 1 > end)
-		{
-			perror("minishell: syntax error near unexpected token 'newline'");
-			return (NULL);
-		}
-		node = create_node(op_type, &tokens[op_pos + 1], envp);
+		if (!ft_strcmp(*args, "<") && *(++args))
+			check = handle_redir_in(&node->u_data.cmd.input, *(args++));
+		else if (!ft_strcmp(*args, ">") && *(++args))
+			check = handle_redir_out(&node->u_data.cmd.output, *(args++), O_TRUNC);
+		else if (!ft_strcmp(*args, ">>") && *(++args))
+			check = handle_redir_out(&node->u_data.cmd.output, *(args++), O_APPEND);
+		else if (!ft_strcmp(*args, "<<") && *(++args))
+			check = handle_heredoc(&node->u_data.cmd.input, *(args++));
+		else
+			new_args[i++] = ft_strdup(*args++);
 	}
-	else
-		node = create_node(op_type, NULL, envp);
-	node->left = parse_tokens(tokens, start, op_pos - 1, envp);
-	node->right = parse_tokens(tokens,
-			op_pos + 1 + (op_type == HEREDOC), end, envp);
+	new_args[i] = NULL;
+	ft_free_split(node->u_data.cmd.args);
+	node->u_data.cmd.args = new_args;
+	return (check);
+}
+
+t_ast_node	*create_command(char **tokens, char **envp)
+{
+	t_ast_node	*node;
+	int			check;
+
+	node = malloc(sizeof(t_ast_node));
+	if (!node)
+		return (NULL);
+	node->type = COMMAND;
+	node->u_data.cmd.args = tokens;
+	node->u_data.cmd.envp = envp;
+	ft_init_file(&node->u_data.cmd.input);
+	ft_init_file(&node->u_data.cmd.output);
+	check = process_redirections(node, node->u_data.cmd.args);
+	if (check == -1)
+	{
+		free_node(node);
+		return (NULL);
+	}
 	return (node);
 }
 
-/*
-** Parses the entire array of tokens to generate an AST.
-**
-** This function calculates the length of the tokens array, invokes
-** the parsing function to create the AST, and frees the original
-** tokens array.
-**
-** @param tokens: The array of tokens to parse.
-** @return: A pointer to the root of the AST created.
-*/
+t_ast_node	*search_and_or(char **tokens, char **envp)
+{
+	int				i;
+	t_ast_node		*node;
+	t_operator_type	type;
+
+	type = -1;
+	i = -1;
+	while (tokens[++i])
+	{
+		if (ft_strncmp(tokens[i], "&&", 3) == 0)
+			type = AND;
+		else if (ft_strncmp(tokens[i], "||", 3) == 0)
+			type = OR;
+		else
+			continue ;
+		node = create_operator(type);
+		if (!node)
+			return (NULL);
+		node->u_data.op.left = parser(ft_strarray_dup(tokens, 0, i - 1), envp);
+		node->u_data.op.right = parser(ft_strarray_dup(tokens, i + 1, SIZE_MAX), envp);
+		ft_free_split(tokens);
+		return (node);
+	}
+	return (NULL);
+}
+
+t_ast_node	*search_pipe(char **tokens, char **envp)
+{
+	int			i;
+	t_ast_node	*node;
+
+	i = -1;
+	while (tokens[++i])
+	{
+		if (ft_strncmp(tokens[i], "|", 2) != 0)
+			continue ;
+		node = create_operator(PIPE);
+		if (!node)
+			return (NULL);
+		node->u_data.op.left = parser(ft_strarray_dup(tokens, 0, i - 1), envp);
+		node->u_data.op.right = parser(ft_strarray_dup(tokens, i + 1, SIZE_MAX), envp);
+		ft_free_split(tokens);
+		return (node);
+	}
+	return (NULL);
+}
+
 t_ast_node	*parser(char **tokens, char **envp)
 {
-	int			len;
-	t_ast_node	*root;
+	t_ast_node	*node;
 
-	if (!tokens)
-		return (NULL);
-	len = 0;
-	while (tokens[len])
-		len++;
-	root = parse_tokens(tokens, 0, len - 1, envp);
-	ft_free_split(tokens);
-	return (root);
+	node = search_and_or(tokens, envp);
+	if (node != NULL)
+		return (node);
+	node = search_pipe(tokens, envp);
+	if (node != NULL)
+		return (node);
+	return (create_command(tokens, envp));
 }
