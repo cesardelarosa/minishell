@@ -18,7 +18,7 @@
 # define WELCOME_MSG \
     "\nWelcome to Minishell! by adpedrer & cde-la-r.\nType 'exit' to quit.\n\n"
 
-typedef struct	s_copy_data
+typedef struct s_copy_data
 {
 	char	*str;
 	int		*i;
@@ -44,17 +44,18 @@ int			sup_quotes(char **str, int i, int j);
 int			is_quotes(char c);
 
 //env
-int		process_variable(char **expanded, char **start);
-int		process_exit_status(char **expanded, char **start);
-int		return_error(char *error);
-char	*ft_strreplace(char *str, char *start, char *end, char *replacement);
-char	*get_env_var(char *var);
-char	*expand_env_vars(char *input);
+int			process_variable(char **expanded, char **start);
+int			process_exit_status(char **expanded, char **start);
+int			return_error(char *error);
+char		*ft_strreplace(char *str, char *start, char *end,
+				char *replacement);
+char		*get_env_var(char *var);
+char		*expand_env_vars(char *input);
 
 //builtin
-void	process_export_argument(char *arg);
-int		is_valid_identifier(const char *str);
-void	print_exported_variables(void);
+void		process_export_argument(char *arg);
+int			is_valid_identifier(const char *str);
+void		print_exported_variables(void);
 
 void		print_prompt(void);
 
