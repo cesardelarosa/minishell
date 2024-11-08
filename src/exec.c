@@ -3,134 +3,265 @@
 /*                                                        :::      ::::::::   */
 /*   exec.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: cde-la-r <cde-la-r@student.42.fr>          +#+  +:+       +#+        */
+/*   By: cde-la-r <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/08/30 13:45:46 by cde-la-r          #+#    #+#             */
-/*   Updated: 2024/10/17 00:46:54 by cde-la-r         ###   ########.fr       */
+/*   Created: 2024/10/30 13:02:35 by cde-la-r          #+#    #+#             */
+/*   Updated: 2024/10/31 01:05:18 by cde-la-r         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include <stdlib.h>
 #include <unistd.h>
-#include <fcntl.h>
+#include <sys/wait.h>
+#include <stdlib.h>
 #include <stdio.h>
-#include <readline/readline.h>
-#include <readline/history.h>
-#include <limits.h>
-#include <stdint.h>
+#include <fcntl.h>
 #include "libft.h"
 #include "minishell.h"
 #include "operators.h"
+#include "builtins.h"
 
-static int	process_redirections(t_ast_node *node, char **args)
+int	setup_input_redirection(t_command *cmd, int *stdin_copy)
 {
-	int		i;
-	int		check;
-	char	**new_args;
+	if (cmd->input.fd != -1)
+	{
+		if (stdin_copy != NULL)
+		{
+			*stdin_copy = dup(STDIN_FILENO);
+			if (*stdin_copy == -1)
+			{
+				perror("dup stdin");
+				return (-1);
+			}
+		}
+		if (dup2(cmd->input.fd, STDIN_FILENO) == -1)
+		{
+			perror("dup2 input");
+			if (stdin_copy != NULL && *stdin_copy != -1)
+				close(*stdin_copy);
+			return (-1);
+		}
+		close(cmd->input.fd);
+		cmd->input.fd = -1;
+	}
+	return (0);
+}
 
-	check = 0;
-	new_args = malloc(sizeof(char *) * (ft_strarray_len(args) + 1));
-	if (new_args == NULL)
+int	setup_output_redirection(t_command *cmd, int *stdout_copy)
+{
+	if (cmd->output.fd != -1)
+	{
+		if (stdout_copy != NULL)
+		{
+			*stdout_copy = dup(STDOUT_FILENO);
+			if (*stdout_copy == -1)
+			{
+				perror("dup stdout");
+				return (-1);
+			}
+		}
+		if (dup2(cmd->output.fd, STDOUT_FILENO) == -1)
+		{
+			perror("dup2 output");
+			if (stdout_copy != NULL && *stdout_copy != -1)
+				close(*stdout_copy);
+			return (-1);
+		}
+		close(cmd->output.fd);
+		cmd->output.fd = -1;
+	}
+	return (0);
+}
+
+int	setup_redirections(t_command *cmd, int *stdin_copy, int *stdout_copy)
+{
+	if (stdin_copy != NULL)
+		*stdin_copy = -1;
+	if (stdout_copy != NULL)
+		*stdout_copy = -1;
+	if (setup_input_redirection(cmd, stdin_copy) == -1)
 		return (-1);
-	i = 0;
-	while (*args && check != -1)
+	if (setup_output_redirection(cmd, stdout_copy) == -1)
 	{
-		if (!ft_strcmp(*args, "<") && *(++args))
-			check = handle_redir_in(&node->u_data.cmd.input, *(args++));
-		else if (!ft_strcmp(*args, ">") && *(++args))
-			check = handle_redir_out(&node->u_data.cmd.output, *(args++), O_TRUNC);
-		else if (!ft_strcmp(*args, ">>") && *(++args))
-			check = handle_redir_out(&node->u_data.cmd.output, *(args++), O_APPEND);
-		else if (!ft_strcmp(*args, "<<") && *(++args))
-			check = handle_heredoc(&node->u_data.cmd.input, *(args++));
-		else
-			new_args[i++] = ft_strdup(*args++);
+		if (stdin_copy != NULL && *stdin_copy != -1)
+		{
+			dup2(*stdin_copy, STDIN_FILENO);
+			close(*stdin_copy);
+		}
+		return (-1);
 	}
-	new_args[i] = NULL;
-	ft_free_split(node->u_data.cmd.args);
-	node->u_data.cmd.args = new_args;
-	return (check);
+	return (0);
 }
 
-t_ast_node	*create_command(char **tokens, char **envp)
+void	reset_redirections(int stdin_copy, int stdout_copy)
 {
-	t_ast_node	*node;
-	int			check;
-
-	node = malloc(sizeof(t_ast_node));
-	if (!node)
-		return (NULL);
-	node->type = COMMAND;
-	node->u_data.cmd.args = tokens;
-	node->u_data.cmd.envp = envp;
-	ft_init_file(&node->u_data.cmd.input);
-	ft_init_file(&node->u_data.cmd.output);
-	check = process_redirections(node, node->u_data.cmd.args);
-	if (check == -1)
+	if (stdin_copy != -1)
 	{
-		free_node(node);
-		return (NULL);
+		dup2(stdin_copy, STDIN_FILENO);
+		close(stdin_copy);
 	}
-	return (node);
+	if (stdout_copy != -1)
+	{
+		dup2(stdout_copy, STDOUT_FILENO);
+		close(stdout_copy);
+	}
 }
 
-t_ast_node	*search_and_or(char **tokens, char **envp)
+t_builtin	is_builtin(char *cmd)
 {
-	int				i;
-	t_ast_node		*node;
-	t_operator_type	type;
+	if (ft_strcmp(cmd, "cd") == 0)
+		return (BUILTIN_CD);
+	else if (ft_strcmp(cmd, "pwd") == 0)
+		return (BUILTIN_PWD);
+	else if (ft_strcmp(cmd, "echo") == 0)
+		return (BUILTIN_ECHO);
+	else if (ft_strcmp(cmd, "exit") == 0)
+		return (BUILTIN_EXIT);
+	else if (ft_strcmp(cmd, "export") == 0)
+		return (BUILTIN_EXPORT);
+	else if (ft_strcmp(cmd, "unset") == 0)
+		return (BUILTIN_UNSET);
+	else if (ft_strcmp(cmd, "env") == 0)
+		return (BUILTIN_ENV);
+	return (BUILTIN_NONE);
+}
 
-	type = -1;
-	i = -1;
-	while (tokens[++i])
+void	execute_builtin(t_builtin builtin, t_command *cmd)
+{
+	int	stdin_copy;
+	int	stdout_copy;
+
+	if (setup_redirections(cmd, &stdin_copy, &stdout_copy) == -1)
 	{
-		if (ft_strncmp(tokens[i], "&&", 3) == 0)
-			type = AND;
-		else if (ft_strncmp(tokens[i], "||", 3) == 0)
-			type = OR;
-		else
-			continue ;
-		node = create_operator(type);
-		if (!node)
+		g_exit_status = 1;
+		return ;
+	}
+	if (builtin == BUILTIN_CD)
+		builtin_cd(cmd->args);
+	else if (builtin == BUILTIN_PWD)
+		builtin_pwd();
+	else if (builtin == BUILTIN_ECHO)
+		builtin_echo(cmd->args);
+	else if (builtin == BUILTIN_EXIT)
+		builtin_exit(cmd->args);
+	else if (builtin == BUILTIN_EXPORT)
+		builtin_export(cmd->args, cmd->envp);
+	else if (builtin == BUILTIN_UNSET)
+		builtin_unset(cmd->args);
+	else if (builtin == BUILTIN_ENV)
+		builtin_env(cmd->envp);
+	reset_redirections(stdin_copy, stdout_copy);
+}
+
+char	*which(const char *cmd)
+{
+	char	*path;
+	char	*dir;
+	char	*full_path;
+	size_t	cmd_len;
+
+	path = getenv("PATH");
+	cmd_len = ft_strlen(cmd);
+	while (path && *path)
+	{
+		dir = (char *)path;
+		while (*path && *path != ':')
+			path++;
+		full_path = malloc((path - dir) + cmd_len + 2);
+		if (full_path == NULL)
 			return (NULL);
-		node->u_data.op.left = parser(ft_strarray_dup(tokens, 0, i - 1), envp);
-		node->u_data.op.right = parser(ft_strarray_dup(tokens, i + 1, SIZE_MAX), envp);
-		ft_free_split(tokens);
-		return (node);
+		ft_memcpy(full_path, dir, path - dir);
+		full_path[path - dir] = '/';
+		ft_memcpy(full_path + (path - dir) + 1, cmd, cmd_len);
+		full_path[(path - dir) + cmd_len + 1] = '\0';
+		if (access(full_path, X_OK) == 0)
+			return (full_path);
+		free(full_path);
+		if (*path == ':')
+			path++;
 	}
 	return (NULL);
 }
 
-t_ast_node	*search_pipe(char **tokens, char **envp)
+void	execute_external(t_command *cmd)
 {
-	int			i;
-	t_ast_node	*node;
+	char	*exec_path;
 
-	i = -1;
-	while (tokens[++i])
+	if (cmd->args[0] == NULL)
+		exit(EXIT_FAILURE);
+	if (access(cmd->args[0], X_OK) == 0)
+		exec_path = cmd->args[0];
+	else
+		exec_path = which(cmd->args[0]);
+	if (exec_path == NULL)
 	{
-		if (ft_strncmp(tokens[i], "|", 2) != 0)
-			continue ;
-		node = create_operator(PIPE);
-		if (!node)
-			return (NULL);
-		node->u_data.op.left = parser(ft_strarray_dup(tokens, 0, i - 1), envp);
-		node->u_data.op.right = parser(ft_strarray_dup(tokens, i + 1, SIZE_MAX), envp);
-		ft_free_split(tokens);
-		return (node);
+		perror("minishell: command not found");
+		exit(EXIT_FAILURE);
 	}
-	return (NULL);
+	if (execve(exec_path, cmd->args, cmd->envp) == -1)
+	{
+		perror("execve failed");
+		exit(EXIT_FAILURE);
+	}
 }
 
-t_ast_node	*parser(char **tokens, char **envp)
+void	execute_external_command(t_command *cmd)
 {
-	t_ast_node	*node;
+	pid_t	pid;
+	int		status;
 
-	node = search_and_or(tokens, envp);
-	if (node != NULL)
-		return (node);
-	node = search_pipe(tokens, envp);
-	if (node != NULL)
-		return (node);
-	return (create_command(tokens, envp));
+	pid = fork();
+	if (pid == 0)
+	{
+		if (setup_redirections(cmd, NULL, NULL) == -1)
+			exit(EXIT_FAILURE);
+		execute_external(cmd);
+		exit(EXIT_FAILURE);
+	}
+	else if (pid < 0)
+	{
+		perror("minishell: fork error");
+		g_exit_status = 1;
+	}
+	else
+	{
+		waitpid(pid, &status, 0);
+		if (WIFEXITED(status))
+			g_exit_status = WEXITSTATUS(status);
+		else if (WIFSIGNALED(status))
+			g_exit_status = 128 + WTERMSIG(status);
+	}
+}
+
+void	handle_command(t_command *cmd)
+{
+	t_builtin	builtin;
+
+	if (cmd->args[0] == NULL)
+		return ;
+	builtin = is_builtin(cmd->args[0]);
+	if (builtin != BUILTIN_NONE)
+		execute_builtin(builtin, cmd);
+	else
+		execute_external_command(cmd);
+}
+
+void	exec(t_ast_node *node)
+{
+	if (node == NULL)
+		return ;
+	if (node->type == COMMAND)
+		handle_command(&node->u_data.cmd);
+	else if (node->type == OPERATOR)
+	{
+		if (node->u_data.op.type == PIPE)
+			handle_pipe(node->u_data.op);
+		else if (node->u_data.op.type == AND)
+			handle_and(node->u_data.op);
+		else if (node->u_data.op.type == OR)
+			handle_or(node->u_data.op);
+		else
+			perror("unsupported operator");
+	}
+	else
+		perror("unsupported node type");
 }

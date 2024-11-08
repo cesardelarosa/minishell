@@ -13,6 +13,18 @@
 #ifndef BUILTINS_H
 # define BUILTINS_H
 
+typedef enum e_builtin
+{
+	BUILTIN_NONE,
+	BUILTIN_CD,
+	BUILTIN_PWD,
+	BUILTIN_ECHO,
+	BUILTIN_EXIT,
+	BUILTIN_EXPORT,
+	BUILTIN_UNSET,
+	BUILTIN_ENV
+}	t_builtin;
+
 void	builtin_exit(char **args);
 void	builtin_echo(char **args);
 void	builtin_pwd(void);
