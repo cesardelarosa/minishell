@@ -56,7 +56,7 @@ char	*ft_strreplace(char *str, char *start, char *end, char *replacement)
 	return (new_str);
 }
 
-// Procesa la variable especial '$?'
+// Process special variable '$?'
 int	process_exit_status(char **expanded, char **start)
 {
 	char		*end;
@@ -84,7 +84,7 @@ int	process_exit_status(char **expanded, char **start)
 	return (0);
 }
 
-// Procesa variables de entorno con nombre
+// Process env-vars with name
 int	process_named_variable(char **expanded, char **start, size_t offset)
 {
 	char	*end;
@@ -114,7 +114,7 @@ int	process_named_variable(char **expanded, char **start, size_t offset)
 	return (0);
 }
 
-// Función auxiliar para procesar una variable en la cadena
+// Process a variable in the string
 int	process_variable(char **expanded, char **start)
 {
 	char	*end;
