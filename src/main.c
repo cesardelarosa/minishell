@@ -24,7 +24,7 @@ int	g_exit_status = 0;
 */
 int	main(int argc, char **argv, char **envp)
 {
-	t_ast_node	*root;
+	t_ast_node	*root; //check
 
 	(void)argc;
 	(void)argv;
