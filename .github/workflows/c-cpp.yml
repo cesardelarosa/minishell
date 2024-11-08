@@ -34,9 +34,12 @@ jobs:
       run: |
         python3 -m pip install --upgrade pip setuptools
         python3 -m pip install norminette
+
     - name: Check code with Norminette
       id: norminette
       run: |
         norminette > norminette_output.log
-        grep -q "Error" norminette_output.log && (echo "Norminette detected errors. Review the output." && cat norminette_output.log)
-
+        if grep -q "Error" norminette_output.log; then
+          echo "Norminette detected errors. Review the output."
+          cat norminette_output.log
+        fi
