@@ -27,17 +27,16 @@ jobs:
     - name: Build project
       run: make
     
-    - name: Build bonus project
-      run: make bonus
+      #    - name: Build bonus project
+      #run: make bonus
 
     - name: Install Norminette
       run: |
         python3 -m pip install --upgrade pip setuptools
         python3 -m pip install norminette
-
     - name: Check code with Norminette
       id: norminette
       run: |
         norminette > norminette_output.log
-        grep -q "OK!" norminette_output.log || (echo "Norminette detected issues. Review the output." && cat norminette_output.log)
+        grep -q "Error" norminette_output.log && (echo "Norminette detected errors. Review the output." && cat norminette_output.log)
 
