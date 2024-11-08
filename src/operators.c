@@ -22,15 +22,10 @@
 /*
 ** Handle pipe ('|'). Redirects output of one command to input of another.
 */
-void	fork_and_exec(t_ast_node *node, int *pipe_fd, int is_right)
+void	fork_and_exec(t_ast_node *node, int *pipe_fd, int fileno)
 {
 	int	pid;
-	int	fileno;
 
-	if (is_right)
-		fileno = STDIN_FILENO;
-	else
-		fileno = STDOUT_FILENO;
 	pid = fork();
 	if (pid == -1)
 	{
@@ -39,10 +34,10 @@ void	fork_and_exec(t_ast_node *node, int *pipe_fd, int is_right)
 	}
 	if (pid == 0)
 	{
-		dup2(pipe_fd[!is_right], fileno);
+		dup2(pipe_fd[fileno == STDOUT_FILENO], fileno);
 		close(pipe_fd[0]);
 		close(pipe_fd[1]);
-		if (is_right)
+		if (fileno == STDIN_FILENO)
 			exec(node->right);
 		else
 			exec(node->left);
@@ -65,8 +60,8 @@ void	handle_pipe(t_ast_node *node)
 		perror("minishell: pipe error");
 		return ;
 	}
-	fork_and_exec(node, pipe_fd, 1);
-	fork_and_exec(node, pipe_fd, 0);
+	fork_and_exec(node, pipe_fd, STDIN_FILENO);
+	fork_and_exec(node, pipe_fd, STDOUT_FILENO);
 	close(pipe_fd[0]);
 	close(pipe_fd[1]);
 	waitpid(-1, &status, 0);
