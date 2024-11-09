@@ -22,28 +22,47 @@
 #include "minishell.h"
 #include "operators.h"
 
+static int	handle_single_redirection(t_ast_node *node, char ***args)
+{
+	int	check;
+
+	check = 0;
+	if (!ft_strcmp(**args, "<") && *(++(*args)))
+	{
+		check = handle_redirection(&node->u_data.cmd.input, *((*args)++), \
+			O_RDONLY);
+	}
+	else if (!ft_strcmp(**args, ">") && *(++(*args)))
+	{
+		check = handle_redirection(&node->u_data.cmd.output, *((*args)++), \
+			O_WRONLY | O_CREAT | O_TRUNC);
+	}
+	else if (!ft_strcmp(**args, ">>") && *(++(*args)))
+	{
+		check = handle_redirection(&node->u_data.cmd.output, *((*args)++), \
+			O_WRONLY | O_CREAT | O_APPEND);
+	}
+	else if (!ft_strcmp(**args, "<<") && *(++(*args)))
+		check = handle_heredoc(&node->u_data.cmd.input, *((*args)++));
+	return (check);
+}
+
 static int	process_redirections(t_ast_node *node, char **args)
 {
 	int		i;
 	int		check;
 	char	**new_args;
 
-	check = 0;
 	new_args = malloc(sizeof(char *) * (ft_strarray_len(args) + 1));
 	if (new_args == NULL)
 		return (-1);
 	i = 0;
-	while (*args && check != -1)
+	while (*args)
 	{
-		if (!ft_strcmp(*args, "<") && *(++args))
-			check = handle_redir_in(&node->u_data.cmd.input, *(args++));
-		else if (!ft_strcmp(*args, ">") && *(++args))
-			check = handle_redir_out(&node->u_data.cmd.output, *(args++), O_TRUNC);
-		else if (!ft_strcmp(*args, ">>") && *(++args))
-			check = handle_redir_out(&node->u_data.cmd.output, *(args++), O_APPEND);
-		else if (!ft_strcmp(*args, "<<") && *(++args))
-			check = handle_heredoc(&node->u_data.cmd.input, *(args++));
-		else
+		check = handle_single_redirection(node, &args);
+		if (check == -1)
+			break ;
+		if (check == 0 && *args)
 			new_args[i++] = ft_strdup(*args++);
 	}
 	new_args[i] = NULL;
@@ -55,7 +74,6 @@ static int	process_redirections(t_ast_node *node, char **args)
 t_ast_node	*create_command(char **tokens, char **envp)
 {
 	t_ast_node	*node;
-	int			check;
 
 	node = malloc(sizeof(t_ast_node));
 	if (!node)
@@ -65,8 +83,7 @@ t_ast_node	*create_command(char **tokens, char **envp)
 	node->u_data.cmd.envp = envp;
 	ft_init_file(&node->u_data.cmd.input);
 	ft_init_file(&node->u_data.cmd.output);
-	check = process_redirections(node, node->u_data.cmd.args);
-	if (check == -1)
+	if (process_redirections(node, node->u_data.cmd.args) == -1)
 	{
 		free_node(node);
 		return (NULL);
@@ -74,62 +91,51 @@ t_ast_node	*create_command(char **tokens, char **envp)
 	return (node);
 }
 
-t_ast_node	*search_and_or(char **tokens, char **envp)
-{
-	int				i;
-	t_ast_node		*node;
-	t_operator_type	type;
-
-	type = -1;
-	i = -1;
-	while (tokens[++i])
-	{
-		if (ft_strncmp(tokens[i], "&&", 3) == 0)
-			type = AND;
-		else if (ft_strncmp(tokens[i], "||", 3) == 0)
-			type = OR;
-		else
-			continue ;
-		node = create_operator(type);
-		if (!node)
-			return (NULL);
-		node->u_data.op.left = parser(ft_strarray_dup(tokens, 0, i - 1), envp);
-		node->u_data.op.right = parser(ft_strarray_dup(tokens, i + 1, SIZE_MAX), envp);
-		ft_free_split(tokens);
-		return (node);
-	}
-	return (NULL);
-}
-
-t_ast_node	*search_pipe(char **tokens, char **envp)
+static t_ast_node	*search_operator(char **tokens, char **envp,
+					t_operator_match *ops, size_t ops_len)
 {
 	int			i;
+	size_t		j;
 	t_ast_node	*node;
 
 	i = -1;
 	while (tokens[++i])
 	{
-		if (ft_strncmp(tokens[i], "|", 2) != 0)
-			continue ;
-		node = create_operator(PIPE);
-		if (!node)
-			return (NULL);
-		node->u_data.op.left = parser(ft_strarray_dup(tokens, 0, i - 1), envp);
-		node->u_data.op.right = parser(ft_strarray_dup(tokens, i + 1, SIZE_MAX), envp);
-		ft_free_split(tokens);
-		return (node);
+		j = -1;
+		while (j++ < ops_len)
+		{
+			if (ft_strcmp(tokens[i], (char *)ops[j].op_str))
+				continue ;
+			node = create_operator(ops[j].type);
+			if (!node)
+				return (NULL);
+			node->u_data.op.left = parser(ft_strarray_dup(tokens, \
+				0, i - 1), envp);
+			node->u_data.op.right = parser(ft_strarray_dup(tokens, \
+				i + 1, SIZE_MAX), envp);
+			ft_free_split(tokens);
+			return (node);
+		}
 	}
 	return (NULL);
 }
 
 t_ast_node	*parser(char **tokens, char **envp)
 {
-	t_ast_node	*node;
+	t_ast_node			*node;
+	t_operator_match	and_or_ops[2];
+	t_operator_match	pipe_ops[1];
 
-	node = search_and_or(tokens, envp);
+	and_or_ops[0].op_str = "&&";
+	and_or_ops[0].type = AND;
+	and_or_ops[1].op_str = "||";
+	and_or_ops[1].type = OR;
+	pipe_ops[0].op_str = "|";
+	pipe_ops[0].type = PIPE;
+	node = search_operator(tokens, envp, and_or_ops, 2);
 	if (node != NULL)
 		return (node);
-	node = search_pipe(tokens, envp);
+	node = search_operator(tokens, envp, pipe_ops, 1);
 	if (node != NULL)
 		return (node);
 	return (create_command(tokens, envp));

@@ -27,6 +27,12 @@ typedef struct s_copy_data
 	char	*new_str;
 }	t_copy_data;
 
+typedef struct s_operator_match
+{
+	const char		*op_str;
+	t_operator_type	type;
+}	t_operator_match;
+
 extern int	g_exit_status;
 
 char		**ft_free_split(char **result);

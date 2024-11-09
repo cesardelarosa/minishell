@@ -20,103 +20,95 @@
 #include "libft.h"
 #include "minishell.h"
 
+void	fork_and_exec(t_operator op, int *pipe_fd, int is_right)
+{
+	pid_t	pid;
+	int		fileno;
+
+	if (is_right)
+		fileno = STDIN_FILENO;
+	else
+		fileno = STDOUT_FILENO;
+	pid = fork();
+	if (pid == -1)
+	{
+		perror("minishell: fork error");
+		return ;
+	}
+	if (pid == 0)
+	{
+		dup2(pipe_fd[!is_right], fileno);
+		close(pipe_fd[0]);
+		close(pipe_fd[1]);
+		if (is_right)
+			exec(op.right);
+		else
+			exec(op.left);
+		exit(EXIT_FAILURE);
+	}
+}
+
 void	handle_pipe(t_operator op)
 {
-	int		fd[2];
-	pid_t	pid_left;
-	pid_t	pid_right;
+	int	pipe_fd[2];
+	int	status;
 
-	if (pipe(fd) == -1)
+	if (!op.left || !op.right)
 	{
-		perror("pipe failed");
+		fprintf(stderr, "minishell: missing command for pipe\n");
 		return ;
 	}
-	pid_left = fork();
-	if (pid_left == -1)
+	if (pipe(pipe_fd) == -1)
 	{
-		perror("fork failed");
+		perror("minishell: pipe error");
 		return ;
 	}
-	if (pid_left == 0)
-	{
-		close(fd[0]);
-		if (dup2(fd[1], STDOUT_FILENO) == -1)
-			exit(EXIT_FAILURE);
-		close(fd[1]);
-		exec(op.left);
-		exit(g_exit_status);
-	}
-	pid_right = fork();
-	if (pid_right == -1)
-	{
-		perror("fork failed");
-		return ;
-	}
-	if (pid_right == 0)
-	{
-		close(fd[1]);
-		if (dup2(fd[0], STDIN_FILENO) == -1)
-			exit(EXIT_FAILURE);
-		close(fd[0]);
-		exec(op.right);
-		exit(g_exit_status);
-	}
-	close(fd[0]);
-	close(fd[1]);
-	waitpid(pid_left, NULL, 0);
-	waitpid(pid_right, NULL, 0);
+	fork_and_exec(op, pipe_fd, 0);
+	fork_and_exec(op, pipe_fd, 1);
+	close(pipe_fd[0]);
+	close(pipe_fd[1]);
+	waitpid(-1, &status, 0);
+	waitpid(-1, &status, 0);
 }
 
-void	handle_and(t_operator op)
+int	handle_redirection(t_file *file, const char *filename, int flags)
 {
-	exec(op.left);
-	if (g_exit_status == 0)
-		exec(op.right);
-}
-
-void	handle_or(t_operator op)
-{
-	exec(op.left);
-	if (g_exit_status != 0)
-		exec(op.right);
-}
-
-int	handle_redir_in(t_file *input, const char *filename)
-{
-	if (input->fd != -1)
-		close(input->fd);
-	input->fd = open(filename, O_RDONLY);
-	if (input->fd < 0)
+	if (file->fd != -1)
+		close(file->fd);
+	file->fd = open(filename, flags, 0644);
+	if (file->fd < 0)
 	{
 		perror("Error opening file");
 		return (-1);
 	}
-	if (input->file != NULL)
-		free(input->file);
-	input->file = ft_strdup(filename);
+	if (file->file != NULL)
+		free(file->file);
+	file->file = ft_strdup(filename);
 	return (0);
 }
 
-int	handle_redir_out(t_file *output, const char *filename, int type)
+static int	write_to_heredoc(int write_fd, const char *delimiter)
 {
-	if (output->fd != -1)
-		close(output->fd);
-	output->fd = open(filename, O_WRONLY | O_CREAT | type, 0644);
-	if (output->fd < 0)
+	char	*line;
+
+	while (1)
 	{
-		perror("Error opening file");
-		return (-1);
+		line = readline("> ");
+		if (line == NULL || ft_strcmp(line, (char *)delimiter) == 0)
+		{
+			free(line);
+			break ;
+		}
+		write(write_fd, line, ft_strlen(line));
+		write(write_fd, "\n", 1);
+		free(line);
 	}
-	if (output->file != NULL)
-		free(output->file);
-	output->file = ft_strdup(filename);
 	return (0);
 }
 
 int	handle_heredoc(t_file *input, const char *delimiter)
 {
-	int		fd[2];
-	char	*line;
+	int	fd[2];
 
 	if (pipe(fd) == -1)
 	{
@@ -128,19 +120,8 @@ int	handle_heredoc(t_file *input, const char *delimiter)
 	input->fd = fd[0];
 	if (input->file != NULL)
 		free(input->file);
-	input->file = ft_strdup(delimiter);
-	while (1)
-	{
-		line = readline("> ");
-		if (line == NULL || ft_strcmp(line, (char *)delimiter) == 0)
-		{
-			free(line);
-			break ;
-		}
-		write(fd[1], line, ft_strlen(line));
-		write(fd[1], "\n", 1);
-		free(line);
-	}
+	input->file = ft_strdup((char *)delimiter);
+	write_to_heredoc(fd[1], delimiter);
 	close(fd[1]);
 	return (0);
 }

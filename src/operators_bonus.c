@@ -1,22 +1,28 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   operators.h                                        :+:      :+:    :+:   */
+/*   operators_bonus.c                                  :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: cde-la-r <cde-la-r@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/10/28 16:42:48 by cde-la-r          #+#    #+#             */
-/*   Updated: 2024/10/30 20:22:45 by cde-la-r         ###   ########.fr       */
+/*   Created: 2024/10/03 10:13:31 by cde-la-r          #+#    #+#             */
+/*   Updated: 2024/10/03 10:13:36 by cde-la-r         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef OPERATORS_H
-# define OPERATORS_H
+#include "minishell.h"
+#include "ast.h"
 
-int		handle_redirection(t_file *file, const char *filename, int flags);
-int		handle_heredoc(t_file *input, const char *delimiter);
-void	handle_pipe(t_operator op);
-void	handle_and(t_operator op);
-void	handle_or(t_operator op);
+void	handle_and(t_operator op)
+{
+	exec(op.left);
+	if (g_exit_status == 0)
+		exec(op.right);
+}
 
-#endif
+void	handle_or(t_operator op)
+{
+	exec(op.left);
+	if (g_exit_status != 0)
+		exec(op.right);
+}
