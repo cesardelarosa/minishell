@@ -80,5 +80,6 @@ int		ft_strcmp(char *s1, char *s2);
 int		ft_isspace(int c);
 char	*ft_strtok(char *str, const char *delim);
 size_t	ft_strarray_len(char **array);
+char    *ft_strreplace(char *str, char *start, char *end, char *replacement);
 
 #endif 
