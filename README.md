@@ -4,10 +4,10 @@
 - [x] Manejo de un historial funcional
 - [x] Buscar y ejecutar el ejecutable correcto
 - [x] Interfaz bonita
-- [ ] Manejo de entrada de texto:
-	- [ ] No interpretar comillas sin cerrar o carácteres especificados en el enunciado como \ o ;
-	- [ ] Gestional la ’ para evitar que se interpreten los metacaracteres en la secuencia entrecomillada
-	- [ ] Gestionar la " para evitar que se interpreten los metacaracteres en la secuencia entrecomillada excepto $
+- [x] Manejo de entrada de texto:
+	- [x] No interpretar comillas sin cerrar o carácteres especificados en el enunciado como \ o ;
+	- [x] Gestional la ’ para evitar que se interpreten los metacaracteres en la secuencia entrecomillada
+	- [x] Gestionar la " para evitar que se interpreten los metacaracteres en la secuencia entrecomillada excepto $
 - [x] Manejo de señales:
 	- [x] ctrl-C
 	- [x] ctrl-D
