@@ -112,7 +112,10 @@ char	*read_input(void)
 	else
 		input = readline("");
 	if (input == NULL)
+	{
+		printf("Exiting minishell...\n");
 		exit(0);
+	}
 	if (*input == '\0')
 	{
 		free(input);
