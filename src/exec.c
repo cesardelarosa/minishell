@@ -134,7 +134,11 @@ void	exec(t_ast_node *node)
 			handle_or(node->u_data.op);
 		else
 			perror("unsupported operator");
+		node->u_data.op.left = NULL;
+		node->u_data.op.right = NULL;
 	}
 	else
 		perror("unsupported node type");
+	free_node(node);
+	node = NULL;
 }

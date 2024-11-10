@@ -10,19 +10,26 @@
 /*                                                                            */
 /* ************************************************************************** */
 
+#include <stddef.h>
 #include "minishell.h"
 #include "ast.h"
 
 void	handle_and(t_operator op)
 {
 	exec(op.left);
+	op.left = NULL;
 	if (g_exit_status == 0)
 		exec(op.right);
+	else
+		free_node(op.right);
 }
 
 void	handle_or(t_operator op)
 {
 	exec(op.left);
+	op.left = NULL;
 	if (g_exit_status != 0)
 		exec(op.right);
+	else
+		free_node(op.right);
 }
