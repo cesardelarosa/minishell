@@ -22,40 +22,6 @@ int	return_error(char *error)
 	return (-1);
 }
 
-/*
-** Replaces a substring in the original string with a new substring.
-** Allocates memory for the new string and returns it.
-**
-** @param str: The original string in which to replace the substring.
-** @param start: A pointer to the start of the substring to replace.
-** @param end: A pointer to the end of the substring to replace.
-** @param replacement: The substring to insert in place of the original.
-** @return: The newly allocated string with the replacement, or exits on failure.
-*/
-char	*ft_strreplace(char *str, char *start, char *end, char *replacement)
-{
-	char	*new_str;
-	size_t	len;
-	size_t	rep_len;
-	size_t	new_len;
-
-	len = ft_strlen(str);
-	rep_len = ft_strlen(replacement);
-	new_len = len - (end - start) + rep_len;
-	new_str = (char *)malloc(new_len + 1);
-	if (new_str == NULL)
-	{
-		perror("minishell: malloc");
-		exit(EXIT_FAILURE);
-	}
-	ft_memcpy(new_str, str, start - str);
-	ft_memcpy(new_str + (start - str), replacement, rep_len);
-	ft_memcpy(new_str + (start - str) + rep_len, end, len - (end - str));
-	new_str[new_len] = '\0';
-	free(str);
-	return (new_str);
-}
-
 // Process special variable '$?'
 int	process_exit_status(char **expanded, char **start)
 {
