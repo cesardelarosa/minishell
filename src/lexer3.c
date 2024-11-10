@@ -47,12 +47,40 @@ void	add_comand(char ***tokens, char *comand, int *args)
 	(*args)++;
 }
 
+static char	*handle_metachar(char *input, int *i)
+{
+	char	*result;
+	int		start;
+	int		len;
+
+	start = *i;
+	len = 1;
+	(*i)++;
+	if (input[*i - 1] == input[*i] && ft_ismetachar(input[*i]))
+	{
+		len++;
+		(*i)++;
+	}
+	result = malloc(len + 1);
+	if (!result)
+	{
+		perror("minishell: memory allocation error");
+		exit(EXIT_FAILURE);
+	}
+	ft_strlcpy(result, input + start, len + 1);
+	while (input[*i] == ' ' && input[*i])
+		(*i)++;
+	return (result);
+}
+
 char	*parser_word(char *input, int *i, int len)
 {
 	char	*result;
 	int		start;
 
 	start = *i;
+	if (ft_ismetachar(input[*i]))
+		return (handle_metachar(input, i));
 	while (input[*i] && !ft_ismetachar(input[*i]) && input[*i] != ' ')
 	{
 		if (ft_isquote(input[*i]))
@@ -81,16 +109,22 @@ char	**parser_comand(char *input, int *i)
 
 	args = 0;
 	tokens = NULL;
-	comand = parser_word(input, i, 0);
-	if (comand)
-		add_comand(&tokens, comand, &args);
-	while (input[*i] && !ft_ismetachar(input[*i]))
+	while (input[*i])
 	{
+		while (input[*i] == ' ')
+			(*i)++;
+		if (input[*i] == '\0')
+			break ;
 		comand = parser_word(input, i, 0);
 		if (comand)
 			add_comand(&tokens, comand, &args);
 	}
-	tokens = realloc(tokens, sizeof(char *) * (args + 1));
-	tokens[args] = NULL;
+	if (args > 0)
+	{
+		tokens = realloc(tokens, sizeof(char *) * (args + 1));
+		if (!tokens)
+			perror("minishell: memory allocation error");
+		tokens[args] = NULL;
+	}
 	return (tokens);
 }

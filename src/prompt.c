@@ -102,10 +102,10 @@ void	print_prompt(void)
 	if (term != NULL && (tgetent(NULL, term) > 0 && tgetnum("colors") >= 0))
 	{
 		printf(TEXT_CYAN"%s"TEXT_WHITE" at "TEXT_YELLOW"%s"TEXT_WHITE" in "
-			TEXT_GREEN"%s\n"RESET_COLOR, user, host, path);
+			TEXT_GREEN"%s"RESET_COLOR"$ ", user, host, path);
 	}
 	else
-		printf("%s at %s in %s\n", user, host, path);
+		printf("%s at %s in %s$ ", user, host, path);
 	free(user);
 	free(host);
 	free(path);
@@ -119,14 +119,18 @@ char	*read_input(void)
 	{
 		rl_replace_line("", 0);
 		print_prompt();
-		input = readline("$ ");
+		input = readline("");
 	}
 	else
 		input = readline("");
 	if (input == NULL)
-		exit(EXIT_SUCCESS);
+		return (NULL);
 	if (*input == '\0')
+	{
+		free(input);
 		g_exit_status = 0;
+		return (NULL);
+	}
 	else
 		add_history(input);
 	return (input);

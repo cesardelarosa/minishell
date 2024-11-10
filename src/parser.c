@@ -92,7 +92,7 @@ t_ast_node	*create_command(char **tokens, char **envp)
 }
 
 static t_ast_node	*search_operator(char **tokens, char **envp,
-					t_operator_match *ops, size_t ops_len)
+		t_operator_match *ops, size_t ops_len)
 {
 	int			i;
 	size_t		j;
@@ -101,20 +101,21 @@ static t_ast_node	*search_operator(char **tokens, char **envp,
 	i = -1;
 	while (tokens[++i])
 	{
-		j = -1;
-		while (j++ < ops_len)
+		j = 0;
+		while (j < ops_len)
 		{
-			if (ft_strcmp(tokens[i], (char *)ops[j].op_str))
-				continue ;
-			node = create_operator(ops[j].type);
-			if (!node)
-				return (NULL);
-			node->u_data.op.left = parser(ft_strarray_dup(tokens, \
-				0, i - 1), envp);
-			node->u_data.op.right = parser(ft_strarray_dup(tokens, \
-				i + 1, SIZE_MAX), envp);
-			ft_free_split(tokens);
-			return (node);
+			if (ft_strcmp(tokens[i], (char *)ops[j++].op_str) == 0)
+			{
+				node = create_operator(ops[j - 1].type);
+				if (!node)
+					return (NULL);
+				node->u_data.op.left = parser(ft_strarray_dup(tokens, \
+						0, i - 1), envp);
+				node->u_data.op.right = parser(ft_strarray_dup(tokens, \
+						i + 1, SIZE_MAX), envp);
+				ft_free_split(tokens);
+				return (node);
+			}
 		}
 	}
 	return (NULL);
@@ -126,6 +127,8 @@ t_ast_node	*parser(char **tokens, char **envp)
 	t_operator_match	and_or_ops[2];
 	t_operator_match	pipe_ops[1];
 
+	if (!tokens)
+		return (NULL);
 	and_or_ops[0].op_str = "&&";
 	and_or_ops[0].type = AND;
 	and_or_ops[1].op_str = "||";

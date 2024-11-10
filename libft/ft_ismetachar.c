@@ -14,5 +14,5 @@
 
 int	ft_ismetachar(int c)
 {
-	return (c == '<' || c == '>' || c == '|');
+	return (c == '<' || c == '>' || c == '|' || c == '&');
 }
