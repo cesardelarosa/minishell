@@ -14,11 +14,6 @@
 #include "minishell.h"
 #include <stdio.h>
 
-int	is_quotes(char c)
-{
-	return (c == '\'' || c == '\"');
-}
-
 /*
 ** Checks if all quotes in the input string are properly closed.
 ** Returns 1 if all are closed, otherwise returns 0.
@@ -39,7 +34,7 @@ int	are_quotes_closed(const char *str)
 	}
 	while (str[i])
 	{
-		if (is_quotes(str[i]))
+		if (ft_isquote(str[i]))
 		{
 			quote_char = str[i];
 			i++;
@@ -73,7 +68,7 @@ int	calc_len_new_str(char *str)
 	len = 0;
 	while (str[i])
 	{
-		if (is_quotes(str[i]))
+		if (ft_isquote(str[i]))
 		{
 			quote_char = str[i];
 			i++;

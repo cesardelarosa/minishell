@@ -15,11 +15,6 @@
 #include <stdlib.h>
 #include <stdio.h>
 
-int	is_special_char(char c)
-{
-	return (c == '>' || c == '<' || c == '|');
-}
-
 void	skip_coma(char *input, int *i)
 {
 	char	quote_char;
@@ -58,9 +53,9 @@ char	*parser_word(char *input, int *i, int len)
 	int		start;
 
 	start = *i;
-	while (input[*i] && !is_special_char(input[*i]) && input[*i] != ' ')
+	while (input[*i] && !ft_ismetachar(input[*i]) && input[*i] != ' ')
 	{
-		if (is_quotes(input[*i]))
+		if (ft_isquote(input[*i]))
 			skip_coma(input, i);
 		else
 			(*i)++;
@@ -89,7 +84,7 @@ char	**parser_comand(char *input, int *i)
 	comand = parser_word(input, i, 0);
 	if (comand)
 		add_comand(&tokens, comand, &args);
-	while (input[*i] && !is_special_char(input[*i]))
+	while (input[*i] && !ft_ismetachar(input[*i]))
 	{
 		comand = parser_word(input, i, 0);
 		if (comand)

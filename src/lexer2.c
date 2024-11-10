@@ -15,7 +15,6 @@
 #include <stdlib.h>
 #include <stdio.h>
 
-int	is_quotes(char c);
 int	calc_len_new_str(char *str);
 int	handle_unclosed_quotes(char **str, char *new_str);
 
@@ -43,7 +42,7 @@ int	process_quotes(char **str, t_copy_data *data)
 {
 	while ((*str)[*data->i])
 	{
-		if (is_quotes((*str)[*data->i]))
+		if (ft_isquote((*str)[*data->i]))
 		{
 			data->quote_char = (*str)[(*data->i)++];
 			if (copy_within_quotes(data) == -1)
