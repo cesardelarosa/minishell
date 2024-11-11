@@ -48,7 +48,7 @@ void	builtin_unset(char **args)
 		if (!is_valid_identifier(args[i]))
 			printf("unset: '%s': not a valid identifier\n", args[i]);
 		else
-			unsetenv(args[i]);
+			unsetenv(args[i]);	// El subject no deja usar unsetenv
 		i++;
 	}
 }

@@ -35,16 +35,21 @@ void	skip_coma(char *input, int *i)
 void	add_comand(char ***tokens, char *comand, int *args)
 {
 	if (*args == 0)
-		*tokens = malloc(sizeof(char *));
+		*tokens = malloc(sizeof(char *) * 2);
 	else
-		*tokens = realloc(*tokens, sizeof(char *) * (*args + 1));
+	{
+		*tokens = ft_realloc(*tokens, sizeof(char *) * (*args + 1), \
+			sizeof(char *) * (*args + 2));
+	}
 	if (!*tokens)
 	{
 		perror("minishell: memory allocation error");
-		exit(EXIT_FAILURE);
+		g_exit_status = 1;
+		return ;
 	}
 	(*tokens)[*args] = comand;
 	(*args)++;
+	(*tokens)[*args] = NULL;
 }
 
 static char	*handle_metachar(char *input, int *i)
@@ -65,7 +70,8 @@ static char	*handle_metachar(char *input, int *i)
 	if (!result)
 	{
 		perror("minishell: memory allocation error");
-		exit(EXIT_FAILURE);
+		g_exit_status = 1;
+		return (NULL);
 	}
 	ft_strlcpy(result, input + start, len + 1);
 	while (input[*i] == ' ' && input[*i])
@@ -93,7 +99,8 @@ char	*parser_word(char *input, int *i, int len)
 	if (!result)
 	{
 		perror("minishell: memory allocation error");
-		exit(EXIT_FAILURE);
+		g_exit_status = 1;
+		return (NULL);
 	}
 	ft_strlcpy(result, input + start, len + 1);
 	while (input[*i] == ' ' && input[*i])
@@ -118,13 +125,6 @@ char	**parser_comand(char *input, int *i)
 		comand = parser_word(input, i, 0);
 		if (comand)
 			add_comand(&tokens, comand, &args);
-	}
-	if (args > 0)
-	{
-		tokens = realloc(tokens, sizeof(char *) * (args + 1));
-		if (!tokens)
-			perror("minishell: memory allocation error");
-		tokens[args] = NULL;
 	}
 	return (tokens);
 }

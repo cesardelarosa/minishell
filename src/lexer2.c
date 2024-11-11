@@ -31,7 +31,7 @@ int	copy_within_quotes(t_copy_data *data)
 		data->new_str[(*data->j)++] = data->str[(*data->i)++];
 	if (!data->str[*data->i])
 	{
-		fprintf(stderr, "minishell: syntax error: unclosed quotes\n");
+		perror("minishell: syntax error: unclosed quotes");
 		return (-1);
 	}
 	(*data->i)++;
@@ -63,7 +63,7 @@ int	sup_quotes(char **str, int i, int j)
 	if (!new_str)
 	{
 		perror("minishell: memory allocation error");
-		exit(EXIT_FAILURE);
+		return (-1);
 	}
 	init_data_structure(&data, *str, &i, &j);
 	data.new_str = new_str;

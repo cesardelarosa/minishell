@@ -83,5 +83,6 @@ int		ft_isspace(int c);
 char	*ft_strtok(char *str, const char *delim);
 size_t	ft_strarray_len(char **array);
 char	*ft_strreplace(char *str, char *start, char *end, char *replacement);
+void	*ft_realloc(void *ptr, size_t old_size, size_t new_size);
 
 #endif 

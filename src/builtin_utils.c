@@ -45,11 +45,11 @@ int	is_valid_identifier(const char *str)
 	int	i;
 
 	i = 1;
-	if (!str || !str[0] || (!isalpha(str[0]) && str[0] != '_'))
+	if (!str || !str[0] || (!ft_isalpha(str[0]) && str[0] != '_'))
 		return (0);
 	while (str[i])
 	{
-		if (!isalnum(str[i]) && str[i] != '_')
+		if (!ft_isalnum(str[i]) && str[i] != '_')
 			return (0);
 		i++;
 	}
@@ -62,21 +62,21 @@ int	extract_key_value(char *arg, char **key, char **value)
 	char	*equal_sign;
 	size_t	key_len;
 
-	equal_sign = strchr(arg, '=');
+	equal_sign = ft_strchr(arg, '=');
 	if (equal_sign)
 	{
 		key_len = equal_sign - arg;
 		*key = (char *)malloc(key_len + 1);
 		if (!*key)
 			return (-1);
-		strncpy(*key, arg, key_len);
+		ft_strlcpy(*key, arg, key_len);
 		(*key)[key_len] = '\0';
 		*value = equal_sign + 1;
 		printf("Debug: Key = %s, Value = %s\n", *key, *value);
 	}
 	else
 	{
-		*key = strdup(arg);
+		*key = ft_strdup(arg);
 		if (!*key)
 			return (-1);
 		*value = NULL;
