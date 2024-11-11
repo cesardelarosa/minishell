@@ -24,7 +24,8 @@ COMMON_SRC = builtin1.c builtin2.c \
 	     lexer.c lexer2.c lexer3.c\
 	     nodes.c \
 	     env.c env_utils.c\
-	     operators.c operators_bonus.c
+	     operators.c operators_bonus.c \
+		 print_node.c
 NO_BONUS_SRC = exec.c exec_utils.c
 BONUS_SRC = exec_bonus.c \
 	    wildcards_bonus.c \
