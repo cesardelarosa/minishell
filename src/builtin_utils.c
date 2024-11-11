@@ -34,24 +34,20 @@ void	print_exported_variables(void)
 
 	i = 0;
 	while (environ[i])
-	{
-		printf("declare -x %s\n", environ[i]);
-		i++;
-	}
+		printf("declare -x %s\n", environ[i++]);
 }
 
 int	is_valid_identifier(const char *str)
 {
 	int	i;
 
-	i = 1;
 	if (!str || !str[0] || (!ft_isalpha(str[0]) && str[0] != '_'))
 		return (0);
-	while (str[i])
+	i = 0;
+	while (str[++i])
 	{
 		if (!ft_isalnum(str[i]) && str[i] != '_')
 			return (0);
-		i++;
 	}
 	return (1);
 }
@@ -66,22 +62,20 @@ int	extract_key_value(char *arg, char **key, char **value)
 	if (equal_sign)
 	{
 		key_len = equal_sign - arg;
-		*key = (char *)malloc(key_len + 1);
-		if (!*key)
-			return (-1);
-		ft_strlcpy(*key, arg, key_len);
-		(*key)[key_len] = '\0';
 		*value = equal_sign + 1;
-		printf("Debug: Key = %s, Value = %s\n", *key, *value);
 	}
 	else
 	{
-		*key = ft_strdup(arg);
-		if (!*key)
-			return (-1);
+		key_len = ft_strlen(arg);
 		*value = NULL;
-		printf("Debug: Key = %s, Value is NULL\n", *key);
 	}
+	*key = (char *)malloc(key_len + 1);
+	if (!*key)
+	{
+		perror("minishell: memory allocation");
+		return (-1);
+	}
+	ft_strlcpy(*key, arg, key_len + 1);
 	return (0);
 }
 
@@ -89,24 +83,10 @@ int	extract_key_value(char *arg, char **key, char **value)
 void	validate_and_set_env_var(char *key, char *value)
 {
 	if (!is_valid_identifier(key))
-	{
 		printf("export: '%s': not a valid identifier\n", key);
-		free(key);
-	}
-	else
-	{
-		if (value)
-		{
-			printf("Debug: Setting environment variable %s=%s\n", key, value);
-			setenv(key, value, 1);
-		}
-		else
-		{
-			printf("Debug: Setting env variable %s with empty value\n", key);
-			setenv(key, "", 1);
-		}
-		free(key);
-	}
+	else if (setenv(key, value, 1) != 0)
+		perror("minishell: error setting enviroment variable");
+	free(key);
 }
 
 // Processes each argument passed to export
