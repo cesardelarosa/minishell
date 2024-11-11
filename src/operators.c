@@ -20,15 +20,10 @@
 #include "libft.h"
 #include "minishell.h"
 
-void	fork_and_exec(t_operator op, int *pipe_fd, int is_right)
+void	fork_and_exec(t_ast_node *node, int *pipe_fd, int fileno)
 {
 	pid_t	pid;
-	int		fileno;
 
-	if (is_right)
-		fileno = STDIN_FILENO;
-	else
-		fileno = STDOUT_FILENO;
 	pid = fork();
 	if (pid == -1)
 	{
@@ -37,13 +32,10 @@ void	fork_and_exec(t_operator op, int *pipe_fd, int is_right)
 	}
 	if (pid == 0)
 	{
-		dup2(pipe_fd[!is_right], fileno);
+		dup2(pipe_fd[fileno == STDOUT_FILENO], fileno);
 		close(pipe_fd[0]);
 		close(pipe_fd[1]);
-		if (is_right)
-			exec(op.right);
-		else
-			exec(op.left);
+		exec(node);
 		exit(EXIT_FAILURE);
 	}
 }
@@ -55,7 +47,7 @@ void	handle_pipe(t_operator op)
 
 	if (!op.left || !op.right)
 	{
-		fprintf(stderr, "minishell: missing command for pipe\n");
+		perror("minishell: missing command for pipe");
 		return ;
 	}
 	if (pipe(pipe_fd) == -1)
@@ -63,8 +55,8 @@ void	handle_pipe(t_operator op)
 		perror("minishell: pipe error");
 		return ;
 	}
-	fork_and_exec(op, pipe_fd, 0);
-	fork_and_exec(op, pipe_fd, 1);
+	fork_and_exec(op.right, pipe_fd, STDIN_FILENO);
+	fork_and_exec(op.left, pipe_fd, STDOUT_FILENO);
 	close(pipe_fd[0]);
 	close(pipe_fd[1]);
 	waitpid(-1, &status, 0);

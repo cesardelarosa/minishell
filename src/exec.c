@@ -127,7 +127,11 @@ void	exec(t_ast_node *node)
 	else if (node->type == OPERATOR)
 	{
 		if (node->u_data.op.type == PIPE)
+		{
 			handle_pipe(node->u_data.op);
+			free_node(node->u_data.op.left);
+			free_node(node->u_data.op.right);
+		}
 		else if (node->u_data.op.type == AND)
 			handle_and(node->u_data.op);
 		else if (node->u_data.op.type == OR)
