@@ -26,24 +26,27 @@ static int	handle_single_redirection(t_ast_node *node, char ***args)
 {
 	int	check;
 
+	if (!args || !*args)
+		return (-1);
 	check = 0;
-	if (!ft_strcmp(**args, "<") && *(++(*args)))
+	if (!ft_strcmp(**args, "<") && **args)
 	{
-		check = handle_redirection(&node->u_data.cmd.input, *((*args)++), \
+		check = handle_redirection(&node->u_data.cmd.input, *(++(*args)), \
 			O_RDONLY);
 	}
-	else if (!ft_strcmp(**args, ">") && *(++(*args)))
+	else if (!ft_strcmp(**args, ">") && **args)
 	{
-		check = handle_redirection(&node->u_data.cmd.output, *((*args)++), \
+		check = handle_redirection(&node->u_data.cmd.output, *(++(*args)), \
 			O_WRONLY | O_CREAT | O_TRUNC);
 	}
-	else if (!ft_strcmp(**args, ">>") && *(++(*args)))
+	else if (!ft_strcmp(**args, ">>") && **args)
 	{
-		check = handle_redirection(&node->u_data.cmd.output, *((*args)++), \
+		check = handle_redirection(&node->u_data.cmd.output, *(++(*args)), \
 			O_WRONLY | O_CREAT | O_APPEND);
 	}
-	else if (!ft_strcmp(**args, "<<") && *(++(*args)))
-		check = handle_heredoc(&node->u_data.cmd.input, *((*args)++));
+	else if (!ft_strcmp(**args, "<<") && **args)
+		check = handle_heredoc(&node->u_data.cmd.input, *(++(*args)));
+	*args += (check != 0);
 	return (check);
 }
 

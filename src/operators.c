@@ -65,6 +65,11 @@ void	handle_pipe(t_operator op)
 
 int	handle_redirection(t_file *file, const char *filename, int flags)
 {
+	if (!filename)
+	{
+		perror("minishell: syntax error");
+		return (-1);
+	}
 	if (file->fd != -1)
 		close(file->fd);
 	file->fd = open(filename, flags, 0644);
@@ -102,6 +107,11 @@ int	handle_heredoc(t_file *input, const char *delimiter)
 {
 	int	fd[2];
 
+	if (!delimiter)
+	{
+		perror("minishell: syntax error");
+		return (-1);
+	}
 	if (pipe(fd) == -1)
 	{
 		perror("Error creating pipe");
@@ -113,7 +123,8 @@ int	handle_heredoc(t_file *input, const char *delimiter)
 	if (input->file != NULL)
 		free(input->file);
 	input->file = ft_strdup((char *)delimiter);
-	write_to_heredoc(fd[1], delimiter);
+	if (*delimiter != '\0')
+		write_to_heredoc(fd[1], delimiter);
 	close(fd[1]);
 	return (0);
 }
