@@ -99,7 +99,6 @@ static t_ast_node	*search_operator(char **tokens, char **envp,
 {
 	int			i;
 	size_t		j;
-	t_ast_node	*node;
 
 	i = -1;
 	while (tokens[++i])
@@ -107,18 +106,8 @@ static t_ast_node	*search_operator(char **tokens, char **envp,
 		j = 0;
 		while (j < ops_len)
 		{
-			if (ft_strcmp(tokens[i], (char *)ops[j++].op_str) == 0)
-			{
-				node = create_operator(ops[j - 1].type);
-				if (!node)
-					return (NULL);
-				node->u_data.op.left = parser(ft_strarray_dup(tokens, \
-						0, i - 1), envp);
-				node->u_data.op.right = parser(ft_strarray_dup(tokens, \
-						i + 1, SIZE_MAX), envp);
-				ft_free_split(tokens);
-				return (node);
-			}
+			if (!ft_strcmp(tokens[i], (char *)ops[j++].op_str))
+				return (create_operator(ops[j - 1].type, tokens, envp, i));
 		}
 	}
 	return (NULL);

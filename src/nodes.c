@@ -12,8 +12,12 @@
 
 #include <stdlib.h>
 #include <unistd.h>
+#include <stdio.h>
+#include <limits.h>
+#include <stdint.h>
 #include "ast.h"
 #include "libft.h"
+#include "minishell.h"
 
 void	ft_init_file(t_file *file)
 {
@@ -21,7 +25,8 @@ void	ft_init_file(t_file *file)
 	file->file = NULL;
 }
 
-t_ast_node	*create_operator(t_operator_type type)
+t_ast_node	*create_operator(t_operator_type type, char **tokens, \
+				char **envp, int i)
 {
 	t_ast_node	*node;
 
@@ -32,6 +37,13 @@ t_ast_node	*create_operator(t_operator_type type)
 	node->u_data.op.type = type;
 	node->u_data.op.left = NULL;
 	node->u_data.op.right = NULL;
+	if (i != 0)
+	{
+		node->u_data.op.left = parser(ft_strarray_dup(tokens, 0, i - 1), envp);
+		node->u_data.op.right = parser(ft_strarray_dup(tokens, i + 1, \
+			SIZE_MAX), envp);
+	}
+	ft_free_split(tokens);
 	return (node);
 }
 

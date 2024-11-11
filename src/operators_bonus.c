@@ -11,11 +11,17 @@
 /* ************************************************************************** */
 
 #include <stddef.h>
+#include <stdio.h>
 #include "minishell.h"
 #include "ast.h"
 
 void	handle_and(t_operator op)
 {
+	if (!op.left || !op.right)
+	{
+		perror("minishell: syntax error");
+		return ;
+	}
 	exec(op.left);
 	op.left = NULL;
 	if (g_exit_status == 0)
@@ -26,6 +32,11 @@ void	handle_and(t_operator op)
 
 void	handle_or(t_operator op)
 {
+	if (!op.left || !op.right)
+	{
+		perror("minishell: syntax error");
+		return ;
+	}
 	exec(op.left);
 	op.left = NULL;
 	if (g_exit_status != 0)

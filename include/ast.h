@@ -57,7 +57,8 @@ typedef struct s_ast_node
 	}	u_data;
 }	t_ast_node;
 
-t_ast_node	*create_operator(t_operator_type type);
+t_ast_node	*create_operator(t_operator_type type, char **tokens,
+				char **envp, int op_index);
 void		free_node(t_ast_node *node);
 void		ft_init_file(t_file *file);
 
