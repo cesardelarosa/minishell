@@ -47,8 +47,28 @@ void	builtin_pwd(void)
 }
 
 /*
+** Checks if the given argument is the '-n' flag for echo.
+**
+** @param arg: The argument to check.
+**
+** @return: 1 if the argument is a valid '-n' flag, 0 otherwise.
+*/
+int	is_flag_n(char *arg)
+{
+	int	i;
+
+	i = 1;
+	if (arg[0] != '-')
+		return (0);
+	while (arg[i] == 'n')
+		i++;
+	return (arg[i] == '\0');
+}
+
+/*
 ** Echoes the given arguments to standard output.
-** If "-n" is passed as the first argument, it suppresses the newline.
+** If "-n" is passed as the first argument(s), it suppresses the newline.
+** Sets g_exit_status to 0 upon successful execution.
 **
 ** @param args: The arguments to echo.
 **              args[1] may be "-n" to suppress the newline.
@@ -56,18 +76,22 @@ void	builtin_pwd(void)
 void	builtin_echo(char **args)
 {
 	int	newline;
-	int	i;
 
-	newline = !args[1] || ft_strncmp(args[1], "-n", 3);
-	i = 2 - newline;
-	while (args[i])
+	newline = 1;
+	while (args[1] && is_flag_n(args[1]))
 	{
-		printf("%s", args[i]);
-		if (args[++i])
-			printf(" ");
+		newline = 0;
+		args++;
+	}
+	while (*++args)
+	{
+		ft_putstr_fd(*args, STDOUT_FILENO);
+		if (*(args + 1))
+			ft_putstr_fd(" ", STDOUT_FILENO);
 	}
 	if (newline)
-		printf("\n");
+		ft_putstr_fd("\n", STDOUT_FILENO);
+	g_exit_status = 0;
 }
 
 /*
