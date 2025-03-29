@@ -1,76 +1,42 @@
-NAME = minishell
-BONUS_NAME = minishell_bonus
+NAME     := minishell
+SRC_DIR  := src
+INC_DIR  := include
+LFT_DIR  := libft
+OBJ_DIR  := obj
 
-INCLUDE_DIR = include
-SRC_DIR = src
-BONUS_DIR = bonus
-OBJ_DIR = obj
-LIBFT_DIR = libft
+SRCS     := $(shell find $(SRC_DIR) -type f -name "*.c")
+OBJS     := $(SRCS:$(SRC_DIR)/%.c=$(OBJ_DIR)/%.o)
 
-CC = gcc
-CFLAGS = -Wall -Wextra -Werror
-INCLUDE = -I./$(INCLUDE_DIR) -I./$(LIBFT_DIR)
-LDFLAGS = -lreadline -lncurses -L$(LIBFT_DIR) -lft
-SANITIZE = -fsanitize=address -g
-
-LIBFT = $(LIBFT_DIR)/libft.a
-
-COMMON_SRC = builtin1.c builtin2.c \
-		 builtin_utils.c \
-	     main.c \
-	     prompt.c \
-	     signals.c \
-	     parser.c \
-	     lexer.c lexer2.c lexer3.c\
-	     nodes.c \
-	     env.c env_utils.c\
-	     operators.c operators_bonus.c \
-		 print_node.c
-NO_BONUS_SRC = exec.c exec_utils.c
-BONUS_SRC = exec_bonus.c \
-	    wildcards_bonus.c \
-	    operators_bonus.c
-
-SRC_FILES = $(COMMON_SRC) $(NO_BONUS_SRC)
-OBJ_FILES = $(SRC_FILES:%.c=$(OBJ_DIR)/%.o)
-
-BONUS_FILES = $(COMMON_SRC) $(BONUS_SRC)
-BONUS_OBJ_FILES = $(BONUS_FILES:%.c=$(OBJ_DIR)/%.o)
+CC       := gcc
+CFLAGS   := -Wall -Wextra -Werror -I$(INC_DIR) -I$(LFT_DIR)
 
 all: $(NAME)
 
-$(NAME): $(OBJ_FILES) $(LIBFT)
-	$(CC) $(CFLAGS) $(SANITIZE) $(OBJ_FILES) $(LDFLAGS) -o $(NAME)
-
-bonus: $(BONUS_NAME)
-
-$(BONUS_NAME): $(BONUS_OBJ_FILES) $(LIBFT)
-	$(CC) $(CFLAGS) $(SANITIZE) $(BONUS_OBJ_FILES) $(LDFLAGS) -o $(BONUS_NAME)
+$(NAME): libft $(OBJS)
+	@printf "\033[1;33m[BUILD] Linking $(NAME)...\033[0m\n"
+	$(CC) $(CFLAGS) -o $(NAME) $(OBJS) $(LFT_DIR)/libft.a
+	@printf "\033[1;32m[OK] ✅ Compilation of $(NAME) completed.\033[0m\n"
 
 $(OBJ_DIR)/%.o: $(SRC_DIR)/%.c
-	@mkdir -p $(OBJ_DIR)
-	$(CC) $(CFLAGS) $(INCLUDE) -c $< -o $@
+	@mkdir -p $(dir $@)
+	@printf "\033[1;33m[BUILD] Compiling object: $<\033[0m\n"
+	$(CC) $(CFLAGS) -c $< -o $@
 
-$(OBJ_DIR)/%.o: $(BONUS_DIR)/%.c
-	@mkdir -p $(OBJ_DIR)
-	$(CC) $(CFLAGS) $(INCLUDE) -c $< -o $@
-
-$(LIBFT):
-	$(MAKE) -C $(LIBFT_DIR)
+libft:
+	@printf "\033[1;33m[BUILD] Building libft...\033[0m\n"
+	$(MAKE) complete -C $(LFT_DIR)
 
 clean:
+	@printf "\033[1;31m[CLEAN] Deleting object files...\033[0m\n"
 	rm -rf $(OBJ_DIR)
-	$(MAKE) -C $(LIBFT_DIR) clean
+	$(MAKE) -C $(LFT_DIR) clean
+	@printf "\033[1;32m[OK] ✅ Cleaning completed.\033[0m\n"
 
 fclean: clean
-	rm -f $(NAME)
-	rm -f $(BONUS_NAME)
-	rm -f $(LIBFT)
+	@printf "\033[1;31m[CLEAN] Deleting executable...\033[0m\n"
+	rm -f $(NAME) $(LFT_DIR)/libft.a
+	@printf "\033[1;32m[OK] ✅ Deletion completed.\033[0m\n"
 
 re: fclean all
 
-double: all bonus
-
-simple: double clean
-
-.PHONY: all bonus clean fclean re double simple
+.PHONY: all clean fclean re libft

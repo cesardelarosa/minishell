@@ -1,18 +1,22 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   ft_isquote.c                                       :+:      :+:    :+:   */
+/*   execution.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: cde-la-r <cde-la-r@student.42.fr>          +#+  +:+       +#+        */
+/*   By: cde-la-r <code@cesardelarosa.xyz>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2023/11/10 11:32:07 by cde-la-r          #+#    #+#             */
-/*   Updated: 2023/11/10 11:32:55 by cde-la-r         ###   ########.fr       */
+/*   Created: 2025/03/08 13:01:51 by cde-la-r          #+#    #+#             */
+/*   Updated: 2025/03/10 11:38:33 by cde-la-r         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "libft.h"
+#ifndef EXECUTION_H
+# define EXECUTION_H
 
-int	ft_isquote(int c)
-{
-	return (c == '\'' || c == '\"');
-}
+# include "structs.h"
+
+int		pipeline_execute(t_pipeline *p, char **envp);
+int		handle_redirs(t_list *redirs);
+void	execute_command(t_command *cmd, char **envp);
+
+#endif

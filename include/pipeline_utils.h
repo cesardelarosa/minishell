@@ -1,18 +1,21 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   wildcard_bonus.h                                   :+:      :+:    :+:   */
+/*   pipeline_utils.h                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: cde-la-r <cde-la-r@student.42.fr>          +#+  +:+       +#+        */
+/*   By: cde-la-r <code@cesardelarosa.xyz>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/09/10 13:50:44 by cde-la-r          #+#    #+#             */
-/*   Updated: 2024/09/10 13:50:44 by cde-la-r         ###   ########.fr       */
+/*   Created: 2025/03/10 12:14:35 by cde-la-r          #+#    #+#             */
+/*   Updated: 2025/03/10 12:14:37 by cde-la-r         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef WILDCARD_BONUS_H
-# define WILDCARD_BONUS_H
+#ifndef PIPELINE_UTILS_H
+# define PIPELINE_UTILS_H
 
-void	expand_wildcards(char ***args);
+# include "structs.h"
+
+void		safe_close(int *fd);
+void		close_all_pipes(t_pipeline *p);
 
 #endif

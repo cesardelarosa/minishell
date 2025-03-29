@@ -1,23 +1,33 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   ft_strarray_len.c                                  :+:      :+:    :+:   */
+/*   ft_strcspn.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: cde-la-r <cde-la-r@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/10/29 17:40:00 by cde-la-r          #+#    #+#             */
-/*   Updated: 2024/10/29 17:40:00 by cde-la-r         ###   ########.fr       */
+/*   Created: 2024/11/15 00:35:55 by cde-la-r          #+#    #+#             */
+/*   Updated: 2025/02/14 13:53:06 by cesi             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include <stddef.h>
+#include "libft.h"
 
-size_t	ft_strarray_len(char **array)
+size_t	ft_strcspn(const char *s, const char *reject)
 {
-	size_t	len;
+	size_t	i;
+	size_t	j;
 
-	len = 0;
-	while (array[len] != NULL)
-		len++;
-	return (len);
+	i = 0;
+	while (s[i])
+	{
+		j = 0;
+		while (reject[j])
+		{
+			if (s[i] == reject[j])
+				return (i);
+			j++;
+		}
+		i++;
+	}
+	return (i);
 }

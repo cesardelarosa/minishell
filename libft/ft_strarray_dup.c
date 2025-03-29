@@ -13,31 +13,23 @@
 #include <stdlib.h>
 #include "libft.h"
 
-char	**ft_strarray_dup(char **tokens, size_t start, size_t end)
+char	**ft_strarray_dup(char **tokens, int start, int end)
 {
-	size_t	i;
-	size_t	len;
+	int		i;
+	int		len;
 	char	**dup;
 
-	len = 0;
-	while (tokens[len])
-		len++;
-	end -= (end - len + 1) * (end >= len);
-	if (start > end)
-		return (NULL);
-	dup = malloc((end - start + 2) * sizeof(char *));
+	len = end - start + 1;
+	dup = malloc((len + 1) * sizeof(char *));
 	if (dup == NULL)
 		return (NULL);
 	i = 0;
-	while (start <= end)
+	while (i < len)
 	{
-		dup[i] = ft_strdup(tokens[start++]);
+		dup[i] = ft_strdup(tokens[start + i]);
 		if (dup[i++] == NULL)
-		{
 			ft_free_split(dup);
-			return (NULL);
-		}
 	}
-	dup[i] = NULL;
+	dup[len] = NULL;
 	return (dup);
 }

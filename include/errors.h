@@ -1,18 +1,20 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   ft_ismetachar.c                                    :+:      :+:    :+:   */
+/*   errors.h                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: cde-la-r <cde-la-r@student.42.fr>          +#+  +:+       +#+        */
+/*   By: cde-la-r <code@cesardelarosa.xyz>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2023/11/10 11:32:07 by cde-la-r          #+#    #+#             */
-/*   Updated: 2023/11/10 11:32:55 by cde-la-r         ###   ########.fr       */
+/*   Created: 2025/03/08 13:01:51 by cde-la-r          #+#    #+#             */
+/*   Updated: 2025/03/09 15:16:07 by cde-la-r         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "libft.h"
+#ifndef ERRORS_H
+# define ERRORS_H
 
-int	ft_ismetachar(int c)
-{
-	return (c == '<' || c == '>' || c == '|' || c == '&');
-}
+# include "structs.h"
+
+void	error_exit_code(int code, char *msg, char *target, t_pipeline *p);
+
+#endif

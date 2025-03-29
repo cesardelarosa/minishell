@@ -1,0 +1,30 @@
+# .gitignore para pipex
+
+# Ignorar todos los archivos por defecto
+*
+
+# Permitir los archivos necesarios
+!*.c
+!*.h
+!Makefile
+!README.md
+!.gitignore
+
+# Permitir carpetas pero ignorar su contenido por defecto
+!*/
+
+# Ignorar archivos de objeto, librerías y binarios
+*.o
+*.a
+*.so
+*.out
+*.exe
+
+# Ignorar archivos de respaldo o temporales
+*~
+*.swp
+*.tmp
+*.DS_Store
+
+# Ignorar carpetas de compilación
+obj/

@@ -6,7 +6,7 @@
 /*   By: cde-la-r <cde-la-r@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/07 12:06:10 by cde-la-r          #+#    #+#             */
-/*   Updated: 2023/09/15 13:20:50 by cde-la-r         ###   ########.fr       */
+/*   Updated: 2025/03/08 13:14:49 by cesi             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,8 +28,6 @@ int		ft_isdigit(int c);
 int		ft_isalnum(int c);
 int		ft_isascii(int c);
 int		ft_isprint(int c);
-int		ft_isquote(int c);
-int		ft_ismetachar(int c);
 size_t	ft_strlen(const char *str);
 void	*ft_memset(void *s, int c, size_t n);
 void	ft_bzero(void *s, size_t n);
@@ -46,6 +44,7 @@ void	*ft_memchr(const void *s, int c, size_t n);
 int		ft_memcmp(const void *s1, const void *s2, size_t n);
 char	*ft_strnstr(const char *str, const char *substr, size_t n);
 int		ft_atoi(const char *nptr);
+double	ft_atof(const char *str);
 void	*ft_calloc(size_t n, size_t s);
 char	*ft_strdup(const char *s);
 char	*ft_substr(char const *s, unsigned int start, size_t len);
@@ -68,6 +67,7 @@ void	ft_lstdelone(t_list *lst, void (*del)(void *));
 void	ft_lstclear(t_list **lst, void (*del)(void *));
 void	ft_lstiter(t_list *lst, void (*f)(void *));
 t_list	*ft_lstmap(t_list *lst, void *(*f)(void *), void (*del)(void *));
+t_list	*ft_lstget(t_list *lst, int index);
 char	*get_next_line(int fd);
 int		ft_putchar(char c);
 int		ft_putstr(const char *str);
@@ -77,12 +77,13 @@ int		ft_putptr(void *ptr);
 int		ft_printf(const char *str, ...);
 int		ft_split_size(const char *s, char c);
 char	**ft_free_split(char **result);
-char	**ft_strarray_dup(char **tokens, size_t start, size_t end);
+char	**ft_strarray_dup(char **tokens, int start, int end);
 int		ft_strcmp(char *s1, char *s2);
 int		ft_isspace(int c);
 char	*ft_strtok(char *str, const char *delim);
-size_t	ft_strarray_len(char **array);
-char	*ft_strreplace(char *str, char *start, char *end, char *replacement);
-void	*ft_realloc(void *ptr, size_t old_size, size_t new_size);
+void	ft_handle_errors(char *prog, char *msg, char *cmd, int exit_code);
+size_t	ft_strcspn(const char *s, const char *reject);
+char	*ft_ftoa(double n, int precision);
+char	*ft_strjoin_free(char *s1, char *s2, int free_flag);
 
 #endif 
