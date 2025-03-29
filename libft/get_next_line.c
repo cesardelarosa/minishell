@@ -6,7 +6,7 @@
 /*   By: cde-la-r <cde-la-r@student.42madrid>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/29 04:50:34 by cde-la-r          #+#    #+#             */
-/*   Updated: 2025/02/18 13:40:36 by cde-la-r         ###   ########.fr       */
+/*   Updated: 2025/03/29 18:00:36 by cesi             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,7 +24,7 @@
 # define OPEN_MAX 1024
 #endif
 
-char	*read_line(char *line, int fd)
+static char	*read_line(char *line, int fd)
 {
 	char	buffer[BUFFER_SIZE + 1];
 	ssize_t	nbytes;
@@ -48,7 +48,7 @@ char	*read_line(char *line, int fd)
 	return (line);
 }
 
-char	*save_tail(char *line)
+static char	*save_tail(char *line)
 {
 	char	*next;
 	char	*tail;

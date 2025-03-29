@@ -9,12 +9,13 @@ OBJS     := $(SRCS:$(SRC_DIR)/%.c=$(OBJ_DIR)/%.o)
 
 CC       := gcc
 CFLAGS   := -Wall -Wextra -Werror -I$(INC_DIR) -I$(LFT_DIR)
+LDLIBS   := -lreadline
 
 all: $(NAME)
 
 $(NAME): libft $(OBJS)
 	@printf "\033[1;33m[BUILD] Linking $(NAME)...\033[0m\n"
-	$(CC) $(CFLAGS) -o $(NAME) $(OBJS) $(LFT_DIR)/libft.a
+	$(CC) $(CFLAGS) -o $(NAME) $(OBJS) $(LFT_DIR)/libft.a $(LDLIBS)
 	@printf "\033[1;32m[OK] ✅ Compilation of $(NAME) completed.\033[0m\n"
 
 $(OBJ_DIR)/%.o: $(SRC_DIR)/%.c
