@@ -6,7 +6,7 @@
 /*   By: cde-la-r <code@cesardelarosa.xyz>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/29 17:51:38 by cde-la-r          #+#    #+#             */
-/*   Updated: 2025/03/31 17:15:37 by cesi             ###   ########.fr       */
+/*   Updated: 2025/03/31 23:24:51 by cesi             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,6 +18,12 @@
 #include <readline/readline.h>
 #include <stdlib.h>
 #include <unistd.h>
+
+#define GREEN "\033[1;32m"
+#define BLUE "\033[1;34m"
+#define YELLOW "\033[1;33m"
+#define MAGENTA "\033[1;35m"
+#define RESET "\033[0m"
 
 static char	*get_hostname(void)
 {
@@ -41,12 +47,26 @@ static char	*get_hostname(void)
 	return (host);
 }
 
-static char	*shorten_cwd(const char *cwd, const char *user)
+static char	*get_user(void)
 {
+	char	*user;
+
+	user = getenv("USER");
+	if (!user)
+		return (ft_strdup("unknown"));
+	return (ft_strdup(user));
+}
+
+static char	*get_cwd(const char *user)
+{
+	char	cwd[PATH_MAX];
 	size_t	ulen;
 
+	if (!getcwd(cwd, sizeof(cwd)))
+		return (ft_strdup("unknown"));
 	ulen = ft_strlen(user);
-	if (!ft_strncmp(cwd, "/home/", 6) && !ft_strncmp(cwd + 6, user, ulen)
+	if (!ft_strncmp(cwd, "/home/", 6)
+		&& !ft_strncmp(cwd + 6, user, ulen)
 		&& (cwd[6 + ulen] == '/' || cwd[6 + ulen] == '\0'))
 	{
 		if (cwd[6 + ulen] == '\0')
@@ -59,40 +79,25 @@ static char	*shorten_cwd(const char *cwd, const char *user)
 
 char	*build_prompt(char **envp)
 {
-	char	cwd[PATH_MAX];
 	char	*user;
 	char	*host;
-	char	*short_cwd;
-	char	*prompt;
+	char	*cwd;
 
 	(void)envp;
-	user = getenv("USER");
-	if (!user)
-		user = "unknown";
+	user = get_user();
 	host = get_hostname();
-	if (!getcwd(cwd, sizeof(cwd)))
-		ft_strlcpy(cwd, "unknown", sizeof(cwd));
-	short_cwd = shorten_cwd(cwd, user);
+	cwd = get_cwd(user);
 	if (isatty(STDOUT_FILENO))
 	{
-		prompt = ft_strjoin_free(ft_strdup("\033[1;32m"), ft_strdup(user), 3);
-		prompt = ft_strjoin_free(prompt, ft_strdup("\033[0m at \033[1;34m"), 3);
-		prompt = ft_strjoin_free(prompt, ft_strdup(host), 3);
-		prompt = ft_strjoin_free(prompt, ft_strdup("\033[0m in \033[1;33m"), 3);
-		prompt = ft_strjoin_free(prompt, ft_strdup(short_cwd), 3);
-		prompt = ft_strjoin_free(prompt, ft_strdup("\033[0m via \033[1;35mminishell\033[0m$ "), 3);
+		return (ft_strjoin_free(ft_strjoin_free(ft_strjoin_free(ft_strjoin_free(
+							ft_strjoin_free(ft_strjoin_free(GREEN, user, 0),
+								RESET " at " BLUE, 1), host, 3),
+						RESET " in " YELLOW, 1), cwd, 3),
+				RESET " via " MAGENTA "minishell" RESET "$ ", 1));
 	}
-	else
-	{
-		prompt = ft_strjoin_free(ft_strdup(user), ft_strdup(" at "), 3);
-		prompt = ft_strjoin_free(prompt, ft_strdup(host), 3);
-		prompt = ft_strjoin_free(prompt, ft_strdup(" in "), 3);
-		prompt = ft_strjoin_free(prompt, ft_strdup(short_cwd), 3);
-		prompt = ft_strjoin_free(prompt, ft_strdup("via minishell$ "), 3);
-	}
-	free(host);
-	free(short_cwd);
-	return (prompt);
+	return (ft_strjoin_free(ft_strjoin_free(ft_strjoin_free(ft_strjoin_free(
+						ft_strjoin_free(user, " at ", 0), host, 3), " in ", 1),
+				cwd, 3), "via minishell$ ", 1));
 }
 
 char	*read_line(char **envp)
