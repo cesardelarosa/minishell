@@ -6,12 +6,12 @@
 /*   By: cde-la-r <code@cesardelarosa.xyz>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/08 12:28:19 by cde-la-r          #+#    #+#             */
-/*   Updated: 2025/03/10 04:42:28 by cde-la-r         ###   ########.fr       */
+/*   Updated: 2025/03/31 19:57:56 by cesi             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "common.h"
-#include "structs.h"
+#include "struct_creation.h"
 #include "execution.h"
 #include "pipeline_utils.h"
 #include "errors.h"
@@ -98,6 +98,7 @@ static int	wait_for_children(t_pipeline *p)
 			exit_status = 128 + WTERMSIG(status);
 		i++;
 	}
+	pipeline_destroy(p);
 	return (exit_status);
 }
 
@@ -106,6 +107,8 @@ int	pipeline_execute(t_pipeline *p, char **envp)
 	t_list			*current_cmd;
 	unsigned int	index;
 
+	if (!p)
+		return (-1);
 	p->pids = ft_calloc(p->cmd_count, sizeof(pid_t));
 	if (!p->pids)
 		error_exit_code(1, "malloc failed", NULL, p);

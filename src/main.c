@@ -6,7 +6,7 @@
 /*   By: cde-la-r <code@cesardelarosa.xyz>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/29 17:52:04 by cde-la-r          #+#    #+#             */
-/*   Updated: 2025/03/29 18:41:16 by cesi             ###   ########.fr       */
+/*   Updated: 2025/03/31 19:58:09 by cesi             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,21 +26,12 @@ int	main(int argc, char **argv, char **envp)
 	(void)argc;
 	(void)argv;
 	init_signals();
-	while (1)
+	while (42)
 	{
 		line = read_line(envp);
-		if (!line)
-			break ;
 		tokens = lexer(line);
-		free(line);
-		if (!tokens)
-			continue ;
 		pipeline = parse_tokens(tokens);
-		free_tokens(tokens);
-		if (!pipeline)
-			continue ;
 		exit_status = pipeline_execute(pipeline, envp);
-		pipeline_destroy(pipeline);
 	}
 	return (exit_status);
 }

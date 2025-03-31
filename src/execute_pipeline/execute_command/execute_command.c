@@ -6,7 +6,7 @@
 /*   By: cde-la-r <code@cesardelarosa.xyz>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/10 12:15:14 by cde-la-r          #+#    #+#             */
-/*   Updated: 2025/03/10 12:24:53 by cde-la-r         ###   ########.fr       */
+/*   Updated: 2025/03/31 18:18:27 by cesi             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,7 +14,7 @@
 #include "common.h"
 #include "execution.h"
 
-char	*get_env_value(char *key, char **envp)
+static char	*get_env_value(char *key, char **envp)
 {
 	size_t	len;
 
