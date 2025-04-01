@@ -40,12 +40,13 @@ static char	**build_argv_from_list(t_list *lst)
 	return (argv);
 }
 
-t_command	*build_command(t_list **tokens_ptr)
+t_command	*build_command(t_list **tokens_ptr, int status)
 {
 	t_command	*cmd;
 	t_list		*arg_list;
 	t_token		*token;
 
+	(void)status;
 	cmd = ft_calloc(1, sizeof(t_command));
 	if (!cmd)
 		return (NULL);
@@ -67,7 +68,7 @@ t_command	*build_command(t_list **tokens_ptr)
 	return (cmd);
 }
 
-t_pipeline	*parser(t_list *tokens)
+t_pipeline	*parser(t_list *tokens, int status)
 {
 	t_pipeline	*pipeline;
 	t_command	*cmd;
@@ -81,7 +82,7 @@ t_pipeline	*parser(t_list *tokens)
 	{
 		if (((t_token *)current_tokens->content)->type == TOKEN_EOF)
 			break ;
-		cmd = build_command(&current_tokens);
+		cmd = build_command(&current_tokens, status);
 		if (!pipeline_add_command(pipeline, cmd))
 		{
 			ft_putstr_fd("Error: failed to add command to pipeline\n", 2);

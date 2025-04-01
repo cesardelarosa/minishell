@@ -19,7 +19,7 @@
 
 void		init_signals(void);
 char		*read_prompt(void);
-t_pipeline	*parser(t_list *tokens);
+t_pipeline	*parser(t_list *tokens, int status);
 void		free_tokens(t_list *tokens);
 int			exec(t_pipeline *p, char **envp);
 
