@@ -6,7 +6,7 @@
 /*   By: cde-la-r <code@cesardelarosa.xyz>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/29 17:20:26 by cde-la-r          #+#    #+#             */
-/*   Updated: 2025/03/31 23:46:40 by cesi             ###   ########.fr       */
+/*   Updated: 2025/04/01 11:58:30 by cesi             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -57,15 +57,14 @@ t_list	*lexer(char *input)
 	{
 		while (*s && is_whitespace(*s))
 			s++;
-		if (!*s)
+		if (!*s || (*s == '\'' && process_single_quote(&s, &tokens) < 0)
+			|| (*s == '\"' && process_double_quote(&s, &tokens) < 0))
 			break ;
 		if ((*s == '|' && process_pipe(&s, &tokens) == 0)
 			|| (*s == '<' && process_redirect_in(&s, &tokens) == 0)
-			|| (*s == '>' && process_redirect_out(&s, &tokens) == 0))
+			|| (*s == '>' && process_redirect_out(&s, &tokens) == 0)
+			|| (*s == '$' && process_variable(&s, &tokens) == 0))
 			continue ;
-		if ((*s == '\'' && process_single_quote(&s, &tokens) < 0)
-			|| (*s == '\"' && process_double_quote(&s, &tokens) < 0))
-			break ;
 		process_word(&s, &tokens);
 	}
 	ft_lstadd_back(&tokens, ft_lstnew(create_token(TOKEN_EOF, NULL)));
