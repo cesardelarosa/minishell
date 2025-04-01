@@ -6,13 +6,14 @@
 /*   By: cde-la-r <code@cesardelarosa.xyz>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/10 12:15:14 by cde-la-r          #+#    #+#             */
-/*   Updated: 2025/03/31 18:18:27 by cesi             ###   ########.fr       */
+/*   Updated: 2025/04/01 10:18:54 by cesi             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "errors.h"
 #include "common.h"
 #include "execution.h"
+#include "builtin.h"
 
 static char	*get_env_value(char *key, char **envp)
 {
@@ -68,10 +69,14 @@ static char	*find_executable(char *cmd, char **envp)
 
 void	execute_command(t_command *cmd, char **envp)
 {
-	char	*path;
+	char			*path;
+	t_builtin_ft	builtin_ft;
 
 	if (handle_redirs(cmd->redirs) < 0)
 		error_exit_code(1, "redirection failed", NULL, cmd->p);
+	builtin_ft = is_builtin(cmd->argv[0]);
+	if (builtin_ft)
+		exit(builtin_ft(cmd->argv, envp));
 	path = find_executable(cmd->argv[0], envp);
 	if (!path)
 		error_exit_code(127, "Command not found", cmd->argv[0], cmd->p);

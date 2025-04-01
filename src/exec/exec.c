@@ -1,28 +1,38 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   main.c                                             :+:      :+:    :+:   */
+/*   exec.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: cde-la-r <code@cesardelarosa.xyz>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/03/29 17:52:04 by cde-la-r          #+#    #+#             */
-/*   Updated: 2025/04/01 11:04:05 by cesi             ###   ########.fr       */
+/*   Created: 2025/04/01 11:02:08 by cde-la-r          #+#    #+#             */
+/*   Updated: 2025/04/01 11:04:54 by cesi             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "core.h"
-#include "libft.h"
+#include "execution.h"
+#include "builtin.h"
 #include "struct_creation.h"
-#include <stdlib.h>
+#include "libft.h"
 
-int	main(int argc, char **argv, char **envp)
+int	exec(t_pipeline *p, char **envp)
 {
-	int	exit_status;
+	t_command		*cmd;
+	t_builtin_ft	ft_builtin;
+	int				status;
 
-	(void)argc;
-	(void)argv;
-	init_signals();
-	while (42)
-		exit_status = exec(parser(lexer(read_prompt())), envp);
-	return (exit_status);
+	if (!p)
+		return (-1);
+	if (p->cmd_count == 1)
+	{
+		cmd = p->commands->content;
+		ft_builtin = is_builtin(cmd->argv[0]);
+		if (ft_builtin)
+		{
+			status = ft_builtin(cmd->argv, envp);
+			pipeline_destroy(p);
+			return (status);
+		}
+	}
+	return (pipeline_execute(p, envp));
 }

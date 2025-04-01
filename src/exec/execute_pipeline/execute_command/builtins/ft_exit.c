@@ -1,28 +1,28 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   main.c                                             :+:      :+:    :+:   */
+/*   ft_exit.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: cde-la-r <code@cesardelarosa.xyz>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/03/29 17:52:04 by cde-la-r          #+#    #+#             */
-/*   Updated: 2025/04/01 11:04:05 by cesi             ###   ########.fr       */
+/*   Created: 2025/03/31 21:13:11 by cde-la-r          #+#    #+#             */
+/*   Updated: 2025/03/31 21:16:22 by cde-la-r         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "core.h"
 #include "libft.h"
-#include "struct_creation.h"
 #include <stdlib.h>
 
-int	main(int argc, char **argv, char **envp)
+int	ft_exit(char **argv, char **envp)
 {
 	int	exit_status;
 
-	(void)argc;
-	(void)argv;
-	init_signals();
-	while (42)
-		exit_status = exec(parser(lexer(read_prompt())), envp);
+	(void)envp;
+	exit_status = 0;
+	if (argv[1])
+		exit_status = ft_atoi(argv[1]);
+	ft_printf("Exiting minishell...\n");
+	ft_free_split(argv);
+	exit(exit_status);
 	return (exit_status);
 }

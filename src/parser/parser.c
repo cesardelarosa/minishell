@@ -67,7 +67,7 @@ t_command	*build_command(t_list **tokens_ptr)
 	return (cmd);
 }
 
-t_pipeline	*parse_tokens(t_list *tokens)
+t_pipeline	*parser(t_list *tokens)
 {
 	t_pipeline	*pipeline;
 	t_command	*cmd;

@@ -1,28 +1,24 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   main.c                                             :+:      :+:    :+:   */
+/*   ft_builtins.h                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: cde-la-r <code@cesardelarosa.xyz>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/03/29 17:52:04 by cde-la-r          #+#    #+#             */
-/*   Updated: 2025/04/01 11:04:05 by cesi             ###   ########.fr       */
+/*   Created: 2025/04/01 10:21:49 by cde-la-r          #+#    #+#             */
+/*   Updated: 2025/04/01 10:47:52 by cesi             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "core.h"
-#include "libft.h"
-#include "struct_creation.h"
-#include <stdlib.h>
+#ifndef FT_BUILTINS_H
+# define FT_BUILTINS_H
 
-int	main(int argc, char **argv, char **envp)
-{
-	int	exit_status;
+int	ft_cd(char **argv, char **envp);
+int	ft_echo(char **argv, char **envp);
+int	ft_pwd(char **argv, char **envp);
+int	ft_exit(char **argv, char **envp);
+int	ft_env(char **argv, char **envp);
+int	ft_export(char **argv, char **envp);
+int	ft_unset(char **argv, char **envp);
 
-	(void)argc;
-	(void)argv;
-	init_signals();
-	while (42)
-		exit_status = exec(parser(lexer(read_prompt())), envp);
-	return (exit_status);
-}
+#endif

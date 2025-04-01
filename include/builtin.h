@@ -1,28 +1,26 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   main.c                                             :+:      :+:    :+:   */
+/*   builtin.h                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: cde-la-r <code@cesardelarosa.xyz>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/03/29 17:52:04 by cde-la-r          #+#    #+#             */
-/*   Updated: 2025/04/01 11:04:05 by cesi             ###   ########.fr       */
+/*   Created: 2025/04/01 10:13:50 by cde-la-r          #+#    #+#             */
+/*   Updated: 2025/04/01 10:19:17 by cesi             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "core.h"
-#include "libft.h"
-#include "struct_creation.h"
-#include <stdlib.h>
+#ifndef BUILTIN_H
+# define BUILTIN_H
 
-int	main(int argc, char **argv, char **envp)
+typedef int			(*t_builtin_ft)(char **argv, char **envp);
+
+typedef struct s_builtin
 {
-	int	exit_status;
+	char			*name;
+	t_builtin_ft	func;
+}					t_builtin;
 
-	(void)argc;
-	(void)argv;
-	init_signals();
-	while (42)
-		exit_status = exec(parser(lexer(read_prompt())), envp);
-	return (exit_status);
-}
+t_builtin_ft		is_builtin(char *cmd);
+
+#endif

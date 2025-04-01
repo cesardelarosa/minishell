@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   read_line.c                                        :+:      :+:    :+:   */
+/*   read_prompt.c                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: cde-la-r <code@cesardelarosa.xyz>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/29 17:51:38 by cde-la-r          #+#    #+#             */
-/*   Updated: 2025/03/31 23:24:51 by cesi             ###   ########.fr       */
+/*   Updated: 2025/04/01 00:28:34 by cesi             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -77,43 +77,41 @@ static char	*get_cwd(const char *user)
 	return (ft_strdup(cwd));
 }
 
-char	*build_prompt(char **envp)
+char	*build_prompt(void)
 {
 	char	*user;
 	char	*host;
 	char	*cwd;
 
-	(void)envp;
 	user = get_user();
 	host = get_hostname();
 	cwd = get_cwd(user);
 	if (isatty(STDOUT_FILENO))
 	{
 		return (ft_strjoin_free(ft_strjoin_free(ft_strjoin_free(ft_strjoin_free(
-							ft_strjoin_free(ft_strjoin_free(GREEN, user, 0),
+							ft_strjoin_free(ft_strjoin_free(GREEN, user, 2),
 								RESET " at " BLUE, 1), host, 3),
 						RESET " in " YELLOW, 1), cwd, 3),
 				RESET " via " MAGENTA "minishell" RESET "$ ", 1));
 	}
 	return (ft_strjoin_free(ft_strjoin_free(ft_strjoin_free(ft_strjoin_free(
-						ft_strjoin_free(user, " at ", 0), host, 3), " in ", 1),
+						ft_strjoin_free(user, " at ", 1), host, 3), " in ", 1),
 				cwd, 3), "via minishell$ ", 1));
 }
 
-char	*read_line(char **envp)
+char	*read_prompt(void)
 {
 	char	*line;
 	char	*prompt;
 	char	*trimmed;
 
-	(void)envp;
 	while (1)
 	{
-		prompt = build_prompt(envp);
+		prompt = build_prompt();
 		line = readline(prompt);
 		free(prompt);
 		if (!line)
-			return (NULL);
+			exit(0);
 		trimmed = ft_strtrim(line, " \t\n");
 		free(line);
 		if (trimmed && *trimmed)
