@@ -6,7 +6,7 @@
 /*   By: cde-la-r <code@cesardelarosa.xyz>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/29 17:51:38 by cde-la-r          #+#    #+#             */
-/*   Updated: 2025/04/01 00:28:34 by cesi             ###   ########.fr       */
+/*   Updated: 2025/04/01 11:23:27 by cesi             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -111,7 +111,10 @@ char	*read_prompt(void)
 		line = readline(prompt);
 		free(prompt);
 		if (!line)
+		{
+			rl_clear_history();
 			exit(0);
+		}
 		trimmed = ft_strtrim(line, " \t\n");
 		free(line);
 		if (trimmed && *trimmed)
