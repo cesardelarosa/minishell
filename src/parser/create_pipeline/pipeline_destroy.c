@@ -1,24 +1,16 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   pipeline_creation.c                                :+:      :+:    :+:   */
+/*   pipeline_destroy.c                                 :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: cde-la-r <code@cesardelarosa.xyz>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/10 12:16:25 by cde-la-r          #+#    #+#             */
-/*   Updated: 2025/03/31 20:17:25 by cesi             ###   ########.fr       */
+/*   Updated: 2025/04/03 23:32:24 by cesi             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "struct_creation.h"
-
-t_pipeline	*pipeline_create(void)
-{
-	t_pipeline	*pipeline;
-
-	pipeline = ft_calloc(1, sizeof(t_pipeline));
-	return (pipeline);
-}
 
 void	pipeline_destroy(t_pipeline *pipeline)
 {
@@ -37,22 +29,4 @@ void	pipeline_destroy(t_pipeline *pipeline)
 	free(pipeline->pids);
 	ft_lstclear(&pipeline->commands, command_destroy);
 	free(pipeline);
-}
-
-int	pipeline_add_command(t_pipeline *p, t_command *cmd)
-{
-	t_list	*node;
-
-	if (!cmd)
-		return (0);
-	node = ft_lstnew(cmd);
-	if (!node)
-	{
-		command_destroy(cmd);
-		return (0);
-	}
-	ft_lstadd_back(&p->commands, node);
-	p->cmd_count++;
-	cmd->p = p;
-	return (1);
 }

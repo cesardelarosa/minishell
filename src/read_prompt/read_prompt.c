@@ -6,7 +6,7 @@
 /*   By: cde-la-r <code@cesardelarosa.xyz>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/29 17:51:38 by cde-la-r          #+#    #+#             */
-/*   Updated: 2025/04/01 11:23:27 by cesi             ###   ########.fr       */
+/*   Updated: 2025/04/03 23:00:19 by cesi             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -77,7 +77,7 @@ static char	*get_cwd(const char *user)
 	return (ft_strdup(cwd));
 }
 
-char	*build_prompt(void)
+static char	*build_prompt(void)
 {
 	char	*user;
 	char	*host;

@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   token.c                                            :+:      :+:    :+:   */
+/*   process_pipe.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: cde-la-r <code@cesardelarosa.xyz>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/29 17:20:26 by cde-la-r          #+#    #+#             */
-/*   Updated: 2025/03/31 23:39:21 by cesi             ###   ########.fr       */
+/*   Updated: 2025/03/31 23:45:56 by cesi             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,26 +15,12 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-t_token	*create_token(t_token_type type, char *value)
+int	process_pipe(char **s, t_list **tokens)
 {
 	t_token	*token;
 
-	token = malloc(sizeof(t_token));
-	if (!token)
-		return (NULL);
-	token->type = type;
-	token->value = value;
-	return (token);
-}
-
-void	free_token(void *token_ptr)
-{
-	t_token	*token;
-
-	token = (t_token *)token_ptr;
-	if (token)
-	{
-		free(token->value);
-		free(token);
-	}
+	token = create_token(TOKEN_PIPE, ft_strdup("|"));
+	ft_lstadd_back(tokens, ft_lstnew(token));
+	(*s)++;
+	return (0);
 }

@@ -1,25 +1,23 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   lexer_utils.h                                      :+:      :+:    :+:   */
+/*   redir_destroy.c                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: cde-la-r <code@cesardelarosa.xyz>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/03/31 23:50:14 by cde-la-r          #+#    #+#             */
-/*   Updated: 2025/04/03 19:49:30 by cesi             ###   ########.fr       */
+/*   Created: 2025/03/10 12:14:56 by cde-la-r          #+#    #+#             */
+/*   Updated: 2025/04/03 23:32:55 by cesi             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef LEXER_UTILS_H
-# define LEXER_UTILS_H
+#include "struct_creation.h"
+#include <stdlib.h>
 
-# include "lexer.h"
+void	redir_destroy(void *content)
+{
+	t_redir	*r;
 
-void	process_word(char **s, t_list **tokens);
-int		process_pipe(char **s, t_list **tokens);
-int		process_redirect_in(char **s, t_list **tokens);
-int		process_redirect_out(char **s, t_list **tokens);
-int		process_single_quote(char **s, t_list **tokens);
-int		process_double_quote(char **s, t_list **tokens);
-
-#endif
+	r = (t_redir *)content;
+	free(r->file);
+	free(r);
+}

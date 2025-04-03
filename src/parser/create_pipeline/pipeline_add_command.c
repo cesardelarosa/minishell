@@ -1,25 +1,31 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   lexer_utils.h                                      :+:      :+:    :+:   */
+/*   pipeline_add_command.c                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: cde-la-r <code@cesardelarosa.xyz>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/03/31 23:50:14 by cde-la-r          #+#    #+#             */
-/*   Updated: 2025/04/03 19:49:30 by cesi             ###   ########.fr       */
+/*   Created: 2025/03/10 12:16:25 by cde-la-r          #+#    #+#             */
+/*   Updated: 2025/04/03 23:31:59 by cesi             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef LEXER_UTILS_H
-# define LEXER_UTILS_H
+#include "struct_creation.h"
 
-# include "lexer.h"
+int	pipeline_add_command(t_pipeline *p, t_command *cmd)
+{
+	t_list	*node;
 
-void	process_word(char **s, t_list **tokens);
-int		process_pipe(char **s, t_list **tokens);
-int		process_redirect_in(char **s, t_list **tokens);
-int		process_redirect_out(char **s, t_list **tokens);
-int		process_single_quote(char **s, t_list **tokens);
-int		process_double_quote(char **s, t_list **tokens);
-
-#endif
+	if (!cmd)
+		return (0);
+	node = ft_lstnew(cmd);
+	if (!node)
+	{
+		command_destroy(cmd);
+		return (0);
+	}
+	ft_lstadd_back(&p->commands, node);
+	p->cmd_count++;
+	cmd->p = p;
+	return (1);
+}

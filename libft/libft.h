@@ -6,7 +6,7 @@
 /*   By: cde-la-r <cde-la-r@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/07 12:06:10 by cde-la-r          #+#    #+#             */
-/*   Updated: 2025/03/08 13:14:49 by cesi             ###   ########.fr       */
+/*   Updated: 2025/04/03 22:49:50 by cesi             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -85,5 +85,6 @@ void	ft_handle_errors(char *prog, char *msg, char *cmd, int exit_code);
 size_t	ft_strcspn(const char *s, const char *reject);
 char	*ft_ftoa(double n, int precision);
 char	*ft_strjoin_free(char *s1, char *s2, int free_flag);
+int		ft_iswhitespace(char c);
 
 #endif 

@@ -1,7 +1,7 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   process_operator.c                                 :+:      :+:    :+:   */
+/*   process_redirect_in.c                              :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: cde-la-r <code@cesardelarosa.xyz>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
@@ -14,16 +14,6 @@
 #include "libft.h"
 #include <stdio.h>
 #include <stdlib.h>
-
-int	process_pipe(char **s, t_list **tokens)
-{
-	t_token	*token;
-
-	token = create_token(TOKEN_PIPE, ft_strdup("|"));
-	ft_lstadd_back(tokens, ft_lstnew(token));
-	(*s)++;
-	return (0);
-}
 
 int	process_redirect_in(char **s, t_list **tokens)
 {
@@ -38,25 +28,6 @@ int	process_redirect_in(char **s, t_list **tokens)
 	else
 	{
 		token = create_token(TOKEN_REDIRECT_IN, ft_strdup("<"));
-		ft_lstadd_back(tokens, ft_lstnew(token));
-		(*s)++;
-	}
-	return (0);
-}
-
-int	process_redirect_out(char **s, t_list **tokens)
-{
-	t_token	*token;
-
-	if ((*s)[1] == '>')
-	{
-		token = create_token(TOKEN_APPEND, ft_strdup(">>"));
-		ft_lstadd_back(tokens, ft_lstnew(token));
-		(*s) += 2;
-	}
-	else
-	{
-		token = create_token(TOKEN_REDIRECT_OUT, ft_strdup(">"));
 		ft_lstadd_back(tokens, ft_lstnew(token));
 		(*s)++;
 	}

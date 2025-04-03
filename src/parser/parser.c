@@ -6,7 +6,7 @@
 /*   By: cde-la-r <code@cesardelarosa.xyz>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/29 18:08:20 by cde-la-r          #+#    #+#             */
-/*   Updated: 2025/04/01 12:27:59 by cesi             ###   ########.fr       */
+/*   Updated: 2025/04/03 23:01:38 by cesi             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,7 +40,7 @@ static char	**build_argv_from_list(t_list *lst)
 	return (argv);
 }
 
-t_command	*build_command(t_list **tokens_ptr, int status)
+static t_command	*build_command(t_list **tokens_ptr, int status)
 {
 	t_command	*cmd;
 	t_list		*arg_list;

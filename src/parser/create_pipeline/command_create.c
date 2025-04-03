@@ -1,25 +1,28 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   lexer_utils.h                                      :+:      :+:    :+:   */
+/*   command_create.c                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: cde-la-r <code@cesardelarosa.xyz>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/03/31 23:50:14 by cde-la-r          #+#    #+#             */
-/*   Updated: 2025/04/03 19:49:30 by cesi             ###   ########.fr       */
+/*   Created: 2025/03/10 12:14:56 by cde-la-r          #+#    #+#             */
+/*   Updated: 2025/04/03 23:31:08 by cesi             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef LEXER_UTILS_H
-# define LEXER_UTILS_H
+#include "struct_creation.h"
+#include <stdlib.h>
 
-# include "lexer.h"
+t_command	*command_create(char *cmd_str)
+{
+	t_command	*cmd;
 
-void	process_word(char **s, t_list **tokens);
-int		process_pipe(char **s, t_list **tokens);
-int		process_redirect_in(char **s, t_list **tokens);
-int		process_redirect_out(char **s, t_list **tokens);
-int		process_single_quote(char **s, t_list **tokens);
-int		process_double_quote(char **s, t_list **tokens);
-
-#endif
+	(void)cmd_str;
+	cmd = ft_calloc(1, sizeof(t_command));
+	if (!cmd)
+		return (NULL);
+	cmd->argv = NULL;
+	cmd->redirs = NULL;
+	cmd->p = NULL;
+	return (cmd);
+}

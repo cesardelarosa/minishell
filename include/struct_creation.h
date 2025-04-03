@@ -6,7 +6,7 @@
 /*   By: cde-la-r <code@cesardelarosa.xyz>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/08 13:01:51 by cde-la-r          #+#    #+#             */
-/*   Updated: 2025/03/09 15:15:26 by cde-la-r         ###   ########.fr       */
+/*   Updated: 2025/04/03 23:26:39 by cesi             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,6 +16,9 @@
 # include "structs.h"
 
 char		**parse_args(const char *input);
+
+t_redir		*redir_create(t_redir_type type, char *file, t_command *parent_cmd);
+void		redir_destroy(void *content);
 
 t_command	*command_create(char *cmd_str);
 void		command_destroy(void *cmd);
