@@ -6,7 +6,7 @@
 /*   By: cde-la-r <code@cesardelarosa.xyz>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/29 17:15:26 by cde-la-r          #+#    #+#             */
-/*   Updated: 2025/03/29 17:19:33 by cde-la-r         ###   ########.fr       */
+/*   Updated: 2025/04/03 19:03:17 by cde-la-r         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,7 +23,6 @@ typedef enum e_token_type
 	TOKEN_HEREDOC,
 	TOKEN_APPEND,
 	TOKEN_WORD,
-	TOKEN_VARIABLE,
 	TOKEN_SINGLE_QUOTED_STRING,
 	TOKEN_DOUBLE_QUOTED_STRING,
 	TOKEN_EOF,

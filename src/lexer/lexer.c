@@ -6,7 +6,7 @@
 /*   By: cde-la-r <code@cesardelarosa.xyz>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/29 17:20:26 by cde-la-r          #+#    #+#             */
-/*   Updated: 2025/04/01 11:58:30 by cesi             ###   ########.fr       */
+/*   Updated: 2025/04/03 19:04:10 by cde-la-r         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -62,8 +62,7 @@ t_list	*lexer(char *input)
 			break ;
 		if ((*s == '|' && process_pipe(&s, &tokens) == 0)
 			|| (*s == '<' && process_redirect_in(&s, &tokens) == 0)
-			|| (*s == '>' && process_redirect_out(&s, &tokens) == 0)
-			|| (*s == '$' && process_variable(&s, &tokens) == 0))
+			|| (*s == '>' && process_redirect_out(&s, &tokens) == 0))
 			continue ;
 		process_word(&s, &tokens);
 	}

@@ -6,7 +6,7 @@
 /*   By: cde-la-r <code@cesardelarosa.xyz>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/31 23:50:14 by cde-la-r          #+#    #+#             */
-/*   Updated: 2025/04/01 11:53:39 by cesi             ###   ########.fr       */
+/*   Updated: 2025/04/03 19:03:05 by cde-la-r         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,6 +20,5 @@ int	process_redirect_in(char **s, t_list **tokens);
 int	process_redirect_out(char **s, t_list **tokens);
 int	process_single_quote(char **s, t_list **tokens);
 int	process_double_quote(char **s, t_list **tokens);
-int	process_variable(char **s, t_list **tokens);
 
 #endif

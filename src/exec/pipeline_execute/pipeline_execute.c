@@ -6,7 +6,7 @@
 /*   By: cde-la-r <code@cesardelarosa.xyz>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/08 12:28:19 by cde-la-r          #+#    #+#             */
-/*   Updated: 2025/04/03 18:56:16 by cde-la-r         ###   ########.fr       */
+/*   Updated: 2025/04/03 19:35:55 by cde-la-r         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -122,7 +122,7 @@ int	pipeline_execute(t_pipeline *p, char **envp)
 			error_exit_code(1, "fork failed", NULL, p);
 		current_cmd = current_cmd->next;
 	}
-	while (--i > 1)
+	while (--i > 0)
 	{
 		close(p->pipes[i - 1][0]);
 		close(p->pipes[i - 1][1]);

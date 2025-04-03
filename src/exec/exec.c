@@ -6,7 +6,7 @@
 /*   By: cde-la-r <code@cesardelarosa.xyz>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/01 11:02:08 by cde-la-r          #+#    #+#             */
-/*   Updated: 2025/04/03 18:58:12 by cde-la-r         ###   ########.fr       */
+/*   Updated: 2025/04/03 19:31:32 by cde-la-r         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,19 +19,6 @@
 #include <stdio.h>
 #include <readline/history.h>
 #include <readline/readline.h>
-
-static void	ft_safe_exit(t_pipeline *p, char **argv, char **envp)
-{
-	int	exit_status;
-
-	(void)envp;
-	exit_status = 0;
-	if (argv[1])
-		exit_status = ft_atoi(argv[1]);
-	pipeline_destroy(p);
-	rl_clear_history();
-	exit(exit_status);
-}
 
 static void	restore_io(int saved_stdin, int saved_stdout)
 {
@@ -59,9 +46,10 @@ static int	builtin_in_parent(t_pipeline *p, t_builtin_ft ft, char **envp)
 	if (ft == ft_exit)
 	{
 		restore_io(saved_stdin, saved_stdout);
-		ft_safe_exit(p, cmd->argv, envp);
+		rl_clear_history();
+		error_exit_code(ft_atoi(cmd->argv[1]), NULL, NULL, cmd->p);
 	}
-	status = is_builtin(cmd->argv[0])(cmd->argv, envp);
+	status = ft(cmd->argv, envp);
 	restore_io(saved_stdin, saved_stdout);
 	pipeline_destroy(p);
 	return (status);
@@ -69,15 +57,13 @@ static int	builtin_in_parent(t_pipeline *p, t_builtin_ft ft, char **envp)
 
 int	exec(t_pipeline *p, char **envp)
 {
-	t_command		*cmd;
 	t_builtin_ft	ft_builtin;
 
 	if (!p)
 		return (-1);
 	if (p->cmd_count == 1)
 	{
-		cmd = p->commands->content;
-		ft_builtin = is_builtin(cmd->argv[0]);
+		ft_builtin = is_builtin(((t_command *)p->commands->content)->argv[0]);
 		if (ft_builtin)
 			return (builtin_in_parent(p, ft_builtin, envp));
 	}

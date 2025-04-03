@@ -6,7 +6,7 @@
 /*   By: cde-la-r <code@cesardelarosa.xyz>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/29 18:08:20 by cde-la-r          #+#    #+#             */
-/*   Updated: 2025/03/31 23:33:29 by cesi             ###   ########.fr       */
+/*   Updated: 2025/04/03 19:05:25 by cde-la-r         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,7 +28,7 @@ static int	handle_redirection(t_command *cmd, t_list **tokens_ptr,
 		return (0);
 	}
 	token = (t_token *)(*tokens_ptr)->content;
-	if (token->type != TOKEN_WORD && token->type != TOKEN_VARIABLE
+	if (token->type != TOKEN_WORD
 		&& token->type != TOKEN_SINGLE_QUOTED_STRING
 		&& token->type != TOKEN_DOUBLE_QUOTED_STRING)
 	{
@@ -76,7 +76,7 @@ int	process_token(t_command *cmd, t_list **tokens_ptr, t_list **arg_lst)
 		if (!handle_redirection(cmd, tokens_ptr, token->type))
 			return (0);
 	}
-	else if (token->type == TOKEN_WORD || token->type == TOKEN_VARIABLE
+	else if (token->type == TOKEN_WORD
 		|| token->type == TOKEN_SINGLE_QUOTED_STRING
 		|| token->type == TOKEN_DOUBLE_QUOTED_STRING)
 	{
