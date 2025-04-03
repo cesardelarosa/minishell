@@ -6,7 +6,7 @@
 /*   By: cde-la-r <code@cesardelarosa.xyz>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/01 11:02:08 by cde-la-r          #+#    #+#             */
-/*   Updated: 2025/04/02 20:56:57 by cesi             ###   ########.fr       */
+/*   Updated: 2025/04/03 00:41:44 by cesi             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,6 +34,14 @@ static void	ft_safe_exit(t_pipeline *p, char **argv, char **envp)
 	exit(exit_status);
 }
 
+static void	restore_io(int saved_stdin, int saved_stdout)
+{
+	dup2(saved_stdin, STDIN_FILENO);
+	dup2(saved_stdout, STDOUT_FILENO);
+	close(saved_stdin);
+	close(saved_stdout);
+}
+
 static int	builtin_in_parent(t_pipeline *p, t_builtin_ft ft, char **envp)
 {
 	int			saved_stdin;
@@ -46,19 +54,16 @@ static int	builtin_in_parent(t_pipeline *p, t_builtin_ft ft, char **envp)
 	saved_stdout = dup(STDOUT_FILENO);
 	if (handle_redirs(cmd->redirs) < 0)
 	{
-		dup2(saved_stdin, STDIN_FILENO);
-		dup2(saved_stdout, STDOUT_FILENO);
-		close(saved_stdin);
-		close(saved_stdout);
+		restore_io(saved_stdin, saved_stdout);
 		error_exit_code(1, "redirection failed", NULL, cmd->p);
 	}
 	if (ft == ft_exit)
+	{
+		restore_io(saved_stdin, saved_stdout);
 		ft_safe_exit(p, cmd->argv, envp);
+	}
 	status = is_builtin(cmd->argv[0])(cmd->argv, envp);
-	dup2(saved_stdin, STDIN_FILENO);
-	dup2(saved_stdout, STDOUT_FILENO);
-	close(saved_stdin);
-	close(saved_stdout);
+	restore_io(saved_stdin, saved_stdout);
 	pipeline_destroy(p);
 	return (status);
 }
