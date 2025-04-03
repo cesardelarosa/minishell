@@ -6,7 +6,7 @@
 /*   By: cde-la-r <code@cesardelarosa.xyz>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/08 12:28:19 by cde-la-r          #+#    #+#             */
-/*   Updated: 2025/04/03 19:35:55 by cde-la-r         ###   ########.fr       */
+/*   Updated: 2025/04/04 00:40:32 by cesi             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -101,7 +101,7 @@ static int	wait_for_children(t_pipeline *p)
 	return (exit_status);
 }
 
-int	pipeline_execute(t_pipeline *p, char **envp)
+int	pipeline_execute(t_pipeline *p)
 {
 	t_list			*current_cmd;
 	unsigned int	i;
@@ -117,7 +117,7 @@ int	pipeline_execute(t_pipeline *p, char **envp)
 	i = 0;
 	while (i < p->cmd_count && current_cmd)
 	{
-		p->pids[i] = fork_command(current_cmd->content, i, envp);
+		p->pids[i] = fork_command(current_cmd->content, i, p->ctx->envp);
 		if (p->pids[i++] < 0)
 			error_exit_code(1, "fork failed", NULL, p);
 		current_cmd = current_cmd->next;

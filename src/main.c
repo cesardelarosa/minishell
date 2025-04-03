@@ -6,7 +6,7 @@
 /*   By: cde-la-r <code@cesardelarosa.xyz>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/29 17:52:04 by cde-la-r          #+#    #+#             */
-/*   Updated: 2025/04/01 11:42:50 by cesi             ###   ########.fr       */
+/*   Updated: 2025/04/04 00:32:20 by cesi             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,13 +17,14 @@
 
 int	main(int argc, char **argv, char **envp)
 {
-	int	status;
+	t_ctx	ctx;
 
 	(void)argc;
 	(void)argv;
 	init_signals();
-	status = 0;
+	ctx.status = 0;
+	ctx.envp = envp;
 	while (42)
-		status = exec(parser(lexer(read_prompt()), status), envp);
-	return (status);
+		ctx.status = exec(parser(lexer(read_prompt()), &ctx));
+	return (ctx.status);
 }

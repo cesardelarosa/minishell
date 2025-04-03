@@ -6,7 +6,7 @@
 /*   By: cde-la-r <code@cesardelarosa.xyz>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/01 11:02:08 by cde-la-r          #+#    #+#             */
-/*   Updated: 2025/04/03 19:31:32 by cde-la-r         ###   ########.fr       */
+/*   Updated: 2025/04/04 00:42:26 by cesi             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,7 +28,7 @@ static void	restore_io(int saved_stdin, int saved_stdout)
 	close(saved_stdout);
 }
 
-static int	builtin_in_parent(t_pipeline *p, t_builtin_ft ft, char **envp)
+static int	builtin_in_parent(t_pipeline *p, t_builtin_ft ft)
 {
 	int			saved_stdin;
 	int			saved_stdout;
@@ -49,13 +49,13 @@ static int	builtin_in_parent(t_pipeline *p, t_builtin_ft ft, char **envp)
 		rl_clear_history();
 		error_exit_code(ft_atoi(cmd->argv[1]), NULL, NULL, cmd->p);
 	}
-	status = ft(cmd->argv, envp);
+	status = ft(cmd->argv, p->ctx->envp);
 	restore_io(saved_stdin, saved_stdout);
 	pipeline_destroy(p);
 	return (status);
 }
 
-int	exec(t_pipeline *p, char **envp)
+int	exec(t_pipeline *p)
 {
 	t_builtin_ft	ft_builtin;
 
@@ -65,7 +65,7 @@ int	exec(t_pipeline *p, char **envp)
 	{
 		ft_builtin = is_builtin(((t_command *)p->commands->content)->argv[0]);
 		if (ft_builtin)
-			return (builtin_in_parent(p, ft_builtin, envp));
+			return (builtin_in_parent(p, ft_builtin));
 	}
-	return (pipeline_execute(p, envp));
+	return (pipeline_execute(p));
 }

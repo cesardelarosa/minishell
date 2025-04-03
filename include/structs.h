@@ -6,7 +6,7 @@
 /*   By: cde-la-r <code@cesardelarosa.xyz>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/08 13:01:51 by cde-la-r          #+#    #+#             */
-/*   Updated: 2025/03/09 15:39:25 by cde-la-r         ###   ########.fr       */
+/*   Updated: 2025/04/04 00:29:03 by cesi             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,6 +23,12 @@ typedef enum e_redir_type
 	REDIR_HEREDOC
 }	t_redir_type;
 
+typedef struct s_ctx
+{
+	int		status;
+	char	**envp;
+}	t_ctx;
+
 typedef struct s_command	t_command;
 
 typedef struct s_redir
@@ -38,6 +44,7 @@ typedef struct s_pipeline
 	unsigned int	cmd_count;
 	int				**pipes;
 	pid_t			*pids;
+	t_ctx			*ctx;
 }	t_pipeline;
 
 typedef struct s_command

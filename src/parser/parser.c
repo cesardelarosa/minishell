@@ -6,7 +6,7 @@
 /*   By: cde-la-r <code@cesardelarosa.xyz>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/29 18:08:20 by cde-la-r          #+#    #+#             */
-/*   Updated: 2025/04/03 23:01:38 by cesi             ###   ########.fr       */
+/*   Updated: 2025/04/04 00:34:37 by cesi             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -68,13 +68,13 @@ static t_command	*build_command(t_list **tokens_ptr, int status)
 	return (cmd);
 }
 
-t_pipeline	*parser(t_list *tokens, int status)
+t_pipeline	*parser(t_list *tokens, t_ctx *ctx)
 {
 	t_pipeline	*pipeline;
 	t_command	*cmd;
 	t_list		*current_tokens;
 
-	pipeline = pipeline_create();
+	pipeline = pipeline_create(ctx);
 	if (!pipeline || !tokens)
 		return (NULL);
 	current_tokens = tokens;
@@ -82,7 +82,7 @@ t_pipeline	*parser(t_list *tokens, int status)
 	{
 		if (((t_token *)current_tokens->content)->type == TOKEN_EOF)
 			break ;
-		cmd = build_command(&current_tokens, status);
+		cmd = build_command(&current_tokens, ctx->status);
 		if (!pipeline_add_command(pipeline, cmd))
 		{
 			ft_putstr_fd("Error: failed to add command to pipeline\n", 2);

@@ -6,7 +6,7 @@
 /*   By: cde-la-r <code@cesardelarosa.xyz>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/08 13:01:51 by cde-la-r          #+#    #+#             */
-/*   Updated: 2025/04/03 23:26:39 by cesi             ###   ########.fr       */
+/*   Updated: 2025/04/04 00:39:09 by cesi             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,7 +24,7 @@ t_command	*command_create(char *cmd_str);
 void		command_destroy(void *cmd);
 int			command_add_redir(t_command *cmd, t_redir_type type, char *file);
 
-t_pipeline	*pipeline_create(void);
+t_pipeline	*pipeline_create(t_ctx *ctx);
 void		pipeline_destroy(t_pipeline *pipeline);
 int			pipeline_add_command(t_pipeline *p, t_command *cmd);
 
