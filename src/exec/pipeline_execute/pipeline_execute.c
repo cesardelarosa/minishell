@@ -6,14 +6,13 @@
 /*   By: cde-la-r <code@cesardelarosa.xyz>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/08 12:28:19 by cde-la-r          #+#    #+#             */
-/*   Updated: 2025/03/31 19:57:56 by cesi             ###   ########.fr       */
+/*   Updated: 2025/04/03 18:56:16 by cde-la-r         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "common.h"
 #include "struct_creation.h"
 #include "execution.h"
-#include "pipeline_utils.h"
 #include "errors.h"
 
 static int	create_pipes(t_pipeline *p)
@@ -56,8 +55,8 @@ static void	setup_child_pipes(unsigned int index, t_pipeline *p)
 			error_exit_code(1, strerror(errno), "dup2", p);
 		if (i == index && dup2(p->pipes[i][1], STDOUT_FILENO) == -1)
 			error_exit_code(1, strerror(errno), "dup2", p);
-		safe_close(&p->pipes[i][0]);
-		safe_close(&p->pipes[i][1]);
+		close(p->pipes[i][0]);
+		close(p->pipes[i][1]);
 		i++;
 	}
 }
@@ -105,7 +104,7 @@ static int	wait_for_children(t_pipeline *p)
 int	pipeline_execute(t_pipeline *p, char **envp)
 {
 	t_list			*current_cmd;
-	unsigned int	index;
+	unsigned int	i;
 
 	if (!p)
 		return (-1);
@@ -115,15 +114,18 @@ int	pipeline_execute(t_pipeline *p, char **envp)
 	if (!create_pipes(p))
 		return (0);
 	current_cmd = p->commands;
-	index = 0;
-	while (index < p->cmd_count && current_cmd)
+	i = 0;
+	while (i < p->cmd_count && current_cmd)
 	{
-		p->pids[index] = fork_command(current_cmd->content, index, envp);
-		if (p->pids[index] < 0)
+		p->pids[i] = fork_command(current_cmd->content, i, envp);
+		if (p->pids[i++] < 0)
 			error_exit_code(1, "fork failed", NULL, p);
 		current_cmd = current_cmd->next;
-		index++;
 	}
-	close_all_pipes(p);
+	while (--i > 1)
+	{
+		close(p->pipes[i - 1][0]);
+		close(p->pipes[i - 1][1]);
+	}
 	return (wait_for_children(p));
 }

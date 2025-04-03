@@ -6,7 +6,7 @@
 /*   By: cde-la-r <code@cesardelarosa.xyz>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/31 21:13:11 by cde-la-r          #+#    #+#             */
-/*   Updated: 2025/04/01 11:26:43 by cesi             ###   ########.fr       */
+/*   Updated: 2025/04/03 13:06:04 by cde-la-r         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,7 +25,6 @@ int	ft_exit(char **argv, char **envp)
 	if (argv[1])
 		exit_status = ft_atoi(argv[1]);
 	ft_printf("Exiting minishell...\n");
-	ft_free_split(argv);
 	rl_clear_history();
 	exit(exit_status);
 	return (exit_status);

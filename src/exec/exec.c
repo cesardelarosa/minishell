@@ -6,7 +6,7 @@
 /*   By: cde-la-r <code@cesardelarosa.xyz>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/01 11:02:08 by cde-la-r          #+#    #+#             */
-/*   Updated: 2025/04/03 00:41:44 by cesi             ###   ########.fr       */
+/*   Updated: 2025/04/03 18:58:12 by cde-la-r         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,7 +15,6 @@
 #include "errors.h"
 #include "execution.h"
 #include "ft_builtins.h"
-#include "pipeline_utils.h"
 #include "struct_creation.h"
 #include <stdio.h>
 #include <readline/history.h>
