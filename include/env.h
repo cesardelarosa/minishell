@@ -6,7 +6,7 @@
 /*   By: cde-la-r <code@cesardelarosa.xyz>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/04 00:18:27 by cde-la-r          #+#    #+#             */
-/*   Updated: 2025/04/04 00:18:36 by cde-la-r         ###   ########.fr       */
+/*   Updated: 2025/04/04 00:43:55 by cesi             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,6 +32,5 @@ int					env_set(t_env *env, const char *key, const char *value,
 int					env_unset(t_env *env, const char *key);
 char				**env_to_array(t_env *env);
 void				env_destroy(t_env *env);
-char				*expand_variables(t_env *env, const char *input);
 
 #endif
