@@ -21,13 +21,13 @@ int	process_redirect_in(char **s, t_list **tokens)
 
 	if ((*s)[1] == '<')
 	{
-		token = create_token(TOKEN_HEREDOC, ft_strdup("<<"));
+		token = create_token(TOKEN_HEREDOC, ft_strdup("<<"), 0);
 		ft_lstadd_back(tokens, ft_lstnew(token));
 		(*s) += 2;
 	}
 	else
 	{
-		token = create_token(TOKEN_REDIRECT_IN, ft_strdup("<"));
+		token = create_token(TOKEN_REDIRECT_IN, ft_strdup("<"), 0);
 		ft_lstadd_back(tokens, ft_lstnew(token));
 		(*s)++;
 	}

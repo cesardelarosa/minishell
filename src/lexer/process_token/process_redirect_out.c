@@ -21,13 +21,13 @@ int	process_redirect_out(char **s, t_list **tokens)
 
 	if ((*s)[1] == '>')
 	{
-		token = create_token(TOKEN_APPEND, ft_strdup(">>"));
+		token = create_token(TOKEN_APPEND, ft_strdup(">>"), 0);
 		ft_lstadd_back(tokens, ft_lstnew(token));
 		(*s) += 2;
 	}
 	else
 	{
-		token = create_token(TOKEN_REDIRECT_OUT, ft_strdup(">"));
+		token = create_token(TOKEN_REDIRECT_OUT, ft_strdup(">"), 0);
 		ft_lstadd_back(tokens, ft_lstnew(token));
 		(*s)++;
 	}

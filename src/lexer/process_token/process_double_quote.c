@@ -6,7 +6,7 @@
 /*   By: cde-la-r <code@cesardelarosa.xyz>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/29 17:20:26 by cde-la-r          #+#    #+#             */
-/*   Updated: 2025/04/03 22:54:43 by cesi             ###   ########.fr       */
+/*   Updated: 2025/04/04 16:48:45 by cesi             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,7 +33,7 @@ static char	*read_double_quoted(const char **s)
 	return (str);
 }
 
-int	process_double_quote(char **s, t_list **tokens)
+int	process_double_quote(char **s, t_list **tokens, int joined)
 {
 	t_token	*token;
 	char	*value;
@@ -41,11 +41,11 @@ int	process_double_quote(char **s, t_list **tokens)
 	value = read_double_quoted((const char **)s);
 	if (!value)
 	{
-		token = create_token(TOKEN_ERROR, ft_strdup("Unclosed double quote"));
+		token = create_token(TOKEN_ERROR, ft_strdup("Unclosed quote"), 0);
 		ft_lstadd_back(tokens, ft_lstnew(token));
 		return (-1);
 	}
-	token = create_token(TOKEN_DOUBLE_QUOTED_STRING, value);
+	token = create_token(TOKEN_DOUBLE_QUOTED_STRING, value, joined);
 	ft_lstadd_back(tokens, ft_lstnew(token));
 	return (0);
 }

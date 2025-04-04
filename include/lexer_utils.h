@@ -15,11 +15,11 @@
 
 # include "lexer.h"
 
-void	process_word(char **s, t_list **tokens);
+void	process_word(char **s, t_list **tokens, int joined);
 int		process_pipe(char **s, t_list **tokens);
 int		process_redirect_in(char **s, t_list **tokens);
 int		process_redirect_out(char **s, t_list **tokens);
-int		process_single_quote(char **s, t_list **tokens);
-int		process_double_quote(char **s, t_list **tokens);
+int		process_single_quote(char **s, t_list **tokens, int joined);
+int		process_double_quote(char **s, t_list **tokens, int joined);
 
 #endif

@@ -6,7 +6,7 @@
 /*   By: cde-la-r <code@cesardelarosa.xyz>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/29 17:20:26 by cde-la-r          #+#    #+#             */
-/*   Updated: 2025/04/03 22:45:48 by cesi             ###   ########.fr       */
+/*   Updated: 2025/04/04 17:22:36 by cesi             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,10 +16,36 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+static int	process_token(char **s, t_list **tokens, int joined)
+{
+	if (**s == '\'')
+	{
+		if (process_single_quote(s, tokens, joined) < 0)
+			return (-1);
+		return (1);
+	}
+	if (**s == '\"')
+	{
+		if (process_double_quote(s, tokens, joined) < 0)
+			return (-1);
+		return (1);
+	}
+	if (**s == '|' && process_pipe(s, tokens) == 0)
+		return (1);
+	if (**s == '<' && process_redirect_in(s, tokens) == 0)
+		return (1);
+	if (**s == '>' && process_redirect_out(s, tokens) == 0)
+		return (1);
+	process_word(s, tokens, joined);
+	return (1);
+}
+
 t_list	*lexer(char *input)
 {
 	t_list	*tokens;
 	char	*s;
+	char	*ws;
+	int		joined;
 
 	if (!input)
 		return (NULL);
@@ -27,18 +53,15 @@ t_list	*lexer(char *input)
 	s = input;
 	while (*s)
 	{
-		while (*s && ft_iswhitespace(*s))
-			s++;
-		if (!*s || (*s == '\'' && process_single_quote(&s, &tokens) < 0)
-			|| (*s == '\"' && process_double_quote(&s, &tokens) < 0))
+		ws = s;
+		while (*ws && ft_iswhitespace(*ws))
+			ws++;
+		joined = (ws == s);
+		s = ws;
+		if (!*s || process_token(&s, &tokens, joined) < 0)
 			break ;
-		if ((*s == '|' && process_pipe(&s, &tokens) == 0)
-			|| (*s == '<' && process_redirect_in(&s, &tokens) == 0)
-			|| (*s == '>' && process_redirect_out(&s, &tokens) == 0))
-			continue ;
-		process_word(&s, &tokens);
 	}
-	ft_lstadd_back(&tokens, ft_lstnew(create_token(TOKEN_EOF, NULL)));
+	ft_lstadd_back(&tokens, ft_lstnew(create_token(TOKEN_EOF, NULL, 0)));
 	free(input);
 	return (tokens);
 }

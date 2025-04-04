@@ -6,7 +6,7 @@
 /*   By: cde-la-r <code@cesardelarosa.xyz>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/29 17:20:26 by cde-la-r          #+#    #+#             */
-/*   Updated: 2025/04/03 22:44:17 by cesi             ###   ########.fr       */
+/*   Updated: 2025/04/04 16:40:46 by cesi             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,12 +29,12 @@ static char	*read_word(const char **s)
 	return (ft_substr(start, 0, len));
 }
 
-void	process_word(char **s, t_list **tokens)
+void	process_word(char **s, t_list **tokens, int joined)
 {
 	t_token	*token;
 	char	*value;
 
 	value = read_word((const char **)s);
-	token = create_token(TOKEN_WORD, value);
+	token = create_token(TOKEN_WORD, value, joined);
 	ft_lstadd_back(tokens, ft_lstnew(token));
 }
