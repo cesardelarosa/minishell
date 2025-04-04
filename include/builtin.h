@@ -6,14 +6,16 @@
 /*   By: cde-la-r <code@cesardelarosa.xyz>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/01 10:13:50 by cde-la-r          #+#    #+#             */
-/*   Updated: 2025/04/01 10:19:17 by cesi             ###   ########.fr       */
+/*   Updated: 2025/04/04 11:06:02 by cde-la-r         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef BUILTIN_H
 # define BUILTIN_H
 
-typedef int			(*t_builtin_ft)(char **argv, char **envp);
+# include "structs.h"
+
+typedef int			(*t_builtin_ft)(char **argv, t_env *env);
 
 typedef struct s_builtin
 {

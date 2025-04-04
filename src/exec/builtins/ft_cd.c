@@ -6,16 +6,17 @@
 /*   By: cde-la-r <code@cesardelarosa.xyz>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/31 21:11:21 by cde-la-r          #+#    #+#             */
-/*   Updated: 2025/04/01 10:24:40 by cesi             ###   ########.fr       */
+/*   Updated: 2025/04/04 11:12:18 by cde-la-r         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include <stdio.h>
 #include <unistd.h>
+#include "env.h"
 
-int	ft_cd(char **argv, char **envp)
+int	ft_cd(char **argv, t_env *env)
 {
-	(void)envp;
+	(void)env;
 	if (!argv[1])
 	{
 		perror("minishell: cd: expected argument");

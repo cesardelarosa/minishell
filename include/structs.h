@@ -6,13 +6,14 @@
 /*   By: cde-la-r <code@cesardelarosa.xyz>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/08 13:01:51 by cde-la-r          #+#    #+#             */
-/*   Updated: 2025/04/04 00:29:03 by cesi             ###   ########.fr       */
+/*   Updated: 2025/04/04 10:53:11 by cde-la-r         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef STRUCTS_H
 # define STRUCTS_H
 
+# include "env.h"
 # include "libft.h"
 
 typedef enum e_redir_type
@@ -27,6 +28,7 @@ typedef struct s_ctx
 {
 	int		status;
 	char	**envp;
+	t_env	*env;
 }	t_ctx;
 
 typedef struct s_command	t_command;

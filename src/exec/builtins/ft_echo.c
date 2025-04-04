@@ -6,11 +6,12 @@
 /*   By: cde-la-r <code@cesardelarosa.xyz>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/31 21:12:49 by cde-la-r          #+#    #+#             */
-/*   Updated: 2025/03/31 21:15:34 by cde-la-r         ###   ########.fr       */
+/*   Updated: 2025/04/04 11:11:55 by cde-la-r         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "libft.h"
+#include "env.h"
 
 static int	is_flag_n(char *arg)
 {
@@ -24,11 +25,11 @@ static int	is_flag_n(char *arg)
 	return (arg[i] == '\0');
 }
 
-int	ft_echo(char **argv, char **envp)
+int	ft_echo(char **argv, t_env *env)
 {
 	int	newline;
 
-	(void)envp;
+	(void)env;
 	newline = 1;
 	while (argv[1] && is_flag_n(argv[1]))
 	{

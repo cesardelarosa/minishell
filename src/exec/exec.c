@@ -6,7 +6,7 @@
 /*   By: cde-la-r <code@cesardelarosa.xyz>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/01 11:02:08 by cde-la-r          #+#    #+#             */
-/*   Updated: 2025/04/04 00:42:26 by cesi             ###   ########.fr       */
+/*   Updated: 2025/04/04 11:02:28 by cde-la-r         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -49,7 +49,7 @@ static int	builtin_in_parent(t_pipeline *p, t_builtin_ft ft)
 		rl_clear_history();
 		error_exit_code(ft_atoi(cmd->argv[1]), NULL, NULL, cmd->p);
 	}
-	status = ft(cmd->argv, p->ctx->envp);
+	status = ft(cmd->argv, p->ctx->env);
 	restore_io(saved_stdin, saved_stdout);
 	pipeline_destroy(p);
 	return (status);

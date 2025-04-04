@@ -6,7 +6,7 @@
 /*   By: cde-la-r <code@cesardelarosa.xyz>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/31 21:13:11 by cde-la-r          #+#    #+#             */
-/*   Updated: 2025/04/03 13:06:04 by cde-la-r         ###   ########.fr       */
+/*   Updated: 2025/04/04 11:11:22 by cde-la-r         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,12 +15,13 @@
 #include <readline/readline.h>
 #include "libft.h"
 #include <stdlib.h>
+#include "env.h"
 
-int	ft_exit(char **argv, char **envp)
+int	ft_exit(char **argv, t_env *env)
 {
 	int	exit_status;
 
-	(void)envp;
+	(void)env;
 	exit_status = 0;
 	if (argv[1])
 		exit_status = ft_atoi(argv[1]);

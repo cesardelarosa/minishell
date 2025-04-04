@@ -6,7 +6,7 @@
 /*   By: cde-la-r <code@cesardelarosa.xyz>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/04 10:28:19 by cde-la-r          #+#    #+#             */
-/*   Updated: 2025/04/04 10:28:54 by cde-la-r         ###   ########.fr       */
+/*   Updated: 2025/04/04 11:08:46 by cde-la-r         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,15 +14,11 @@
 #include "libft.h"
 #include <stdio.h>
 
-int	ft_unset(char **argv, char **envp)
+int	ft_unset(char **argv, t_env *env)
 {
-	t_env	*env;
 	int		i;
 	int		status;
 
-	env = env_init(envp);
-	if (!env)
-		return (1);
 	status = 0;
 	i = 1;
 	while (argv[i])
@@ -31,6 +27,5 @@ int	ft_unset(char **argv, char **envp)
 			status = 1;
 		i++;
 	}
-	env_destroy(env);
 	return (status);
 }
