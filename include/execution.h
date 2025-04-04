@@ -6,7 +6,7 @@
 /*   By: cde-la-r <code@cesardelarosa.xyz>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/08 13:01:51 by cde-la-r          #+#    #+#             */
-/*   Updated: 2025/04/04 00:39:38 by cesi             ###   ########.fr       */
+/*   Updated: 2025/04/04 13:34:16 by cde-la-r         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,6 +17,6 @@
 
 int		pipeline_execute(t_pipeline *p);
 int		handle_redirs(t_list *redirs);
-void	execute_command(t_command *cmd, char **envp);
+void	execute_command(t_command *cmd);
 
 #endif

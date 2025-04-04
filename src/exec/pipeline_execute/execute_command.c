@@ -6,7 +6,7 @@
 /*   By: cde-la-r <code@cesardelarosa.xyz>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/10 12:15:14 by cde-la-r          #+#    #+#             */
-/*   Updated: 2025/04/04 11:06:55 by cde-la-r         ###   ########.fr       */
+/*   Updated: 2025/04/04 13:33:18 by cde-la-r         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,6 +19,8 @@ static char	*get_env_value(char *key, char **envp)
 {
 	size_t	len;
 
+	if (!envp || !*envp)
+		return (NULL);
 	len = ft_strlen(key);
 	while (*envp)
 	{
@@ -67,21 +69,27 @@ static char	*find_executable(char *cmd, char **envp)
 	return (exec_path);
 }
 
-void	execute_command(t_command *cmd, char **envp)
+void	execute_command(t_command *cmd)
 {
 	char			*path;
 	t_builtin_ft	builtin_ft;
+	char			**current_envp;
 
 	if (handle_redirs(cmd->redirs) < 0)
 		error_exit_code(1, "redirection failed", NULL, cmd->p);
 	builtin_ft = is_builtin(cmd->argv[0]);
 	if (builtin_ft)
 		exit(builtin_ft(cmd->argv, cmd->p->ctx->env));
-	path = find_executable(cmd->argv[0], envp);
+	current_envp = env_to_array(cmd->p->ctx->env);
+	path = find_executable(cmd->argv[0], current_envp);
 	if (!path)
+	{
+		ft_free_split(current_envp);
 		error_exit_code(127, "Command not found", cmd->argv[0], cmd->p);
-	execve(path, cmd->argv, envp);
+	}
+	execve(path, cmd->argv, current_envp);
 	free(path);
+	ft_free_split(current_envp);
 	if (errno == ENOENT)
 		error_exit_code(127, "Command not found", cmd->argv[0], cmd->p);
 	if (errno == EACCES)

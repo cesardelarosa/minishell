@@ -6,7 +6,7 @@
 /*   By: cde-la-r <code@cesardelarosa.xyz>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/08 12:28:19 by cde-la-r          #+#    #+#             */
-/*   Updated: 2025/04/04 00:40:32 by cesi             ###   ########.fr       */
+/*   Updated: 2025/04/04 13:34:54 by cde-la-r         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -61,7 +61,7 @@ static void	setup_child_pipes(unsigned int index, t_pipeline *p)
 	}
 }
 
-static int	fork_command(t_command *cmd, unsigned int index, char **envp)
+static int	fork_command(t_command *cmd, unsigned int index)
 {
 	pid_t	pid;
 
@@ -71,7 +71,7 @@ static int	fork_command(t_command *cmd, unsigned int index, char **envp)
 	if (pid == 0)
 	{
 		setup_child_pipes(index, cmd->p);
-		execute_command(cmd, envp);
+		execute_command(cmd);
 		error_exit_code(1, "execution failed", NULL, cmd->p);
 	}
 	return (pid);
@@ -117,7 +117,7 @@ int	pipeline_execute(t_pipeline *p)
 	i = 0;
 	while (i < p->cmd_count && current_cmd)
 	{
-		p->pids[i] = fork_command(current_cmd->content, i, p->ctx->envp);
+		p->pids[i] = fork_command(current_cmd->content, i);
 		if (p->pids[i++] < 0)
 			error_exit_code(1, "fork failed", NULL, p);
 		current_cmd = current_cmd->next;
