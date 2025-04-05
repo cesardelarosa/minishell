@@ -23,7 +23,7 @@ static char	*read_word(const char **s)
 
 	start = *s;
 	while (**s && !ft_iswhitespace(**s) && **s != '|' && **s != '<'
-		&& **s != '>' && **s != '$' && **s != '\'' && **s != '\"')
+		&& **s != '>' && **s != '\'' && **s != '\"')
 		(*s)++;
 	len = *s - start;
 	return (ft_substr(start, 0, len));

@@ -16,8 +16,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-int			parse_token(t_command *cmd, t_list **tokens_ptr, t_list **arg_lst
-				, t_ctx *ctx);
+int			parse_token(t_command *cmd, t_list **tokens_ptr, t_list **arg_lst,
+				t_ctx *ctx);
 
 static char	**build_argv_from_list(t_list *lst)
 {

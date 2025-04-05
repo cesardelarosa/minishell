@@ -16,7 +16,7 @@
 #include <stdlib.h>
 #include "lexer.h"
 
-t_command	*build_command(t_list **tokens_ptr, int status);
+t_command	*build_command(t_list **tokens_ptr, t_ctx *ctx);
 
 t_pipeline	*parser(t_list *tokens, t_ctx *ctx)
 {
@@ -32,7 +32,7 @@ t_pipeline	*parser(t_list *tokens, t_ctx *ctx)
 	{
 		if (((t_token *)current_tokens->content)->type == TOKEN_EOF)
 			break ;
-		cmd = build_command(&current_tokens, ctx->status);
+		cmd = build_command(&current_tokens, ctx);
 		if (!pipeline_add_command(pipeline, cmd))
 		{
 			ft_putstr_fd("Error: failed to add command to pipeline\n", 2);
