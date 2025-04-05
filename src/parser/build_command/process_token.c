@@ -16,43 +16,6 @@
 #include <stdlib.h>
 #include <stdio.h>
 
-int	handle_redirection(t_command *cmd, t_list **tokens_ptr,
-		t_token_type op_type)
-{
-	t_token	*token;
-
-	*tokens_ptr = (*tokens_ptr)->next;
-	if (!*tokens_ptr)
-	{
-		ft_putstr_fd("Error: redirection operator without target\n", 2);
-		return (0);
-	}
-	token = (t_token *)(*tokens_ptr)->content;
-	if (token->type != TOKEN_WORD && token->type != TOKEN_SINGLE_QUOTED_STRING
-		&& token->type != TOKEN_DOUBLE_QUOTED_STRING)
-	{
-		ft_putstr_fd("Error: redirection target must be a word\n", 2);
-		return (0);
-	}
-	if (op_type == TOKEN_REDIRECT_IN)
-		command_add_redir(cmd, REDIR_INPUT, token->value);
-	else if (op_type == TOKEN_REDIRECT_OUT)
-		command_add_redir(cmd, REDIR_OUTPUT, token->value);
-	else if (op_type == TOKEN_HEREDOC)
-		command_add_redir(cmd, REDIR_HEREDOC, token->value);
-	else if (op_type == TOKEN_APPEND)
-		command_add_redir(cmd, REDIR_APPEND, token->value);
-	return (1);
-}
-
-int	handle_error_token(t_token *token)
-{
-	ft_putstr_fd("Error: ", 2);
-	ft_putstr_fd(token->value, 2);
-	ft_putstr_fd("\n", 2);
-	return (0);
-}
-
 static char	*expand_status(t_ctx *ctx)
 {
 	char	*status_str;
@@ -138,6 +101,67 @@ static char	*expand_value(char *value, t_token_type type, t_ctx *ctx,
 	return (expanded);
 }
 
+int	handle_redirection(t_command *cmd, t_list **tokens_ptr,
+		t_token_type op_type, t_ctx *ctx)
+{
+	t_token	*token;
+	char	*expanded;
+	int		is_multiple;
+
+	*tokens_ptr = (*tokens_ptr)->next;
+	if (!*tokens_ptr)
+	{
+		ft_putstr_fd("Error: redirection operator without target\n", 2);
+		return (0);
+	}
+	token = (t_token *)(*tokens_ptr)->content;
+	if (token->type != TOKEN_WORD && token->type != TOKEN_SINGLE_QUOTED_STRING
+		&& token->type != TOKEN_DOUBLE_QUOTED_STRING)
+	{
+		ft_putstr_fd("Error: redirection target must be a word\n", 2);
+		return (0);
+	}
+	
+	// Expand the redirection target
+	expanded = expand_value(token->value, token->type, ctx, &is_multiple);
+	if (!expanded)
+		return (0);
+
+	// Check for ambiguous redirect (multiple words after expansion)
+	if (is_multiple)
+	{
+		ft_putstr_fd("minishell: ", 2);
+		ft_putstr_fd(token->value, 2);
+		ft_putstr_fd(": ambiguous redirect\n", 2);
+		free(expanded);
+		*tokens_ptr = (*tokens_ptr)->next;
+		return (0);
+	}
+
+	// Add the redirection with expanded target
+	if (op_type == TOKEN_REDIRECT_IN)
+		command_add_redir(cmd, REDIR_INPUT, expanded);
+	else if (op_type == TOKEN_REDIRECT_OUT)
+		command_add_redir(cmd, REDIR_OUTPUT, expanded);
+	else if (op_type == TOKEN_HEREDOC)
+		command_add_redir(cmd, REDIR_HEREDOC, expanded);
+	else if (op_type == TOKEN_APPEND)
+		command_add_redir(cmd, REDIR_APPEND, expanded);
+	
+	free(expanded);
+	*tokens_ptr = (*tokens_ptr)->next;
+	return (1);
+}
+
+int	handle_error_token(t_token *token)
+{
+	ft_putstr_fd("Error: ", 2);
+	ft_putstr_fd(token->value, 2);
+	ft_putstr_fd("\n", 2);
+	return (0);
+}
+
+
 static void	add_arg_to_list(t_list **arg_lst, char *arg)
 {
 	if (arg && *arg)
@@ -182,7 +206,7 @@ int	parse_token(t_command *cmd, t_list **tokens_ptr, t_list **arg_lst,
 	token = (t_token *)(*tokens_ptr)->content;
 	if (token->type == TOKEN_REDIRECT_IN || token->type == TOKEN_REDIRECT_OUT
 		|| token->type == TOKEN_HEREDOC || token->type == TOKEN_APPEND)
-		return (handle_redirection(cmd, tokens_ptr, token->type));
+		return (handle_redirection(cmd, tokens_ptr, token->type, ctx));
 	else if (token->type == TOKEN_ERROR)
 		return (handle_error_token(token));
 	else if (token->type == TOKEN_WORD
