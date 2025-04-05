@@ -81,7 +81,7 @@ char	*concat_arg_tokens(t_list **tokens_ptr)
 	return (arg);
 }
 
-int	process_token(t_command *cmd, t_list **tokens_ptr, t_list **arg_lst)
+int	parse_token(t_command *cmd, t_list **tokens_ptr, t_list **arg_lst)
 {
 	t_token	*token;
 	char	*arg;

@@ -16,28 +16,26 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-t_list	*lexer(char *input)
+int	process_token(char **s, t_list **tokens, int joined)
 {
-	t_list	*tokens;
-	char	*s;
-	char	*ws;
-	int		joined;
-
-	if (!input)
-		return (NULL);
-	tokens = NULL;
-	s = input;
-	while (*s)
+	if (**s == '\'')
 	{
-		ws = s;
-		while (*ws && ft_iswhitespace(*ws))
-			ws++;
-		joined = (ws == s);
-		s = ws;
-		if (!*s || process_token(&s, &tokens, joined) < 0)
-			break ;
+		if (process_single_quote(s, tokens, joined) < 0)
+			return (-1);
+		return (1);
 	}
-	ft_lstadd_back(&tokens, ft_lstnew(create_token(TOKEN_EOF, NULL, 0)));
-	free(input);
-	return (tokens);
+	if (**s == '\"')
+	{
+		if (process_double_quote(s, tokens, joined) < 0)
+			return (-1);
+		return (1);
+	}
+	if (**s == '|' && process_pipe(s, tokens) == 0)
+		return (1);
+	if (**s == '<' && process_redirect_in(s, tokens) == 0)
+		return (1);
+	if (**s == '>' && process_redirect_out(s, tokens) == 0)
+		return (1);
+	process_word(s, tokens, joined);
+	return (1);
 }

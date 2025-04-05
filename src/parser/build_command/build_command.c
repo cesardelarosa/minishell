@@ -10,13 +10,13 @@
 /*                                                                            */
 /* ************************************************************************** */
 
+#include "lexer.h"
 #include "libft.h"
 #include "struct_creation.h"
 #include <stdio.h>
 #include <stdlib.h>
-#include "lexer.h"
 
-int	process_token(t_command *cmd, t_list **tokens_ptr, t_list **arg_lst);
+int			parse_token(t_command *cmd, t_list **tokens_ptr, t_list **arg_lst);
 
 static char	**build_argv_from_list(t_list *lst)
 {
@@ -56,7 +56,7 @@ t_command	*build_command(t_list **tokens_ptr, int status)
 		token = (t_token *)(*tokens_ptr)->content;
 		if (token->type == TOKEN_PIPE || token->type == TOKEN_EOF)
 			break ;
-		if (!process_token(cmd, tokens_ptr, &arg_list))
+		if (!parse_token(cmd, tokens_ptr, &arg_list))
 		{
 			free(cmd);
 			ft_lstclear(&arg_list, free);

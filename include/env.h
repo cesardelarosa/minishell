@@ -32,5 +32,9 @@ int					env_set(t_env *env, const char *key, const char *value,
 int					env_unset(t_env *env, const char *key);
 char				**env_to_array(t_env *env);
 void				env_destroy(t_env *env);
+int					env_is_valid_key(const char *key);
+char				*env_expand_variables(char *str, t_env *env);
+void				env_print_sorted(t_env *env);
+int					env_count(t_env *env);
 
 #endif

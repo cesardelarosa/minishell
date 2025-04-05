@@ -27,7 +27,7 @@ typedef enum e_token_type
 	TOKEN_DOUBLE_QUOTED_STRING,
 	TOKEN_EOF,
 	TOKEN_ERROR
-}	t_token_type;
+}					t_token_type;
 
 typedef struct s_token
 {
@@ -37,6 +37,7 @@ typedef struct s_token
 }					t_token;
 
 void				free_token(void *token_ptr);
+int					process_token(char **s, t_list **tokens, int joined);
 t_list				*lexer(char *input);
 t_token				*create_token(t_token_type type, char *value, int joined);
 

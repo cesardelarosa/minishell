@@ -1,33 +1,47 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   env_destroy.c                                      :+:      :+:    :+:   */
+/*   env_validation.c                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: cesi <cesi@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/04/04 17:48:00 by cesi              #+#    #+#             */
-/*   Updated: 2025/04/04 17:48:00 by cesi             ###   ########.fr       */
+/*   Created: 2025/04/04 17:40:00 by cesi              #+#    #+#             */
+/*   Updated: 2025/04/04 17:40:00 by cesi             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "env.h"
-#include <stdlib.h>
+#include "libft.h"
 
-void	env_destroy(t_env *env)
+int	env_is_valid_key(const char *key)
 {
-	t_envvar	*curr;
-	t_envvar	*next;
+	int	i;
 
-	if (!env)
-		return ;
+	if (!key || !*key)
+		return (0);
+	if (!(ft_isalpha(key[0]) || key[0] == '_'))
+		return (0);
+	i = 1;
+	while (key[i])
+	{
+		if (!(ft_isalnum(key[i]) || key[i] == '_'))
+			return (0);
+		i++;
+	}
+	return (1);
+}
+
+int	env_count(t_env *env)
+{
+	int			count;
+	t_envvar	*curr;
+
+	count = 0;
 	curr = env->head;
 	while (curr)
 	{
-		next = curr->next;
-		free(curr->key);
-		free(curr->value);
-		free(curr);
-		curr = next;
+		count++;
+		curr = curr->next;
 	}
-	free(env);
+	return (count);
 }
