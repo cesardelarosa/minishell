@@ -16,7 +16,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-int			parse_token(t_command *cmd, t_list **tokens_ptr, t_list **arg_lst);
+int			parse_token(t_command *cmd, t_list **tokens_ptr, t_list **arg_lst
+				, t_ctx *ctx);
 
 static char	**build_argv_from_list(t_list *lst)
 {
@@ -40,13 +41,12 @@ static char	**build_argv_from_list(t_list *lst)
 	return (argv);
 }
 
-t_command	*build_command(t_list **tokens_ptr, int status)
+t_command	*build_command(t_list **tokens_ptr, t_ctx *ctx)
 {
 	t_command	*cmd;
 	t_list		*arg_list;
 	t_token		*token;
 
-	(void)status;
 	cmd = ft_calloc(1, sizeof(t_command));
 	if (!cmd)
 		return (NULL);
@@ -56,7 +56,7 @@ t_command	*build_command(t_list **tokens_ptr, int status)
 		token = (t_token *)(*tokens_ptr)->content;
 		if (token->type == TOKEN_PIPE || token->type == TOKEN_EOF)
 			break ;
-		if (!parse_token(cmd, tokens_ptr, &arg_list))
+		if (!parse_token(cmd, tokens_ptr, &arg_list, ctx))
 		{
 			free(cmd);
 			ft_lstclear(&arg_list, free);

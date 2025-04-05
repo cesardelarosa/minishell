@@ -81,11 +81,12 @@ char	*concat_arg_tokens(t_list **tokens_ptr)
 	return (arg);
 }
 
-int	parse_token(t_command *cmd, t_list **tokens_ptr, t_list **arg_lst)
+int	parse_token(t_command *cmd, t_list **tokens_ptr, t_list **arg_lst, t_ctx *ctx)
 {
 	t_token	*token;
 	char	*arg;
 
+	(void)ctx;
 	token = (t_token *)(*tokens_ptr)->content;
 	if (token->type == TOKEN_REDIRECT_IN || token->type == TOKEN_REDIRECT_OUT
 		|| token->type == TOKEN_HEREDOC || token->type == TOKEN_APPEND)
