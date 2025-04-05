@@ -6,7 +6,7 @@
 /*   By: cde-la-r <code@cesardelarosa.xyz>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/29 18:08:20 by cde-la-r          #+#    #+#             */
-/*   Updated: 2025/04/05 14:58:27 by cesi             ###   ########.fr       */
+/*   Updated: 2025/04/05 19:04:42 by cesi             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -121,13 +121,9 @@ int	handle_redirection(t_command *cmd, t_list **tokens_ptr,
 		ft_putstr_fd("Error: redirection target must be a word\n", 2);
 		return (0);
 	}
-	
-	// Expand the redirection target
 	expanded = expand_value(token->value, token->type, ctx, &is_multiple);
 	if (!expanded)
 		return (0);
-
-	// Check for ambiguous redirect (multiple words after expansion)
 	if (is_multiple)
 	{
 		ft_putstr_fd("minishell: ", 2);
@@ -137,8 +133,6 @@ int	handle_redirection(t_command *cmd, t_list **tokens_ptr,
 		*tokens_ptr = (*tokens_ptr)->next;
 		return (0);
 	}
-
-	// Add the redirection with expanded target
 	if (op_type == TOKEN_REDIRECT_IN)
 		command_add_redir(cmd, REDIR_INPUT, expanded);
 	else if (op_type == TOKEN_REDIRECT_OUT)
@@ -147,7 +141,6 @@ int	handle_redirection(t_command *cmd, t_list **tokens_ptr,
 		command_add_redir(cmd, REDIR_HEREDOC, expanded);
 	else if (op_type == TOKEN_APPEND)
 		command_add_redir(cmd, REDIR_APPEND, expanded);
-	
 	free(expanded);
 	*tokens_ptr = (*tokens_ptr)->next;
 	return (1);
@@ -160,7 +153,6 @@ int	handle_error_token(t_token *token)
 	ft_putstr_fd("\n", 2);
 	return (0);
 }
-
 
 static void	add_arg_to_list(t_list **arg_lst, char *arg)
 {
