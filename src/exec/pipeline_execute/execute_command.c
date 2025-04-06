@@ -74,9 +74,15 @@ void	execute_command(t_command *cmd)
 	char			*path;
 	t_builtin_ft	builtin_ft;
 	char			**current_envp;
+	extern volatile sig_atomic_t	g_sigint_received;
 
 	if (handle_redirs(cmd->redirs) < 0)
-		error_exit_code(1, "redirection failed", NULL, cmd->p);
+	{
+		if (!g_sigint_received)  // Only show error if not interrupted by signal
+			error_exit_code(1, "redirection failed", NULL, cmd->p);
+		else
+			exit(130);  // Exit silently with SIGINT code if interrupted
+	}
 	builtin_ft = is_builtin(cmd->argv[0]);
 	if (builtin_ft)
 		exit(builtin_ft(cmd->argv, cmd->p->ctx->env));

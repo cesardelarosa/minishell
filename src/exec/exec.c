@@ -34,6 +34,7 @@ static int	builtin_in_parent(t_pipeline *p, t_builtin_ft ft)
 	int			saved_stdout;
 	int			status;
 	t_command	*cmd;
+	extern volatile sig_atomic_t	g_sigint_received;
 
 	cmd = p->commands->content;
 	saved_stdin = dup(STDIN_FILENO);
@@ -41,7 +42,10 @@ static int	builtin_in_parent(t_pipeline *p, t_builtin_ft ft)
 	if (handle_redirs(cmd->redirs) < 0)
 	{
 		restore_io(saved_stdin, saved_stdout);
-		error_exit_code(1, "redirection failed", NULL, cmd->p);
+		if (!g_sigint_received)  // Only show error if not interrupted by signal
+			error_exit_code(1, "redirection failed", NULL, cmd->p);
+		else
+			return (130);  // Return SIGINT code silently if interrupted
 	}
 	if (ft == ft_exit)
 	{

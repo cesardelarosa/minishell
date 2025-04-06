@@ -17,17 +17,24 @@
 #include <readline/history.h>
 #include <signal.h>
 
-static int	g_heredoc_sigint = 0;
+void		init_signals(void);
+extern volatile sig_atomic_t	g_sigint_received;
+
+static void	sig_ignore(void)
+{
+	signal(SIGINT, SIG_IGN);
+	signal(SIGQUIT, SIG_IGN);
+}
 
 static void	heredoc_signal_handler(int sig)
 {
 	if (sig == SIGINT)
 	{
-		g_heredoc_sigint = 1;
+		g_sigint_received = 1;
 		write(STDOUT_FILENO, "\n", 1);
 		rl_on_new_line();
 		rl_replace_line("", 0);
-		close(STDIN_FILENO);
+		exit(130);  // Exit immediately on SIGINT
 	}
 }
 
@@ -44,8 +51,8 @@ static void	setup_heredoc_signals(void)
 
 static void	restore_signals(void)
 {
-	signal(SIGINT, SIG_DFL);
-	signal(SIGQUIT, SIG_DFL);
+	// Re-initialize the main shell's signals
+	init_signals();
 }
 
 static void	read_heredoc_lines(int write_fd, t_redir *redir)
@@ -56,23 +63,22 @@ static void	read_heredoc_lines(int write_fd, t_redir *redir)
 	while (1)
 	{
 		line = readline("> ");
-		if (!line || g_heredoc_sigint)
+		if (!line)
 		{
-			if (!g_heredoc_sigint && !line)
-				ft_putstr_fd("warning: here-document delimited by end-of-file\n", 
-					STDERR_FILENO);
-			break ;
+			ft_putstr_fd("warning: here-document delimited by end-of-file\n", 
+				STDERR_FILENO);
+			break;
 		}
 		if (ft_strcmp(line, redir->file) == 0)
 		{
 			free(line);
-			break ;
+			break;
 		}
 		ft_putendl_fd(line, write_fd);
 		free(line);
 	}
 	close(write_fd);
-	exit(g_heredoc_sigint);
+	exit(0);
 }
 
 int	handle_heredoc(t_redir *redir)
@@ -80,7 +86,9 @@ int	handle_heredoc(t_redir *redir)
 	int		pipefd[2];
 	pid_t	pid;
 	int		status;
+	int		result;
 
+	result = 0;
 	if (pipe(pipefd) < 0)
 		error_exit_code(1, strerror(errno), "pipe", redir->cmd->p);
 	pid = fork();
@@ -94,20 +102,30 @@ int	handle_heredoc(t_redir *redir)
 	else
 	{
 		close(pipefd[1]);
-		signal(SIGINT, SIG_IGN);
+		sig_ignore();
 		waitpid(pid, &status, 0);
-		restore_signals();
-		if (WIFEXITED(status) && WEXITSTATUS(status) == 1)
+		
+		// Check if terminated by signal (SIGINT)
+		if (WIFSIGNALED(status) && WTERMSIG(status) == SIGINT)
 		{
 			close(pipefd[0]);
-			return (-1);
+			g_sigint_received = 1;
+			result = -1;
 		}
-		if (dup2(pipefd[0], STDIN_FILENO) < 0)
+		// Or if exited with code 130 (our own exit after SIGINT)
+		else if (WIFEXITED(status) && WEXITSTATUS(status) == 130)
 		{
 			close(pipefd[0]);
-			return (-1);
+			g_sigint_received = 1;
+			result = -1;
+		}
+		else if (dup2(pipefd[0], STDIN_FILENO) < 0)
+		{
+			close(pipefd[0]);
+			result = -1;
 		}
 		close(pipefd[0]);
+		restore_signals();
 	}
-	return (0);
+	return (result);
 }
