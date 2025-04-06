@@ -14,19 +14,18 @@
 #include "libft.h"
 #include "struct_creation.h"
 #include <stdlib.h>
-#include "ctx.h"
 
 int	main(int argc, char **argv, char **envp)
 {
-	t_ctx	ctx;
-	char	*line;
-	t_list	*tokens;
+	t_ctx		ctx;
+	char		*line;
+	t_list		*tokens;
 	t_pipeline	*pipeline;
 
 	(void)argc;
 	(void)argv;
-	init_signals();
 	ctx = init_ctx(envp);
+	init_signals();
 	while (42)
 	{
 		line = read_prompt(ctx.status);
