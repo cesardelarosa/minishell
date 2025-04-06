@@ -13,52 +13,101 @@
 #include "common.h"
 #include "structs.h"
 #include "errors.h"
+#include <readline/readline.h>
+#include <readline/history.h>
+#include <signal.h>
 
-static void	write_heredoc_lines(int fd, t_redir *redir)
+static int	g_heredoc_sigint = 0;
+
+static void	heredoc_signal_handler(int sig)
+{
+	if (sig == SIGINT)
+	{
+		g_heredoc_sigint = 1;
+		write(STDOUT_FILENO, "\n", 1);
+		rl_on_new_line();
+		rl_replace_line("", 0);
+		close(STDIN_FILENO);
+	}
+}
+
+static void	setup_heredoc_signals(void)
+{
+	struct sigaction	sa;
+
+	sa.sa_handler = heredoc_signal_handler;
+	sigemptyset(&sa.sa_mask);
+	sa.sa_flags = 0;
+	sigaction(SIGINT, &sa, NULL);
+	signal(SIGQUIT, SIG_IGN);
+}
+
+static void	restore_signals(void)
+{
+	signal(SIGINT, SIG_DFL);
+	signal(SIGQUIT, SIG_DFL);
+}
+
+static void	read_heredoc_lines(int write_fd, t_redir *redir)
 {
 	char	*line;
-	int		tty_fd;
 
+	setup_heredoc_signals();
 	while (1)
 	{
-		tty_fd = open("/dev/tty", O_WRONLY);
-		if (tty_fd < 0)
+		line = readline("> ");
+		if (!line || g_heredoc_sigint)
+		{
+			if (!g_heredoc_sigint && !line)
+				ft_putstr_fd("warning: here-document delimited by end-of-file\n", 
+					STDERR_FILENO);
 			break ;
-		ft_putstr_fd("> ", tty_fd);
-		close(tty_fd);
-		line = get_next_line(STDIN_FILENO);
-		if (!line)
-			break ;
+		}
 		if (ft_strcmp(line, redir->file) == 0)
 		{
 			free(line);
 			break ;
 		}
-		write(fd, line, ft_strlen(line));
-		write(fd, "\n", 1);
+		ft_putendl_fd(line, write_fd);
 		free(line);
 	}
+	close(write_fd);
+	exit(g_heredoc_sigint);
 }
 
 int	handle_heredoc(t_redir *redir)
 {
-	int			fd;
-	const char	*tmp_path = "/tmp/.heredoc_tmp";
+	int		pipefd[2];
+	pid_t	pid;
+	int		status;
 
-	fd = open(tmp_path, O_RDWR | O_CREAT | O_TRUNC, 0600);
-	if (fd < 0)
-		error_exit_code(1, strerror(errno), "open", redir->cmd->p);
-	write_heredoc_lines(fd, redir);
-	close(fd);
-	fd = open(tmp_path, O_RDONLY);
-	if (fd < 0)
-		error_exit_code(1, strerror(errno), "open", redir->cmd->p);
-	unlink(tmp_path);
-	if (dup2(fd, STDIN_FILENO) < 0)
+	if (pipe(pipefd) < 0)
+		error_exit_code(1, strerror(errno), "pipe", redir->cmd->p);
+	pid = fork();
+	if (pid < 0)
+		error_exit_code(1, strerror(errno), "fork", redir->cmd->p);
+	if (pid == 0)
 	{
-		close(fd);
-		return (-1);
+		close(pipefd[0]);
+		read_heredoc_lines(pipefd[1], redir);
 	}
-	close(fd);
+	else
+	{
+		close(pipefd[1]);
+		signal(SIGINT, SIG_IGN);
+		waitpid(pid, &status, 0);
+		restore_signals();
+		if (WIFEXITED(status) && WEXITSTATUS(status) == 1)
+		{
+			close(pipefd[0]);
+			return (-1);
+		}
+		if (dup2(pipefd[0], STDIN_FILENO) < 0)
+		{
+			close(pipefd[0]);
+			return (-1);
+		}
+		close(pipefd[0]);
+	}
 	return (0);
 }
