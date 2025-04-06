@@ -19,12 +19,26 @@
 int	main(int argc, char **argv, char **envp)
 {
 	t_ctx	ctx;
+	char	*line;
+	t_list	*tokens;
+	t_pipeline	*pipeline;
 
 	(void)argc;
 	(void)argv;
 	init_signals();
 	ctx = init_ctx(envp);
 	while (42)
-		ctx.status = exec(parser(lexer(read_prompt()), &ctx));
+	{
+		line = read_prompt(ctx.status);
+		if (!line)
+			break ;
+		tokens = lexer(line);
+		if (!tokens)
+			continue ;
+		pipeline = parser(tokens, &ctx);
+		if (!pipeline)
+			continue ;
+		ctx.status = exec(pipeline);
+	}
 	return (destroy_ctx(&ctx));
 }

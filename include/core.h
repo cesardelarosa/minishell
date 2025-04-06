@@ -18,7 +18,7 @@
 # include "structs.h"
 
 void		init_signals(void);
-char		*read_prompt(void);
+char		*read_prompt(int status);
 t_pipeline	*parser(t_list *tokens, t_ctx *ctx);
 void		free_tokens(t_list *tokens);
 int			exec(t_pipeline *p);

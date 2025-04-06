@@ -6,16 +6,16 @@
 /*   By: cde-la-r <code@cesardelarosa.xyz>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/29 17:51:38 by cde-la-r          #+#    #+#             */
-/*   Updated: 2025/04/03 23:00:19 by cesi             ###   ########.fr       */
+/*   Updated: 2025/04/06 20:03:43 by cesi             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include <stdio.h>
 #include "libft.h"
 #include <fcntl.h>
 #include <limits.h>
 #include <readline/history.h>
 #include <readline/readline.h>
+#include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h>
 
@@ -24,6 +24,7 @@
 #define YELLOW "\033[1;33m"
 #define MAGENTA "\033[1;35m"
 #define RESET "\033[0m"
+#define RED "\033[1;31m"
 
 static char	*get_hostname(void)
 {
@@ -65,8 +66,7 @@ static char	*get_cwd(const char *user)
 	if (!getcwd(cwd, sizeof(cwd)))
 		return (ft_strdup("unknown"));
 	ulen = ft_strlen(user);
-	if (!ft_strncmp(cwd, "/home/", 6)
-		&& !ft_strncmp(cwd + 6, user, ulen)
+	if (!ft_strncmp(cwd, "/home/", 6) && !ft_strncmp(cwd + 6, user, ulen)
 		&& (cwd[6 + ulen] == '/' || cwd[6 + ulen] == '\0'))
 	{
 		if (cwd[6 + ulen] == '\0')
@@ -77,29 +77,36 @@ static char	*get_cwd(const char *user)
 	return (ft_strdup(cwd));
 }
 
-static char	*build_prompt(void)
+static char	*build_prompt(int status)
 {
 	char	*user;
 	char	*host;
 	char	*cwd;
+	char	*status_indicator;
 
 	user = get_user();
 	host = get_hostname();
 	cwd = get_cwd(user);
+	status_indicator = NULL;
 	if (isatty(STDOUT_FILENO))
 	{
+		if (status == 0)
+			status_indicator = ft_strdup(GREEN "✓ " RESET);
+		else
+			status_indicator = ft_strdup(RED "✗ " RESET);
 		return (ft_strjoin_free(ft_strjoin_free(ft_strjoin_free(ft_strjoin_free(
-							ft_strjoin_free(ft_strjoin_free(GREEN, user, 2),
-								RESET " at " BLUE, 1), host, 3),
-						RESET " in " YELLOW, 1), cwd, 3),
-				RESET " via " MAGENTA "minishell" RESET "$ ", 1));
+							ft_strjoin_free(ft_strjoin_free(ft_strjoin_free(
+										status_indicator, GREEN, 1), user, 2),
+								RESET " at " BLUE, 1), host, 3), RESET " in "
+						YELLOW, 1), cwd, 3), RESET " via " MAGENTA "minishell"
+				RESET "$ ", 1));
 	}
 	return (ft_strjoin_free(ft_strjoin_free(ft_strjoin_free(ft_strjoin_free(
 						ft_strjoin_free(user, " at ", 1), host, 3), " in ", 1),
 				cwd, 3), "via minishell$ ", 1));
 }
 
-char	*read_prompt(void)
+char	*read_prompt(int status)
 {
 	char	*line;
 	char	*prompt;
@@ -107,13 +114,13 @@ char	*read_prompt(void)
 
 	while (1)
 	{
-		prompt = build_prompt();
+		prompt = build_prompt(status);
 		line = readline(prompt);
 		free(prompt);
 		if (!line)
 		{
 			rl_clear_history();
-			exit(0);
+			return (NULL);
 		}
 		trimmed = ft_strtrim(line, " \t\n");
 		free(line);
