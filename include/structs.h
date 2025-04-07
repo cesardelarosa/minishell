@@ -6,7 +6,7 @@
 /*   By: cde-la-r <code@cesardelarosa.xyz>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/08 13:01:51 by cde-la-r          #+#    #+#             */
-/*   Updated: 2025/04/04 10:53:11 by cde-la-r         ###   ########.fr       */
+/*   Updated: 2025/04/07 23:26:13 by cde-la-r         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,14 +16,22 @@
 # include "env.h"
 # include "libft.h"
 
-typedef enum e_redir_type
+typedef enum e_ast_type
 {
-	REDIR_INPUT,
-	REDIR_OUTPUT,
-	REDIR_APPEND,
-	REDIR_HEREDOC
-}	t_redir_type;
+	AST_PIPE,
+	AST_AND,
+	AST_OR,
+	AST_GROUP
+}	t_ast_type;
 
+typedef struct s_ast
+{
+	t_ast_type		type;
+	t_pipeline		*pipeline;
+	struct s_ast	*left;
+	struct s_ast	*right;
+	struct s_ast	*group;
+}	t_ast;
 typedef struct s_ctx
 {
 	int		status;
@@ -32,6 +40,14 @@ typedef struct s_ctx
 }	t_ctx;
 
 typedef struct s_command	t_command;
+
+typedef enum e_redir_type
+{
+	REDIR_INPUT,
+	REDIR_OUTPUT,
+	REDIR_APPEND,
+	REDIR_HEREDOC
+}	t_redir_type;
 
 typedef struct s_redir
 {
