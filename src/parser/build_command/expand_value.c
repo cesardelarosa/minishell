@@ -6,7 +6,7 @@
 /*   By: cde-la-r <code@cesardelarosa.xyz>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/29 18:08:20 by cde-la-r          #+#    #+#             */
-/*   Updated: 2025/04/05 21:55:54 by cesi             ###   ########.fr       */
+/*   Updated: 2025/04/07 15:38:18 by cesi             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,14 +15,7 @@
 #include "struct_creation.h"
 #include <stdlib.h>
 #include <stdio.h>
-
-typedef struct s_expand_data
-{
-	char			*expanded;
-	int				is_multiple;
-	t_token_type	type;
-	t_ctx			*ctx;
-}	t_expand_data;
+#include "expander.h"
 
 static int	append_char(t_expand_data *data, char c)
 {

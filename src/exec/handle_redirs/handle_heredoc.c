@@ -6,7 +6,7 @@
 /*   By: cde-la-r <code@cesardelarosa.xyz>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/08 12:27:40 by cde-la-r          #+#    #+#             */
-/*   Updated: 2025/04/07 12:57:15 by cesi             ###   ########.fr       */
+/*   Updated: 2025/04/07 14:40:16 by cesi             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,50 +16,11 @@
 #include <stdio.h>
 #include <readline/readline.h>
 #include <readline/history.h>
-#include <signal.h>
-
-void		init_signals(void);
-extern volatile sig_atomic_t	g_sigint_received;
-
-static void	sig_ignore(void)
-{
-	signal(SIGINT, SIG_IGN);
-	signal(SIGQUIT, SIG_IGN);
-}
-
-static void	heredoc_signal_handler(int sig)
-{
-	if (sig == SIGINT)
-	{
-		g_sigint_received = 1;
-		write(STDOUT_FILENO, "\n", 1);
-		rl_on_new_line();
-		rl_replace_line("", 0);
-		exit(130);
-	}
-}
-
-static void	setup_heredoc_signals(void)
-{
-	struct sigaction	sa;
-
-	sa.sa_handler = heredoc_signal_handler;
-	sigemptyset(&sa.sa_mask);
-	sa.sa_flags = 0;
-	sigaction(SIGINT, &sa, NULL);
-	signal(SIGQUIT, SIG_IGN);
-}
-
-static void	restore_signals(void)
-{
-	init_signals();
-}
 
 static void	read_heredoc_lines(int write_fd, t_redir *redir)
 {
 	char	*line;
 
-	setup_heredoc_signals();
 	while (1)
 	{
 		line = readline("> ");
@@ -102,27 +63,10 @@ int	handle_heredoc(t_redir *redir)
 	else
 	{
 		close(pipefd[1]);
-		sig_ignore();
 		waitpid(pid, &status, 0);
-		if (WIFSIGNALED(status) && WTERMSIG(status) == SIGINT)
-		{
-			close(pipefd[0]);
-			g_sigint_received = 1;
+		if (dup2(pipefd[0], STDIN_FILENO) < 0)
 			result = -1;
-		}
-		else if (WIFEXITED(status) && WEXITSTATUS(status) == 130)
-		{
-			close(pipefd[0]);
-			g_sigint_received = 1;
-			result = -1;
-		}
-		else if (dup2(pipefd[0], STDIN_FILENO) < 0)
-		{
-			close(pipefd[0]);
-			result = -1;
-		}
 		close(pipefd[0]);
-		restore_signals();
 	}
 	return (result);
 }

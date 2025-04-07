@@ -6,7 +6,7 @@
 /*   By: cde-la-r <code@cesardelarosa.xyz>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/31 21:11:21 by cde-la-r          #+#    #+#             */
-/*   Updated: 2025/04/04 17:32:08 by cesi             ###   ########.fr       */
+/*   Updated: 2025/04/07 18:12:39 by cesi             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,24 +43,6 @@ static char	*handle_quoted_value(char *value, t_env *env)
 	return (env_expand_variables(value, env));
 }
 
-static int	handle_no_equal_sign(char *arg)
-{
-	if (!env_is_valid_key(arg))
-	{
-		printf("export: '%s': not a valid identifier\n", arg);
-		return (1);
-	}
-	return (0);
-}
-
-static void	print_invalid_identifier(char *key)
-{
-	if (key)
-		printf("export: '%s': not a valid identifier\n", key);
-	else
-		printf("export: '': not a valid identifier\n");
-}
-
 static int	set_env_value(char *key, char *raw_value, t_env *env)
 {
 	char	*processed_value;
@@ -80,7 +62,10 @@ static int	process_with_equal_sign(char *key, char *raw_value, t_env *env)
 
 	if (!key || !*key || !env_is_valid_key(key))
 	{
-		print_invalid_identifier(key);
+		if (key)
+			printf("export: '%s': not a valid identifier\n", key);
+		else
+			printf("export: '': not a valid identifier\n");
 		result = 1;
 	}
 	else
@@ -97,7 +82,14 @@ static int	process_export_arg(char *arg, t_env *env)
 
 	equal_sign = ft_strchr(arg, '=');
 	if (!equal_sign)
-		return (handle_no_equal_sign(arg));
+	{
+		if (!env_is_valid_key(arg))
+		{
+			printf("export: '%s': not a valid identifier\n", arg);
+			return (1);
+		}
+		return (0);
+	}
 	key = ft_substr(arg, 0, equal_sign - arg);
 	raw_value = ft_strdup(equal_sign + 1);
 	result = process_with_equal_sign(key, raw_value, env);

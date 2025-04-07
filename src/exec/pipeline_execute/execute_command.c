@@ -6,7 +6,7 @@
 /*   By: cde-la-r <code@cesardelarosa.xyz>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/10 12:15:14 by cde-la-r          #+#    #+#             */
-/*   Updated: 2025/04/07 12:55:53 by cesi             ###   ########.fr       */
+/*   Updated: 2025/04/07 14:26:40 by cesi             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -74,14 +74,9 @@ void	execute_command(t_command *cmd)
 	char							*path;
 	t_builtin_ft					builtin_ft;
 	char							**current_envp;
-	extern volatile sig_atomic_t	g_sigint_received;
 
 	if (handle_redirs(cmd->redirs) < 0)
-	{
-		if (!g_sigint_received)
-			error_exit_code(1, "redirection failed", NULL, cmd->p);
-		error_exit_code(130, NULL, NULL, cmd->p);
-	}
+		error_exit_code(1, "redirection failed", NULL, cmd->p);
 	builtin_ft = is_builtin(cmd->argv[0]);
 	if (builtin_ft)
 		exit(builtin_ft(cmd->argv, cmd->p->ctx->env));

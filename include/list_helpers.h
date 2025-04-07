@@ -1,27 +1,24 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   core.h                                             :+:      :+:    :+:   */
+/*   list_helpers.h                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: cde-la-r <code@cesardelarosa.xyz>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/03/29 18:04:00 by cde-la-r          #+#    #+#             */
-/*   Updated: 2025/04/07 14:25:35 by cesi             ###   ########.fr       */
+/*   Created: 2025/04/07 17:32:40 by cde-la-r          #+#    #+#             */
+/*   Updated: 2025/04/07 17:40:29 by cesi             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef CORE_H
-# define CORE_H
+#ifndef LIST_HELPERS_H
+# define LIST_HELPERS_H
 
-# include "lexer.h"
 # include "libft.h"
-# include "structs.h"
 
-char		*read_prompt(int status);
-t_pipeline	*parser(t_list *tokens, t_ctx *ctx);
-void		free_tokens(t_list *tokens);
-int			exec(t_pipeline *p);
-t_ctx		init_ctx(char **envp);
-int			destroy_ctx(t_ctx *ctx);
+void	add_arg_to_list(t_list **arg_lst, char *arg);
+char	*get_last_arg(t_list *arg_lst);
+void	update_last_arg(t_list *arg_lst, char *new_content);
+char	*expand_value(char *value, t_token_type type, t_ctx *ctx,
+			int *is_multiple);
 
 #endif

@@ -6,7 +6,7 @@
 /*   By: cesi <cesi@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/04 17:42:00 by cesi              #+#    #+#             */
-/*   Updated: 2025/04/04 17:42:00 by cesi             ###   ########.fr       */
+/*   Updated: 2025/04/07 18:09:41 by cesi             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -68,25 +68,12 @@ static int	calculate_expanded_length(char *str, t_env *env)
 	return (len);
 }
 
-static int	process_variable(char *result, int j, char *var_name, t_env *env)
-{
-	char	*var_value;
-
-	var_value = NULL;
-	if (var_name)
-		var_value = env_get(env, var_name);
-	if (var_value)
-		j += ft_strlcpy(result + j, var_value, ft_strlen(var_value) + 1);
-	if (var_name)
-		free(var_name);
-	return (j);
-}
-
 static void	build_expanded_string(char *result, char *str, t_env *env)
 {
 	int		i;
 	int		j;
 	char	*var_name;
+	char	*var_val;
 
 	i = 0;
 	j = 0;
@@ -96,7 +83,13 @@ static void	build_expanded_string(char *result, char *str, t_env *env)
 			&& (ft_isalnum(str[i + 1]) || str[i + 1] == '_'))
 		{
 			var_name = extract_var_name(str, &i);
-			j = process_variable(result, j, var_name, env);
+			var_val = NULL;
+			if (var_name)
+				var_val = env_get(env, var_name);
+			if (var_val)
+				j += ft_strlcpy(result + j, var_val, ft_strlen(var_val) + 1);
+			if (var_name)
+				free(var_name);
 		}
 		else
 			result[j++] = str[i++];
