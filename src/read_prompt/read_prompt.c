@@ -6,7 +6,7 @@
 /*   By: cde-la-r <code@cesardelarosa.xyz>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/29 17:51:38 by cde-la-r          #+#    #+#             */
-/*   Updated: 2025/04/07 09:11:11 by cesi             ###   ########.fr       */
+/*   Updated: 2025/04/07 18:30:01 by cesi             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -96,7 +96,7 @@ static char	*build_prompt(int status)
 			status_indicator = ft_strdup(RED "✗ " RESET);
 		return (ft_strjoin_free(ft_strjoin_free(ft_strjoin_free(ft_strjoin_free(
 							ft_strjoin_free(ft_strjoin_free(ft_strjoin_free(
-										status_indicator, GREEN, 1), user, 2),
+										status_indicator, GREEN, 1), user, 3),
 								RESET " at " BLUE, 1), host, 3), RESET " in "
 						YELLOW, 1), cwd, 3), RESET " via " MAGENTA "minishell"
 				RESET "$ ", 1));
