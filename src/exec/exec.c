@@ -6,7 +6,7 @@
 /*   By: cde-la-r <code@cesardelarosa.xyz>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/01 11:02:08 by cde-la-r          #+#    #+#             */
-/*   Updated: 2025/04/07 14:26:18 by cesi             ###   ########.fr       */
+/*   Updated: 2025/04/07 20:31:37 by cde-la-r         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,6 +19,8 @@
 #include <stdio.h>
 #include <readline/history.h>
 #include <readline/readline.h>
+
+int	destroy_ctx(t_ctx *ctx);
 
 static void	restore_io(int saved_stdin, int saved_stdout)
 {
@@ -47,6 +49,7 @@ static int	builtin_in_parent(t_pipeline *p, t_builtin_ft ft)
 	{
 		restore_io(saved_stdin, saved_stdout);
 		rl_clear_history();
+		destroy_ctx(p->ctx);
 		error_exit_code(ft_atoi(cmd->argv[1]), NULL, NULL, cmd->p);
 	}
 	status = ft(cmd->argv, p->ctx->env);
