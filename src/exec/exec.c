@@ -6,7 +6,7 @@
 /*   By: cde-la-r <code@cesardelarosa.xyz>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/01 11:02:08 by cde-la-r          #+#    #+#             */
-/*   Updated: 2025/04/04 11:02:28 by cde-la-r         ###   ########.fr       */
+/*   Updated: 2025/04/07 12:54:09 by cesi             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,6 +19,8 @@
 #include <stdio.h>
 #include <readline/history.h>
 #include <readline/readline.h>
+
+extern volatile sig_atomic_t	g_sigint_received;
 
 static void	restore_io(int saved_stdin, int saved_stdout)
 {
@@ -34,7 +36,6 @@ static int	builtin_in_parent(t_pipeline *p, t_builtin_ft ft)
 	int			saved_stdout;
 	int			status;
 	t_command	*cmd;
-	extern volatile sig_atomic_t	g_sigint_received;
 
 	cmd = p->commands->content;
 	saved_stdin = dup(STDIN_FILENO);
@@ -42,10 +43,9 @@ static int	builtin_in_parent(t_pipeline *p, t_builtin_ft ft)
 	if (handle_redirs(cmd->redirs) < 0)
 	{
 		restore_io(saved_stdin, saved_stdout);
-		if (!g_sigint_received)  // Only show error if not interrupted by signal
+		if (!g_sigint_received)
 			error_exit_code(1, "redirection failed", NULL, cmd->p);
-		else
-			return (130);  // Return SIGINT code silently if interrupted
+		error_exit_code(130, NULL, NULL, cmd->p);
 	}
 	if (ft == ft_exit)
 	{

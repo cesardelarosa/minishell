@@ -6,7 +6,7 @@
 /*   By: cde-la-r <code@cesardelarosa.xyz>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/10 12:15:14 by cde-la-r          #+#    #+#             */
-/*   Updated: 2025/04/04 13:33:18 by cde-la-r         ###   ########.fr       */
+/*   Updated: 2025/04/07 12:55:53 by cesi             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -71,17 +71,16 @@ static char	*find_executable(char *cmd, char **envp)
 
 void	execute_command(t_command *cmd)
 {
-	char			*path;
-	t_builtin_ft	builtin_ft;
-	char			**current_envp;
+	char							*path;
+	t_builtin_ft					builtin_ft;
+	char							**current_envp;
 	extern volatile sig_atomic_t	g_sigint_received;
 
 	if (handle_redirs(cmd->redirs) < 0)
 	{
-		if (!g_sigint_received)  // Only show error if not interrupted by signal
+		if (!g_sigint_received)
 			error_exit_code(1, "redirection failed", NULL, cmd->p);
-		else
-			exit(130);  // Exit silently with SIGINT code if interrupted
+		error_exit_code(130, NULL, NULL, cmd->p);
 	}
 	builtin_ft = is_builtin(cmd->argv[0]);
 	if (builtin_ft)

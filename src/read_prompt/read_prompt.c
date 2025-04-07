@@ -6,16 +6,16 @@
 /*   By: cde-la-r <code@cesardelarosa.xyz>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/29 17:51:38 by cde-la-r          #+#    #+#             */
-/*   Updated: 2025/04/06 20:03:43 by cesi             ###   ########.fr       */
+/*   Updated: 2025/04/07 09:11:11 by cesi             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "libft.h"
+#include <stdio.h>
 #include <fcntl.h>
 #include <limits.h>
 #include <readline/history.h>
 #include <readline/readline.h>
-#include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h>
 

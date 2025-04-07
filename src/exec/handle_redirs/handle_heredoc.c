@@ -1,18 +1,19 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   handle_heredoc_bonus.c                             :+:      :+:    :+:   */
+/*   handle_heredoc.c                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: cde-la-r <code@cesardelarosa.xyz>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/08 12:27:40 by cde-la-r          #+#    #+#             */
-/*   Updated: 2025/03/09 15:21:40 by cde-la-r         ###   ########.fr       */
+/*   Updated: 2025/04/07 12:57:15 by cesi             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "common.h"
 #include "structs.h"
 #include "errors.h"
+#include <stdio.h>
 #include <readline/readline.h>
 #include <readline/history.h>
 #include <signal.h>
@@ -34,7 +35,7 @@ static void	heredoc_signal_handler(int sig)
 		write(STDOUT_FILENO, "\n", 1);
 		rl_on_new_line();
 		rl_replace_line("", 0);
-		exit(130);  // Exit immediately on SIGINT
+		exit(130);
 	}
 }
 
@@ -51,7 +52,6 @@ static void	setup_heredoc_signals(void)
 
 static void	restore_signals(void)
 {
-	// Re-initialize the main shell's signals
 	init_signals();
 }
 
@@ -65,14 +65,14 @@ static void	read_heredoc_lines(int write_fd, t_redir *redir)
 		line = readline("> ");
 		if (!line)
 		{
-			ft_putstr_fd("warning: here-document delimited by end-of-file\n", 
+			ft_putstr_fd("warning: here-document delimited by end-of-file\n",
 				STDERR_FILENO);
-			break;
+			break ;
 		}
 		if (ft_strcmp(line, redir->file) == 0)
 		{
 			free(line);
-			break;
+			break ;
 		}
 		ft_putendl_fd(line, write_fd);
 		free(line);
@@ -104,15 +104,12 @@ int	handle_heredoc(t_redir *redir)
 		close(pipefd[1]);
 		sig_ignore();
 		waitpid(pid, &status, 0);
-		
-		// Check if terminated by signal (SIGINT)
 		if (WIFSIGNALED(status) && WTERMSIG(status) == SIGINT)
 		{
 			close(pipefd[0]);
 			g_sigint_received = 1;
 			result = -1;
 		}
-		// Or if exited with code 130 (our own exit after SIGINT)
 		else if (WIFEXITED(status) && WEXITSTATUS(status) == 130)
 		{
 			close(pipefd[0]);
