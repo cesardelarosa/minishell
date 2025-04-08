@@ -6,7 +6,7 @@
 /*   By: cde-la-r <code@cesardelarosa.xyz>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/29 17:20:26 by cde-la-r          #+#    #+#             */
-/*   Updated: 2025/04/04 16:40:46 by cesi             ###   ########.fr       */
+/*   Updated: 2025/04/08 11:02:48 by cde-la-r         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,14 +16,21 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+static int	is_metachar(char c)
+{
+	if (c == '|' || c == '<' || c == '>' || c == '\'' || c == '\"' || c == '('
+		|| c == ')' || c == '&')
+		return (1);
+	return (0);
+}
+
 static char	*read_word(const char **s)
 {
 	const char	*start;
 	size_t		len;
 
 	start = *s;
-	while (**s && !ft_iswhitespace(**s) && **s != '|' && **s != '<'
-		&& **s != '>' && **s != '\'' && **s != '\"')
+	while (**s && !ft_iswhitespace(**s) && !is_metachar(**s))
 		(*s)++;
 	len = *s - start;
 	return (ft_substr(start, 0, len));
