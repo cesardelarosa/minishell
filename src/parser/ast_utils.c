@@ -6,7 +6,7 @@
 /*   By: cde-la-r <code@cesardelarosa.xyz>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/08 12:19:06 by cde-la-r          #+#    #+#             */
-/*   Updated: 2025/04/08 12:19:07 by cde-la-r         ###   ########.fr       */
+/*   Updated: 2025/04/08 16:10:48 by cesi             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,7 +37,5 @@ void	ast_destroy(t_ast *ast)
 		ast_destroy(ast->left);
 	if (ast->right)
 		ast_destroy(ast->right);
-	if (ast->pipeline)
-		pipeline_destroy(ast->pipeline);
 	free(ast);
 }

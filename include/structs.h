@@ -6,7 +6,7 @@
 /*   By: cde-la-r <code@cesardelarosa.xyz>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/08 13:01:51 by cde-la-r          #+#    #+#             */
-/*   Updated: 2025/04/08 00:00:51 by cesi             ###   ########.fr       */
+/*   Updated: 2025/04/08 16:00:04 by cesi             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,11 +16,14 @@
 # include "env.h"
 # include "libft.h"
 
+typedef struct s_ast		t_ast;
+
 typedef struct s_ctx
 {
 	int		status;
 	char	**envp;
 	t_env	*env;
+	t_ast	*current_ast;
 }	t_ctx;
 
 typedef struct s_command	t_command;
