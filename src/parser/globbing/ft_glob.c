@@ -86,8 +86,11 @@ static int	recursive_glob(const char *base, t_glob_context *ctx, int seg_index)
 	dir = opendir(base);
 	if (!dir)
 		return (0);
-	while ((entry = readdir(dir)) != NULL)
+	while (1)
 	{
+		entry = readdir(dir);
+		if (!entry)
+			break ;
 		if (ctx->segments[seg_index][0] != '.' && entry->d_name[0] == '.')
 			continue ;
 		if (match_pattern(ctx->segments[seg_index], entry->d_name))
@@ -164,6 +167,7 @@ static int	handle_path_pattern(const char *pattern, int flags, t_ftglob *p)
 	t_glob_context	ctx;
 	size_t			count;
 	size_t			capacity;
+	size_t			i;
 
 	ctx.segments = ft_split(pattern, '/');
 	if (!ctx.segments)
@@ -180,8 +184,8 @@ static int	handle_path_pattern(const char *pattern, int flags, t_ftglob *p)
 	if (!recursive_glob(".", &ctx, 0))
 	{
 		ft_free_split(ctx.segments);
-		for (size_t i = 0; i < count; i++)
-			free(matches[i]);
+		while (i < count)
+			free(matches[i++]);
 		free(matches);
 		return (1);
 	}
@@ -218,8 +222,11 @@ static int	handle_simple_pattern(const char *pattern, int flags, t_ftglob *p)
 		free(matches);
 		return (1);
 	}
-	while ((entry = readdir(dir)) != NULL)
+	while (1)
 	{
+		entry = readdir(dir);
+		if (entry == NULL)
+			break ;
 		if (pattern[0] != '.' && entry->d_name[0] == '.')
 			continue ;
 		if (match_pattern(pattern, entry->d_name))
@@ -254,18 +261,4 @@ int	ft_glob(const char *pattern, int flags, t_ftglob *p)
 		return (handle_path_pattern(pattern, flags, p));
 	else
 		return (handle_simple_pattern(pattern, flags, p));
-}
-
-void	ft_globfree(t_ftglob *p)
-{
-	size_t	i;
-
-	if (!p || !p->gl_pathv)
-		return ;
-	i = 0;
-	while (i < p->gl_pathc)
-		free(p->gl_pathv[i++]);
-	free(p->gl_pathv);
-	p->gl_pathv = NULL;
-	p->gl_pathc = 0;
 }
