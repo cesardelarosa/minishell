@@ -6,7 +6,7 @@
 /*   By: cde-la-r <code@cesardelarosa.xyz>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/05 21:25:45 by cde-la-r          #+#    #+#             */
-/*   Updated: 2025/04/05 21:25:48 by cde-la-r         ###   ########.fr       */
+/*   Updated: 2025/04/09 12:31:47 by cesi             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,6 +15,7 @@
 #include "struct_creation.h"
 #include <stdlib.h>
 #include <stdio.h>
+#include "ft_glob.h"
 
 char	*expand_value(char *value, t_token_type type, t_ctx *ctx,
 			int *is_multiple);
@@ -44,6 +45,35 @@ static int	validate_token_type(t_token *token)
 
 static int	process_expansion(t_token *token, t_ctx *ctx, char **expanded)
 {
+	int			is_multiple;
+	t_ftglob	glob_result;
+
+	*expanded = expand_value(token->value, token->type, ctx, &is_multiple);
+	if (!*expanded)
+		return (0);
+	if (token->type == TOKEN_WORD && ft_strchr(*expanded, '*'))
+	{
+		if (ft_glob(*expanded, GLOB_NOCHECK, &glob_result) == 0)
+		{
+			if (glob_result.gl_pathc != 1)
+			{
+				ft_putstr_fd("minishell: ambiguous redirect\n", 2);
+				free(*expanded);
+				ft_globfree(&glob_result);
+				return (2);
+			}
+			free(*expanded);
+			*expanded = ft_strdup(glob_result.gl_pathv[0]);
+			ft_globfree(&glob_result);
+			if (!*expanded)
+				return (0);
+		}
+	}
+	return (1);
+}
+/*
+static int	process_expansion(t_token *token, t_ctx *ctx, char **expanded)
+{
 	int	is_multiple;
 
 	*expanded = expand_value(token->value, token->type, ctx, &is_multiple);
@@ -58,7 +88,7 @@ static int	process_expansion(t_token *token, t_ctx *ctx, char **expanded)
 		return (2);
 	}
 	return (1);
-}
+}*/
 
 static void	add_redirection(t_command *cmd, t_token_type op_type,
 		char *expanded)
