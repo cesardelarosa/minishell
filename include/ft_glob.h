@@ -6,7 +6,7 @@
 /*   By: cde-la-r <code@cesardelarosa.xyz>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/09 12:22:22 by cde-la-r          #+#    #+#             */
-/*   Updated: 2025/04/09 12:22:28 by cde-la-r         ###   ########.fr       */
+/*   Updated: 2025/04/09 14:36:58 by cde-la-r         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,6 +22,14 @@ typedef struct s_ftglob
 	size_t	gl_pathc;
 	char	**gl_pathv;
 }			t_ftglob;
+
+typedef struct s_glob_context
+{
+	char	**segments;
+	char	***results;
+	size_t	*res_count;
+	size_t	*res_capacity;
+}			t_glob_context;
 
 int			ft_glob(const char *pattern, int flags, t_ftglob *p);
 void		ft_globfree(t_ftglob *p);
