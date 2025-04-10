@@ -73,23 +73,17 @@ void	execute_command(t_command *cmd)
 {
 	char							*path;
 	t_builtin_ft					builtin_ft;
-	char							**current_envp;
 
 	if (handle_redirs(cmd->redirs) < 0)
 		error_exit_code(1, "redirection failed", NULL, cmd->p);
 	builtin_ft = is_builtin(cmd->argv[0]);
 	if (builtin_ft)
 		exit(builtin_ft(cmd->argv, cmd->p->ctx->env));
-	current_envp = env_to_array(cmd->p->ctx->env);
-	path = find_executable(cmd->argv[0], current_envp);
+	path = find_executable(cmd->argv[0], cmd->p->ctx->env->envp);
 	if (!path)
-	{
-		ft_free_split(current_envp);
 		error_exit_code(127, "Command not found", cmd->argv[0], cmd->p);
-	}
-	execve(path, cmd->argv, current_envp);
+	execve(path, cmd->argv, cmd->p->ctx->env->envp);
 	free(path);
-	ft_free_split(current_envp);
 	if (errno == ENOENT)
 		error_exit_code(127, "Command not found", cmd->argv[0], cmd->p);
 	if (errno == EACCES)

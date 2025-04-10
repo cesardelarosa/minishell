@@ -41,6 +41,7 @@ int	env_set(t_env *env, const char *key, const char *value, int overwrite)
 				free(curr->value);
 				curr->value = ft_strdup(value);
 			}
+			env_update_envp(env);
 			return (0);
 		}
 		curr = curr->next;
@@ -50,5 +51,6 @@ int	env_set(t_env *env, const char *key, const char *value, int overwrite)
 		return (-1);
 	curr->next = env->head;
 	env->head = curr;
+	env_update_envp(env);
 	return (0);
 }

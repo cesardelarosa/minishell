@@ -32,6 +32,7 @@ int	env_unset(t_env *env, const char *key)
 			free(curr->key);
 			free(curr->value);
 			free(curr);
+			env_update_envp(env);
 			return (0);
 		}
 		prev = curr;

@@ -23,6 +23,7 @@ typedef struct s_envvar
 typedef struct s_env
 {
 	t_envvar		*head;
+	char			**envp;
 }					t_env;
 
 t_env				*env_init(char **envp);
@@ -36,5 +37,6 @@ int					env_is_valid_key(const char *key);
 char				*env_expand_variables(char *str, t_env *env);
 void				env_print_sorted(t_env *env);
 int					env_count(t_env *env);
+void				env_update_envp(t_env *env);
 
 #endif

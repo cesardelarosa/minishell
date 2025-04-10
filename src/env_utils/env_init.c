@@ -56,6 +56,7 @@ t_env	*env_init(char **envp)
 	if (!env)
 		return (NULL);
 	env->head = NULL;
+	env->envp = NULL;
 	i = 0;
 	while (envp[i])
 	{
@@ -67,5 +68,6 @@ t_env	*env_init(char **envp)
 		}
 		i++;
 	}
+	env->envp = env_to_array(env);
 	return (env);
 }
