@@ -97,7 +97,7 @@ static int	handle_normal_token(t_list **arg_lst, char *expanded,
 	return (handle_normal_multiple(arg_lst, expanded));
 }
 
-int	process_word_token(t_list **arg_lst, t_token *token, t_ctx *ctx)
+int	parse_word(t_list **arg_lst, t_token *token, t_ctx *ctx)
 {
 	char	*expanded;
 	int		is_multiple;

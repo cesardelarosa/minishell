@@ -73,7 +73,7 @@ static void	add_redirection(t_command *cmd, t_token_type op_type,
 		command_add_redir(cmd, REDIR_APPEND, expanded);
 }
 
-int	handle_redirection(t_command *cmd, t_list **tokens_ptr,
+int	parse_redirection(t_command *cmd, t_list **tokens_ptr,
 		t_token_type op_type, t_ctx *ctx)
 {
 	t_token	*token;

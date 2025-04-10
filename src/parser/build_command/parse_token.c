@@ -15,7 +15,7 @@
 #include "struct_creation.h"
 #include <stdio.h>
 #include <stdlib.h>
-#include "token_handlers.h"
+#include "parse_token.h"
 
 int	parse_token(t_command *cmd, t_list **tokens_ptr, t_list **arg_lst,
 		t_ctx *ctx)
@@ -24,16 +24,18 @@ int	parse_token(t_command *cmd, t_list **tokens_ptr, t_list **arg_lst,
 	int		result;
 
 	token = (t_token *)(*tokens_ptr)->content;
-	if (token->type == TOKEN_REDIRECT_IN || token->type == TOKEN_REDIRECT_OUT
-		|| token->type == TOKEN_HEREDOC || token->type == TOKEN_APPEND)
-		return (handle_redirection(cmd, tokens_ptr, token->type, ctx));
+	if (token->type == TOKEN_REDIRECT_IN
+		|| token->type == TOKEN_REDIRECT_OUT
+		|| token->type == TOKEN_HEREDOC
+		|| token->type == TOKEN_APPEND)
+		return (parse_redirection(cmd, tokens_ptr, token->type, ctx));
 	else if (token->type == TOKEN_ERROR)
-		return (handle_error_token(token));
+		return (parse_error(token));
 	else if (token->type == TOKEN_WORD
 		|| token->type == TOKEN_SINGLE_QUOTED_STRING
 		|| token->type == TOKEN_DOUBLE_QUOTED_STRING)
 	{
-		result = process_word_token(arg_lst, token, ctx);
+		result = parse_word(arg_lst, token, ctx);
 		*tokens_ptr = (*tokens_ptr)->next;
 		return (result);
 	}

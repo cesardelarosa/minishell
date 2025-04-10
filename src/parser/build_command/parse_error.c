@@ -12,7 +12,7 @@
 
 #include "lexer.h"
 
-int	handle_error_token(t_token *token)
+int	parse_error(t_token *token)
 {
 	ft_putstr_fd("Error: ", 2);
 	ft_putstr_fd(token->value, 2);
