@@ -31,6 +31,8 @@ int	ft_echo(char **argv, t_env *env)
 
 	(void)env;
 	newline = 1;
+	if (!argv)
+		return (1);
 	while (argv[1] && is_flag_n(argv[1]))
 	{
 		newline = 0;

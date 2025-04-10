@@ -24,7 +24,11 @@ static void	print_env_in_order(t_envvar *curr)
 
 int	ft_env(char **argv, t_env *env)
 {
-	(void)argv;
+	if (argv && argv[1])
+	{
+		ft_putstr_fd("minishell: env: too many arguments\n", 2);
+		return (1);
+	}
 	print_env_in_order(env->head);
 	return (0);
 }
