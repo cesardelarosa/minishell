@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   token_handlers.c                                   :+:      :+:    :+:   */
+/*   parse_word.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: cde-la-r <code@cesardelarosa.xyz>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/29 18:08:20 by cde-la-r          #+#    #+#             */
-/*   Updated: 2025/04/07 17:35:49 by cesi             ###   ########.fr       */
+/*   Updated: 2025/04/10 13:41:47 by cesi             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,34 +14,35 @@
 #include "libft.h"
 #include "struct_creation.h"
 #include <stdlib.h>
-#include "list_helpers.h"
 
-static int	handle_joined_multiple(t_list *arg_lst, char *expanded,
-	char *last_arg)
+char	*expand_value(char *value, t_token_type type, t_ctx *ctx,
+			int *is_multiple);
+
+static int	handle_joined_multiple(char *expanded, t_list *last_node)
 {
 	char	**words;
 	char	*joined;
 	int		i;
-	t_list	**arg_lst_ptr;
 
-	arg_lst_ptr = &arg_lst;
 	words = ft_split(expanded, ' ');
 	free(expanded);
 	if (!words)
 		return (0);
 	if (words[0])
 	{
-		joined = ft_strjoin(last_arg, words[0]);
+		joined = ft_strjoin(last_node->content, words[0]);
 		if (!joined)
 			return (ft_free_split(words), 0);
-		update_last_arg(arg_lst, joined);
 		free(words[0]);
+		free(last_node->content);
+		last_node->content = joined;
 	}
 	i = 1;
 	while (words[i])
 	{
-		add_arg_to_list(arg_lst_ptr, words[i]);
-		free(words[i++]);
+		ft_lstadd_back(&last_node, ft_lstnew(ft_strdup(words[i])));
+		free(words[i]);
+		i++;
 	}
 	return (free(words), 1);
 }
@@ -49,20 +50,21 @@ static int	handle_joined_multiple(t_list *arg_lst, char *expanded,
 static int	handle_joined_token(t_list *arg_lst, char *expanded,
 		t_token_type type, int is_multiple)
 {
-	char	*last_arg;
+	t_list	*last_node;
 	char	*joined;
 
-	last_arg = get_last_arg(arg_lst);
+	last_node = ft_lstlast(arg_lst);
 	if (type == TOKEN_DOUBLE_QUOTED_STRING || !is_multiple)
 	{
-		joined = ft_strjoin(last_arg, expanded);
+		joined = ft_strjoin(last_node->content, expanded);
 		free(expanded);
 		if (!joined)
 			return (0);
-		update_last_arg(arg_lst, joined);
+		free(last_node->content);
+		last_node->content = joined;
 		return (1);
 	}
-	return (handle_joined_multiple(arg_lst, expanded, last_arg));
+	return (handle_joined_multiple(expanded, last_node));
 }
 
 static int	handle_normal_multiple(t_list **arg_lst, char *expanded)
@@ -77,7 +79,7 @@ static int	handle_normal_multiple(t_list **arg_lst, char *expanded)
 	i = 0;
 	while (words[i])
 	{
-		add_arg_to_list(arg_lst, words[i]);
+		ft_lstadd_back(arg_lst, ft_lstnew(ft_strdup(words[i])));
 		free(words[i]);
 		i++;
 	}
@@ -90,8 +92,7 @@ static int	handle_normal_token(t_list **arg_lst, char *expanded,
 {
 	if (type == TOKEN_DOUBLE_QUOTED_STRING || !is_multiple)
 	{
-		add_arg_to_list(arg_lst, expanded);
-		free(expanded);
+		ft_lstadd_back(arg_lst, ft_lstnew(expanded));
 		return (1);
 	}
 	return (handle_normal_multiple(arg_lst, expanded));
