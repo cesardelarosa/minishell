@@ -6,7 +6,7 @@
 /*   By: cde-la-r <code@cesardelarosa.xyz>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/10 12:15:14 by cde-la-r          #+#    #+#             */
-/*   Updated: 2025/04/07 14:26:40 by cesi             ###   ########.fr       */
+/*   Updated: 2025/04/10 11:38:32 by cesi             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -76,7 +76,7 @@ void	execute_command(t_command *cmd)
 
 	if (handle_redirs(cmd->redirs) < 0)
 		error_exit_code(1, "redirection failed", NULL, cmd->p);
-	builtin_ft = is_builtin(cmd->argv[0]);
+	builtin_ft = get_builtin_ft(cmd->argv[0]);
 	if (builtin_ft)
 		exit(builtin_ft(cmd->argv, cmd->p->ctx->env));
 	path = find_executable(cmd->argv[0], cmd->p->ctx->env->envp);

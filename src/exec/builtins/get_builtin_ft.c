@@ -14,7 +14,7 @@
 #include "ft_builtins.h"
 #include "libft.h"
 
-t_builtin_ft	is_builtin(char *cmd)
+t_builtin_ft	get_builtin_ft(char *cmd)
 {
 	size_t					i;
 	size_t					n;
