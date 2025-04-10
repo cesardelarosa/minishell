@@ -1,24 +1,29 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   token_handlers.h                                   :+:      :+:    :+:   */
+/*   list_helpers.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: cde-la-r <code@cesardelarosa.xyz>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/04/07 17:31:31 by cde-la-r          #+#    #+#             */
-/*   Updated: 2025/04/07 17:38:33 by cesi             ###   ########.fr       */
+/*   Created: 2025/03/29 18:08:20 by cde-la-r          #+#    #+#             */
+/*   Updated: 2025/04/07 17:35:11 by cesi             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef TOKEN_HANDLERS_H
-# define TOKEN_HANDLERS_H
+#include "lexer.h"
+#include "libft.h"
+#include "struct_creation.h"
+#include <stdio.h>
+#include <stdlib.h>
 
-# include "lexer.h"
-# include "libft.h"
+char	*get_last_arg(t_list *arg_lst)
+{
+	t_list	*current;
 
-int	process_word_token(t_list **arg_lst, t_token *token, t_ctx *ctx);
-int	handle_error_token(t_token *token);
-int	handle_redirection(t_command *cmd, t_list **tokens_ptr,
-		t_token_type op_type, t_ctx *ctx);
-
-#endif
+	if (!arg_lst)
+		return (NULL);
+	current = arg_lst;
+	while (current->next)
+		current = current->next;
+	return ((char *)current->content);
+}

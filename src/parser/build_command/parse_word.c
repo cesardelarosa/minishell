@@ -16,7 +16,8 @@
 #include <stdlib.h>
 #include "list_helpers.h"
 
-int	handle_joined_multiple(t_list *arg_lst, char *expanded, char *last_arg)
+static int	handle_joined_multiple(t_list *arg_lst, char *expanded,
+	char *last_arg)
 {
 	char	**words;
 	char	*joined;
@@ -45,7 +46,7 @@ int	handle_joined_multiple(t_list *arg_lst, char *expanded, char *last_arg)
 	return (free(words), 1);
 }
 
-int	handle_joined_token(t_list *arg_lst, char *expanded,
+static int	handle_joined_token(t_list *arg_lst, char *expanded,
 		t_token_type type, int is_multiple)
 {
 	char	*last_arg;
@@ -64,7 +65,7 @@ int	handle_joined_token(t_list *arg_lst, char *expanded,
 	return (handle_joined_multiple(arg_lst, expanded, last_arg));
 }
 
-int	handle_normal_multiple(t_list **arg_lst, char *expanded)
+static int	handle_normal_multiple(t_list **arg_lst, char *expanded)
 {
 	char	**words;
 	int		i;
@@ -84,7 +85,7 @@ int	handle_normal_multiple(t_list **arg_lst, char *expanded)
 	return (1);
 }
 
-int	handle_normal_token(t_list **arg_lst, char *expanded,
+static int	handle_normal_token(t_list **arg_lst, char *expanded,
 		t_token_type type, int is_multiple)
 {
 	if (type == TOKEN_DOUBLE_QUOTED_STRING || !is_multiple)

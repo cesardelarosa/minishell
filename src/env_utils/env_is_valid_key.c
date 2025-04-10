@@ -30,18 +30,3 @@ int	env_is_valid_key(const char *key)
 	}
 	return (1);
 }
-
-int	env_count(t_env *env)
-{
-	int			count;
-	t_envvar	*curr;
-
-	count = 0;
-	curr = env->head;
-	while (curr)
-	{
-		count++;
-		curr = curr->next;
-	}
-	return (count);
-}

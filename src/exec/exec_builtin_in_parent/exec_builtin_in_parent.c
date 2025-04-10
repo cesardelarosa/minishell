@@ -20,21 +20,40 @@
 #include <readline/history.h>
 #include <readline/readline.h>
 
-int	exec_builtin_in_parent(t_pipeline *p, t_builtin_ft ft);
+int	destroy_ctx(t_ctx *ctx);
 
-int	exec(t_pipeline *p)
+static void	restore_io(int saved_stdin, int saved_stdout)
 {
-	t_builtin_ft	ft_builtin;
-	t_command		*cmd;
+	dup2(saved_stdin, STDIN_FILENO);
+	dup2(saved_stdout, STDOUT_FILENO);
+	close(saved_stdin);
+	close(saved_stdout);
+}
 
-	if (!p)
-		return (-1);
-	if (p->cmd_count == 1)
+int	exec_builtin_in_parent(t_pipeline *p, t_builtin_ft ft)
+{
+	int			saved_stdin;
+	int			saved_stdout;
+	int			status;
+	t_command	*cmd;
+
+	cmd = p->commands->content;
+	saved_stdin = dup(STDIN_FILENO);
+	saved_stdout = dup(STDOUT_FILENO);
+	if (handle_redirs(cmd->redirs) < 0)
 	{
-		cmd = p->commands->content;
-		ft_builtin = get_builtin_ft(cmd->argv[0]);
-		if (ft_builtin)
-			return (exec_builtin_in_parent(p, ft_builtin));
+		restore_io(saved_stdin, saved_stdout);
+		error_exit_code(1, "redirection failed", NULL, cmd->p);
 	}
-	return (pipeline_execute(p));
+	if (ft == ft_exit)
+	{
+		restore_io(saved_stdin, saved_stdout);
+		rl_clear_history();
+		destroy_ctx(p->ctx);
+		error_exit_code(ft_atoi(cmd->argv[1]), NULL, NULL, cmd->p);
+	}
+	status = ft(cmd->argv, p->ctx->env);
+	restore_io(saved_stdin, saved_stdout);
+	pipeline_destroy(p);
+	return (status);
 }

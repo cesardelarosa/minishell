@@ -15,6 +15,21 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+static int	env_count(t_env *env)
+{
+	int			count;
+	t_envvar	*curr;
+
+	count = 0;
+	curr = env->head;
+	while (curr)
+	{
+		count++;
+		curr = curr->next;
+	}
+	return (count);
+}
+
 static void	print_exported_var(t_envvar *var)
 {
 	printf("declare -x %s=\"%s\"\n", var->key, var->value);

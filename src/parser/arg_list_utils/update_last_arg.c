@@ -16,24 +16,6 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-void	add_arg_to_list(t_list **arg_lst, char *arg)
-{
-	if (arg && *arg)
-		ft_lstadd_back(arg_lst, ft_lstnew(ft_strdup(arg)));
-}
-
-char	*get_last_arg(t_list *arg_lst)
-{
-	t_list	*current;
-
-	if (!arg_lst)
-		return (NULL);
-	current = arg_lst;
-	while (current->next)
-		current = current->next;
-	return ((char *)current->content);
-}
-
 void	update_last_arg(t_list *arg_lst, char *new_content)
 {
 	t_list	*current;

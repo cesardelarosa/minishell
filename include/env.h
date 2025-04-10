@@ -36,7 +36,6 @@ void				env_destroy(t_env *env);
 int					env_is_valid_key(const char *key);
 char				*env_expand_variables(char *str, t_env *env);
 void				env_print_sorted(t_env *env);
-int					env_count(t_env *env);
 void				env_update_envp(t_env *env);
 
 #endif
