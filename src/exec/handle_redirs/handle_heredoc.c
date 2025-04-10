@@ -6,28 +6,30 @@
 /*   By: cde-la-r <code@cesardelarosa.xyz>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/08 12:27:40 by cde-la-r          #+#    #+#             */
-/*   Updated: 2025/04/07 14:40:16 by cesi             ###   ########.fr       */
+/*   Updated: 2025/04/10 14:24:02 by cesi             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "common.h"
-#include "structs.h"
 #include "errors.h"
+#include "structs.h"
 #include <stdio.h>
-#include <readline/readline.h>
 #include <readline/history.h>
+#include <readline/readline.h>
+
+#define HEREDOC_EOF "warning: here-document delimited by end-of-file\n"
 
 static void	read_heredoc_lines(int write_fd, t_redir *redir)
 {
 	char	*line;
+	char	*expanded;
 
 	while (1)
 	{
 		line = readline("> ");
 		if (!line)
 		{
-			ft_putstr_fd("warning: here-document delimited by end-of-file\n",
-				STDERR_FILENO);
+			ft_putstr_fd(HEREDOC_EOF, STDERR_FILENO);
 			break ;
 		}
 		if (ft_strcmp(line, redir->file) == 0)
@@ -35,8 +37,12 @@ static void	read_heredoc_lines(int write_fd, t_redir *redir)
 			free(line);
 			break ;
 		}
-		ft_putendl_fd(line, write_fd);
+		expanded = env_expand_variables(line, redir->cmd->p->ctx->env);
 		free(line);
+		if (!expanded)
+			break ;
+		ft_putendl_fd(expanded, write_fd);
+		free(expanded);
 	}
 	close(write_fd);
 	exit(0);
