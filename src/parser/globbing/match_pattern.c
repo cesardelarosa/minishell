@@ -1,25 +1,36 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   ft_glob.c                                          :+:      :+:    :+:   */
+/*   match_pattern.c                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: cde-la-r <code@cesardelarosa.xyz>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/09 12:23:20 by cde-la-r          #+#    #+#             */
-/*   Updated: 2025/04/10 08:35:48 by cesi             ###   ########.fr       */
+/*   Updated: 2025/04/09 19:24:19 by cesi             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "ft_glob.h"
-#include "libft.h"
-#include <dirent.h>
-#include <stdlib.h>
-#include <sys/stat.h>
 
-int	ft_glob(const char *pattern, int flags, t_ftglob *p)
+int	match_pattern(const char *pattern, const char *str)
 {
-	if (ft_strchr(pattern, '/'))
-		return (handle_path_pattern(pattern, flags, p));
-	else
-		return (handle_simple_pattern(pattern, flags, p));
+	if (!*pattern)
+		return (!*str);
+	if (*pattern == '*')
+	{
+		while (*pattern == '*')
+			pattern++;
+		if (!*pattern)
+			return (1);
+		while (*str)
+		{
+			if (match_pattern(pattern, str))
+				return (1);
+			str++;
+		}
+		return (0);
+	}
+	if (*pattern != *str)
+		return (0);
+	return (match_pattern(pattern + 1, str + 1));
 }

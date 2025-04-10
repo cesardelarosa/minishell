@@ -1,25 +1,21 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   ft_glob.c                                          :+:      :+:    :+:   */
+/*   init_matches.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: cde-la-r <code@cesardelarosa.xyz>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/04/09 12:23:20 by cde-la-r          #+#    #+#             */
-/*   Updated: 2025/04/10 08:35:48 by cesi             ###   ########.fr       */
+/*   Created: 2025/04/10 08:33:09 by cde-la-r          #+#    #+#             */
+/*   Updated: 2025/04/10 08:42:49 by cesi             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "ft_glob.h"
-#include "libft.h"
-#include <dirent.h>
+#include <stddef.h>
 #include <stdlib.h>
-#include <sys/stat.h>
 
-int	ft_glob(const char *pattern, int flags, t_ftglob *p)
+int	init_matches(char ***matches, size_t *capacity)
 {
-	if (ft_strchr(pattern, '/'))
-		return (handle_path_pattern(pattern, flags, p));
-	else
-		return (handle_simple_pattern(pattern, flags, p));
+	*capacity = 10;
+	*matches = malloc(sizeof(char *) * (*capacity));
+	return (*matches != NULL);
 }

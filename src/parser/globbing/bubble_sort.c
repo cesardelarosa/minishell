@@ -1,25 +1,38 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   ft_glob.c                                          :+:      :+:    :+:   */
+/*   bubble_sort.c                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: cde-la-r <code@cesardelarosa.xyz>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/04/09 12:23:20 by cde-la-r          #+#    #+#             */
-/*   Updated: 2025/04/10 08:35:48 by cesi             ###   ########.fr       */
+/*   Created: 2025/04/10 08:32:29 by cde-la-r          #+#    #+#             */
+/*   Updated: 2025/04/10 08:43:14 by cesi             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "ft_glob.h"
 #include "libft.h"
-#include <dirent.h>
-#include <stdlib.h>
-#include <sys/stat.h>
+#include <stddef.h>
 
-int	ft_glob(const char *pattern, int flags, t_ftglob *p)
+void	bubble_sort(char **arr, size_t count)
 {
-	if (ft_strchr(pattern, '/'))
-		return (handle_path_pattern(pattern, flags, p));
-	else
-		return (handle_simple_pattern(pattern, flags, p));
+	char	*temp;
+	size_t	i;
+	size_t	j;
+
+	i = 0;
+	while (i < count)
+	{
+		j = 0;
+		while (j < count - i - 1)
+		{
+			if (ft_strcmp(arr[j], arr[j + 1]) > 0)
+			{
+				temp = arr[j];
+				arr[j] = arr[j + 1];
+				arr[j + 1] = temp;
+			}
+			j++;
+		}
+		i++;
+	}
 }

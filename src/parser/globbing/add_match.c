@@ -1,25 +1,32 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   ft_glob.c                                          :+:      :+:    :+:   */
+/*   add_match.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: cde-la-r <code@cesardelarosa.xyz>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/04/09 12:23:20 by cde-la-r          #+#    #+#             */
-/*   Updated: 2025/04/10 08:35:48 by cesi             ###   ########.fr       */
+/*   Created: 2025/04/10 08:43:56 by cde-la-r          #+#    #+#             */
+/*   Updated: 2025/04/10 08:43:57 by cde-la-r         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "ft_glob.h"
-#include "libft.h"
-#include <dirent.h>
 #include <stdlib.h>
-#include <sys/stat.h>
 
-int	ft_glob(const char *pattern, int flags, t_ftglob *p)
+int	add_match(char ***results, size_t *res_count, size_t *res_capacity,
+		char *new_path)
 {
-	if (ft_strchr(pattern, '/'))
-		return (handle_path_pattern(pattern, flags, p));
-	else
-		return (handle_simple_pattern(pattern, flags, p));
+	char	**temp;
+
+	if (*res_count >= *res_capacity)
+	{
+		*res_capacity *= 2;
+		temp = realloc(*results, sizeof(char *) * (*res_capacity));
+		if (!temp)
+			return (0);
+		*results = temp;
+	}
+	(*results)[*res_count] = new_path;
+	(*res_count)++;
+	return (1);
 }
