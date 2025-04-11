@@ -6,7 +6,7 @@
 /*   By: cde-la-r <code@cesardelarosa.xyz>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/29 17:52:04 by cde-la-r          #+#    #+#             */
-/*   Updated: 2025/04/11 16:36:26 by cde-la-r         ###   ########.fr       */
+/*   Updated: 2025/04/11 17:29:39 by cesi             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,10 +31,10 @@ int	main(int argc, char **argv, char **envp)
 
 	(void)argc;
 	(void)argv;
-	setup_signals(INTERACTIVE_MODE);
 	ctx = init_ctx(envp);
 	while (42)
 	{
+		setup_signals(INTERACTIVE_MODE);
 		line = read_prompt(ctx.status);
 		if (!line)
 			break ;
@@ -46,7 +46,6 @@ int	main(int argc, char **argv, char **envp)
 			continue ;
 		setup_signals(COMMAND_MODE);
 		ctx.status = exec(pipeline);
-		setup_signals(INTERACTIVE_MODE);
 	}
 	return (destroy_ctx(&ctx));
 }
