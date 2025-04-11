@@ -6,7 +6,7 @@
 /*   By: cde-la-r <code@cesardelarosa.xyz>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/11 11:35:53 by cde-la-r          #+#    #+#             */
-/*   Updated: 2025/04/11 16:37:06 by cde-la-r         ###   ########.fr       */
+/*   Updated: 2025/04/11 17:16:25 by cde-la-r         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -49,27 +49,18 @@ void	setup_signals(t_signal_mode mode)
 
 	sigemptyset(&sa.sa_mask);
 	sa.sa_flags = SA_RESTART;
-	if (mode == INTERACTIVE_MODE)
-	{
-		sa.sa_handler = interactive_sigint_handler;
-		sigaction(SIGINT, &sa, NULL);
-		signal(SIGQUIT, SIG_IGN);
-	}
-	else if (mode == HEREDOC_MODE)
-	{
-		sa.sa_handler = heredoc_sigint_handler;
-		sigaction(SIGINT, &sa, NULL);
-		signal(SIGQUIT, SIG_IGN);
-	}
-	else if (mode == COMMAND_MODE)
-	{
-		sa.sa_handler = command_sigint_handler;
-		sigaction(SIGINT, &sa, NULL);
-		signal(SIGQUIT, SIG_IGN);
-	}
-	else if (mode == RESET_MODE)
+	if (mode == RESET_MODE)
 	{
 		signal(SIGINT, SIG_DFL);
 		signal(SIGQUIT, SIG_DFL);
+		return ;
 	}
+	if (mode == INTERACTIVE_MODE)
+		sa.sa_handler = interactive_sigint_handler;
+	else if (mode == HEREDOC_MODE)
+		sa.sa_handler = heredoc_sigint_handler;
+	else if (mode == COMMAND_MODE)
+		sa.sa_handler = command_sigint_handler;
+	sigaction(SIGINT, &sa, NULL);
+	signal(SIGQUIT, SIG_IGN);
 }
