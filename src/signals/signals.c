@@ -6,13 +6,14 @@
 /*   By: cde-la-r <code@cesardelarosa.xyz>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/11 11:35:53 by cde-la-r          #+#    #+#             */
-/*   Updated: 2025/04/11 12:28:56 by cesi             ###   ########.fr       */
+/*   Updated: 2025/04/11 16:37:06 by cde-la-r         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "signals.h"
 #include <stdlib.h>
 #include <unistd.h>
+#include <stdio.h>
 #include <readline/readline.h>
 #include <readline/history.h>
 
