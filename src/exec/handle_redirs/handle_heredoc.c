@@ -6,7 +6,7 @@
 /*   By: cde-la-r <code@cesardelarosa.xyz>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/08 12:27:40 by cde-la-r          #+#    #+#             */
-/*   Updated: 2025/04/11 16:36:45 by cde-la-r         ###   ########.fr       */
+/*   Updated: 2025/04/11 19:03:57 by cde-la-r         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,6 +14,7 @@
 #include "errors.h"
 #include "signals.h"
 #include "structs.h"
+#include "struct_creation.h"
 #include <stdio.h>
 #include <readline/history.h>
 #include <readline/readline.h>
@@ -22,6 +23,8 @@
 #define EOF_MSG "warning: here-document delimited by end-of-file\n"
 
 extern volatile sig_atomic_t	g_sigint_received;
+
+int	destroy_ctx(t_ctx *ctx);
 
 static void	read_heredoc_lines(int write_fd, t_redir *redir)
 {
@@ -53,6 +56,9 @@ static void	read_heredoc_lines(int write_fd, t_redir *redir)
 		free(expanded);
 	}
 	close(write_fd);
+	rl_clear_history();
+	destroy_ctx(redir->cmd->p->ctx);
+	pipeline_destroy(redir->cmd->p);
 	if (g_sigint_received)
 		exit(130);
 	exit(0);
@@ -78,17 +84,14 @@ int	handle_heredoc(t_redir *redir)
 		close(pipefd[0]);
 		read_heredoc_lines(pipefd[1], redir);
 	}
-	else
-	{
-		close(pipefd[1]);
-		waitpid(pid, &status, 0);
-		setup_signals(INTERACTIVE_MODE);
-		if ((WIFSIGNALED(status) && WTERMSIG(status) == SIGINT)
-			|| (WIFEXITED(status) && WEXITSTATUS(status) == 130))
-			result = 130;
-		else if (dup2(pipefd[0], STDIN_FILENO) < 0)
-			result = -1;
-		close(pipefd[0]);
-	}
+	close(pipefd[1]);
+	waitpid(pid, &status, 0);
+	setup_signals(INTERACTIVE_MODE);
+	if ((WIFSIGNALED(status) && WTERMSIG(status) == SIGINT)
+		|| (WIFEXITED(status) && WEXITSTATUS(status) == 130))
+		result = 130;
+	else if (dup2(pipefd[0], STDIN_FILENO) < 0)
+		result = -1;
+	close(pipefd[0]);
 	return (result);
 }
