@@ -6,7 +6,7 @@
 /*   By: cde-la-r <code@cesardelarosa.xyz>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/10 12:15:14 by cde-la-r          #+#    #+#             */
-/*   Updated: 2025/04/10 11:38:32 by cesi             ###   ########.fr       */
+/*   Updated: 2025/04/11 12:24:02 by cesi             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -73,9 +73,13 @@ void	execute_command(t_command *cmd)
 {
 	char							*path;
 	t_builtin_ft					builtin_ft;
+	int								redir_status;
 
-	if (handle_redirs(cmd->redirs) < 0)
-		error_exit_code(1, "redirection failed", NULL, cmd->p);
+	redir_status = handle_redirs(cmd->redirs);
+	if (redir_status == 130)
+		error_exit_code(redir_status, NULL, NULL, cmd->p);
+	if (redir_status != 0)
+		error_exit_code(redir_status, "redirection failed", NULL, cmd->p);
 	builtin_ft = get_builtin_ft(cmd->argv[0]);
 	if (builtin_ft)
 		exit(builtin_ft(cmd->argv, cmd->p->ctx->env));

@@ -6,7 +6,7 @@
 /*   By: cde-la-r <code@cesardelarosa.xyz>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/08 12:27:40 by cde-la-r          #+#    #+#             */
-/*   Updated: 2025/04/11 11:39:15 by cesi             ###   ########.fr       */
+/*   Updated: 2025/04/11 12:26:04 by cesi             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,10 +14,10 @@
 #include "errors.h"
 #include "signals.h"
 #include "structs.h"
-#include <stdio.h>
 #include <readline/history.h>
 #include <readline/readline.h>
 #include <signal.h>
+#include <stdio.h>
 
 #define EOF_MSG "warning: here-document delimited by end-of-file\n"
 
@@ -83,12 +83,10 @@ int	handle_heredoc(t_redir *redir)
 		close(pipefd[1]);
 		waitpid(pid, &status, 0);
 		setup_signals(INTERACTIVE_MODE);
-		if (WIFEXITED(status) && WEXITSTATUS(status) == 130)
-		{
-			close(pipefd[0]);
-			return (-1);
-		}
-		if (dup2(pipefd[0], STDIN_FILENO) < 0)
+		if ((WIFSIGNALED(status) && WTERMSIG(status) == SIGINT)
+			|| (WIFEXITED(status) && WEXITSTATUS(status) == 130))
+			result = 130;
+		else if (dup2(pipefd[0], STDIN_FILENO) < 0)
 			result = -1;
 		close(pipefd[0]);
 	}
