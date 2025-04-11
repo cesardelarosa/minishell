@@ -6,30 +6,54 @@
 /*   By: cde-la-r <code@cesardelarosa.xyz>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/08 12:27:40 by cde-la-r          #+#    #+#             */
-/*   Updated: 2025/04/11 19:03:57 by cde-la-r         ###   ########.fr       */
+/*   Updated: 2025/04/11 19:29:15 by cesi             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "common.h"
 #include "errors.h"
 #include "signals.h"
-#include "structs.h"
 #include "struct_creation.h"
+#include "structs.h"
 #include <stdio.h>
 #include <readline/history.h>
 #include <readline/readline.h>
 #include <signal.h>
+#include <stdbool.h>
 
 #define EOF_MSG "warning: here-document delimited by end-of-file\n"
 
 extern volatile sig_atomic_t	g_sigint_received;
 
-int	destroy_ctx(t_ctx *ctx);
+int								destroy_ctx(t_ctx *ctx);
+
+static void	cleanup_heredoc(int write_fd, t_redir *redir)
+{
+	close(write_fd);
+	rl_clear_history();
+	destroy_ctx(redir->cmd->p->ctx);
+	pipeline_destroy(redir->cmd->p);
+	if (g_sigint_received)
+		exit(130);
+	exit(0);
+}
+
+static bool	process_line(char *line, int write_fd, t_redir *redir)
+{
+	char	*expanded;
+
+	expanded = env_expand_variables(line, redir->cmd->p->ctx->env);
+	free(line);
+	if (!expanded)
+		return (false);
+	ft_putendl_fd(expanded, write_fd);
+	free(expanded);
+	return (true);
+}
 
 static void	read_heredoc_lines(int write_fd, t_redir *redir)
 {
 	char	*line;
-	char	*expanded;
 
 	g_sigint_received = 0;
 	while (1)
@@ -39,8 +63,7 @@ static void	read_heredoc_lines(int write_fd, t_redir *redir)
 		{
 			if (!g_sigint_received)
 				ft_putstr_fd(EOF_MSG, STDERR_FILENO);
-			if (line)
-				free(line);
+			free(line);
 			break ;
 		}
 		if (ft_strcmp(line, redir->file) == 0)
@@ -48,20 +71,17 @@ static void	read_heredoc_lines(int write_fd, t_redir *redir)
 			free(line);
 			break ;
 		}
-		expanded = env_expand_variables(line, redir->cmd->p->ctx->env);
-		free(line);
-		if (!expanded)
+		if (!process_line(line, write_fd, redir))
 			break ;
-		ft_putendl_fd(expanded, write_fd);
-		free(expanded);
 	}
-	close(write_fd);
-	rl_clear_history();
-	destroy_ctx(redir->cmd->p->ctx);
-	pipeline_destroy(redir->cmd->p);
-	if (g_sigint_received)
-		exit(130);
-	exit(0);
+	cleanup_heredoc(write_fd, redir);
+}
+
+static void	heredoc_child(int pipefd[], t_redir *redir)
+{
+	close(pipefd[0]);
+	setup_signals(RESET_MODE);
+	read_heredoc_lines(pipefd[1], redir);
 }
 
 int	handle_heredoc(t_redir *redir)
@@ -79,11 +99,7 @@ int	handle_heredoc(t_redir *redir)
 	if (pid < 0)
 		error_exit_code(1, strerror(errno), "fork", redir->cmd->p);
 	if (pid == 0)
-	{
-		setup_signals(RESET_MODE);
-		close(pipefd[0]);
-		read_heredoc_lines(pipefd[1], redir);
-	}
+		heredoc_child(pipefd, redir);
 	close(pipefd[1]);
 	waitpid(pid, &status, 0);
 	setup_signals(INTERACTIVE_MODE);
