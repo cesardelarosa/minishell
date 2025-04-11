@@ -6,14 +6,20 @@
 /*   By: cde-la-r <code@cesardelarosa.xyz>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/29 17:52:04 by cde-la-r          #+#    #+#             */
-/*   Updated: 2025/04/07 14:25:46 by cesi             ###   ########.fr       */
+/*   Updated: 2025/04/11 11:37:11 by cesi             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "core.h"
 #include "libft.h"
+#include "signals.h"
 #include "struct_creation.h"
+#include <readline/history.h>
+#include <readline/readline.h>
 #include <stdlib.h>
+#include <unistd.h>
+
+extern volatile sig_atomic_t	g_sigint_received;
 
 int	main(int argc, char **argv, char **envp)
 {
@@ -24,6 +30,7 @@ int	main(int argc, char **argv, char **envp)
 
 	(void)argc;
 	(void)argv;
+	setup_signals(INTERACTIVE_MODE);
 	ctx = init_ctx(envp);
 	while (42)
 	{
@@ -36,7 +43,9 @@ int	main(int argc, char **argv, char **envp)
 		pipeline = parser(tokens, &ctx);
 		if (!pipeline)
 			continue ;
+		setup_signals(COMMAND_MODE);
 		ctx.status = exec(pipeline);
+		setup_signals(INTERACTIVE_MODE);
 	}
 	return (destroy_ctx(&ctx));
 }
