@@ -6,7 +6,7 @@
 /*   By: cde-la-r <code@cesardelarosa.xyz>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/29 17:15:26 by cde-la-r          #+#    #+#             */
-/*   Updated: 2025/04/04 16:44:41 by cesi             ###   ########.fr       */
+/*   Updated: 2025/04/12 11:13:56 by cesi             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,6 +26,10 @@ typedef enum e_token_type
 	TOKEN_SINGLE_QUOTED_STRING,
 	TOKEN_DOUBLE_QUOTED_STRING,
 	TOKEN_EOF,
+	TOKEN_AND,
+	TOKEN_OR,
+	TOKEN_LPAREN,
+	TOKEN_RPAREN,
 	TOKEN_ERROR
 }					t_token_type;
 
