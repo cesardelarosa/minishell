@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   ast_parser.c                                       :+:      :+:    :+:   */
+/*   ast_parser_bonus.c                                 :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: cde-la-r <code@cesardelarosa.xyz>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/07 23:59:26 by cde-la-r          #+#    #+#             */
-/*   Updated: 2025/04/12 12:14:51 by cesi             ###   ########.fr       */
+/*   Updated: 2025/04/12 14:11:36 by cesi             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,10 +17,13 @@
 #include "structs.h"
 #include <stdlib.h>
 
-t_command			*build_command(t_list **tokens_ptr, t_ctx *ctx);
+int					parse_token(t_command *cmd, t_list **tokens_ptr,
+						t_list **arg_lst, t_ctx *ctx);
+
 static t_ast		*parse_expr(t_list **tokens, t_ctx *ctx, int *err);
 static t_ast		*parse_factor(t_list **tokens, t_ctx *ctx, int *err);
 static t_pipeline	*parse_pipeline(t_list **tokens, t_ctx *ctx, int *err);
+static t_command	*build_command(t_list **tokens_ptr, t_ctx *ctx, int *err);
 
 t_ast	*ast_parser(t_list *tokens, t_ctx *ctx)
 {
@@ -189,7 +192,7 @@ static t_pipeline	*parse_pipeline(t_list **tokens, t_ctx *ctx, int *err)
 		if (tok->type == TOKEN_EOF || tok->type == TOKEN_AND
 			|| tok->type == TOKEN_OR || tok->type == TOKEN_RPAREN)
 			break ;
-		cmd = build_command(tokens, ctx);
+		cmd = build_command(tokens, ctx, err);
 		if (!cmd)
 		{
 			pipeline_destroy(pipeline);
@@ -214,4 +217,62 @@ static t_pipeline	*parse_pipeline(t_list **tokens, t_ctx *ctx, int *err)
 		}
 	}
 	return (pipeline);
+}
+
+static char	**build_argv_from_list(t_list *lst)
+{
+	size_t	count;
+	size_t	i;
+	char	**argv;
+	t_list	*current;
+
+	count = ft_lstsize(lst);
+	argv = ft_calloc(count + 1, sizeof(char *));
+	if (!argv)
+		return (NULL);
+	i = 0;
+	current = lst;
+	while (current)
+	{
+		argv[i++] = ft_strdup((char *)current->content);
+		current = current->next;
+	}
+	argv[i] = NULL;
+	return (argv);
+}
+
+static t_command	*build_command(t_list **tokens_ptr, t_ctx *ctx, int *err)
+{
+	t_command	*cmd;
+	t_list		*arg_list;
+	t_token		*token;
+
+	cmd = ft_calloc(1, sizeof(t_command));
+	if (!cmd)
+		return (NULL);
+	arg_list = NULL;
+	while (*tokens_ptr)
+	{
+		token = (t_token *)(*tokens_ptr)->content;
+		if (token->type == TOKEN_PIPE || token->type == TOKEN_EOF
+			|| token->type == TOKEN_AND || token->type == TOKEN_OR
+			|| token->type == TOKEN_RPAREN || token->type == TOKEN_LPAREN)
+			break ;
+		if (!parse_token(cmd, tokens_ptr, &arg_list, ctx))
+		{
+			free(cmd);
+			ft_lstclear(&arg_list, free);
+			return (NULL);
+		}
+	}
+	if (!arg_list)
+	{
+		if (!*err)
+			*err = 1;
+		free(cmd);
+		return (NULL);
+	}
+	cmd->argv = build_argv_from_list(arg_list);
+	ft_lstclear(&arg_list, free);
+	return (cmd);
 }
