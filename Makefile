@@ -7,6 +7,8 @@ LFT_DIR         := libft
 OBJ_DIR         := obj
 OBJ_DIR_BONUS   := obj_bonus
 
+LFT_NAME		:= $(LFT_DIR)/libft.a
+
 ALL_SRCS        := $(shell find $(SRC_DIR) -type f -name "*.c")
 NORM_SRCS       := $(filter-out %_bonus.c, $(ALL_SRCS))
 
@@ -25,14 +27,14 @@ LDLIBS          := -lreadline
 
 all: $(NAME)
 
-$(NAME): libft $(OBJS)
+$(NAME): $(LFT_NAME) $(OBJS)
 	@printf "\033[1;33m[BUILD] Linking $(NAME)...\033[0m\n"
 	$(CC) $(CFLAGS) -o $(NAME) $(OBJS) $(LFT_DIR)/libft.a $(LDLIBS)
 	@printf "\033[1;32m[OK] ✅ Compilation of $(NAME) completed.\033[0m\n"
 
 bonus: $(BONUS_NAME)
 
-$(BONUS_NAME): libft $(COMMON_OBJS) $(BONUS_ONLY_OBJS)
+$(BONUS_NAME): $(LFT_NAME) $(COMMON_OBJS) $(BONUS_ONLY_OBJS)
 	@printf "\033[1;33m[BUILD] Linking $(BONUS_NAME)...\033[0m\n"
 	$(CC) $(CFLAGS) -o $(BONUS_NAME) $(COMMON_OBJS) $(BONUS_ONLY_OBJS) $(LFT_DIR)/libft.a $(LDLIBS)
 	@printf "\033[1;32m[OK] ✅ Compilation of $(BONUS_NAME) completed.\033[0m\n"
@@ -47,7 +49,7 @@ $(OBJ_DIR_BONUS)/%.o: $(SRC_DIR)/%.c
 	@printf "\033[1;33m[BUILD] Compiling bonus object: $<\033[0m\n"
 	$(CC) $(CFLAGS) -c $< -o $@
 
-libft:
+$(LFT_NAME):
 	@printf "\033[1;33m[BUILD] Building libft...\033[0m\n"
 	$(MAKE) complete -C $(LFT_DIR)
 
@@ -59,9 +61,11 @@ clean:
 
 fclean: clean
 	@printf "\033[1;31m[CLEAN] Deleting executables...\033[0m\n"
-	rm -f $(NAME) $(BONUS_NAME) $(LFT_DIR)/libft.a
+	rm -f $(NAME) $(BONUS_NAME) $(LFT_NAME)
 	@printf "\033[1;32m[OK] ✅ Deletion completed.\033[0m\n"
 
 re: fclean all
 
-.PHONY: all bonus libft clean fclean re
+both: $(NAME) $(BONUS_NAME)
+
+.PHONY: all bonus clean fclean re

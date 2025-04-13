@@ -10,6 +10,11 @@
 !/include/
 !/include/*.h
 
+!/libft
+!/libft/*.c
+!/libft/libft.h
+!/libft/Makefile
+
 !README.md
 
 !/doc/
