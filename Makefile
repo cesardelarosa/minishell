@@ -1,27 +1,27 @@
-NAME          := minishell
-BONUS_NAME    := minishell_bonus
+NAME            := minishell
+BONUS_NAME      := minishell_bonus
 
-SRC_DIR       := src
-INC_DIR       := include
-LFT_DIR       := libft
-OBJ_DIR       := obj
-OBJ_DIR_BONUS := obj_bonus
+SRC_DIR         := src
+INC_DIR         := include
+LFT_DIR         := libft
+OBJ_DIR         := obj
+OBJ_DIR_BONUS   := obj_bonus
 
-ALL_SRCS      := $(shell find $(SRC_DIR) -type f -name "*.c")
-NORM_SRCS     := $(filter-out %_bonus.c, $(ALL_SRCS))
+ALL_SRCS        := $(shell find $(SRC_DIR) -type f -name "*.c")
+NORM_SRCS       := $(filter-out %_bonus.c, $(ALL_SRCS))
 
 bonus_file = $(basename $1)_bonus.c
 
-BONUS_NORM_SRCS := $(foreach s,$(NORM_SRCS),$(if $(wildcard $(call bonus_file,$(s))),,$(s)))
-BONUS_FILES   := $(shell find $(SRC_DIR) -type f -name "*_bonus.c")
-BONUS_SRCS    := $(BONUS_NORM_SRCS) $(BONUS_FILES)
+COMMON_SRCS     := $(foreach s,$(NORM_SRCS),$(if $(wildcard $(call bonus_file,$(s))),, $(s)))
+BONUS_ONLY_SRCS := $(shell find $(SRC_DIR) -type f -name "*_bonus.c")
 
-OBJS          := $(NORM_SRCS:$(SRC_DIR)/%.c=$(OBJ_DIR)/%.o)
-OBJS_BONUS    := $(BONUS_SRCS:$(SRC_DIR)/%.c=$(OBJ_DIR_BONUS)/%.o)
+OBJS            := $(NORM_SRCS:$(SRC_DIR)/%.c=$(OBJ_DIR)/%.o)
+COMMON_OBJS     := $(COMMON_SRCS:$(SRC_DIR)/%.c=$(OBJ_DIR)/%.o)
+BONUS_ONLY_OBJS := $(BONUS_ONLY_SRCS:$(SRC_DIR)/%.c=$(OBJ_DIR_BONUS)/%.o)
 
-CC            := gcc
-CFLAGS        := -Wall -Wextra -Werror -I$(INC_DIR) -I$(LFT_DIR)
-LDLIBS        := -lreadline
+CC              := gcc
+CFLAGS          := -Wall -Wextra -Werror -I$(INC_DIR) -I$(LFT_DIR)
+LDLIBS          := -lreadline
 
 all: $(NAME)
 
@@ -32,9 +32,9 @@ $(NAME): libft $(OBJS)
 
 bonus: $(BONUS_NAME)
 
-$(BONUS_NAME): libft $(OBJS_BONUS)
+$(BONUS_NAME): libft $(COMMON_OBJS) $(BONUS_ONLY_OBJS)
 	@printf "\033[1;33m[BUILD] Linking $(BONUS_NAME)...\033[0m\n"
-	$(CC) $(CFLAGS) -o $(BONUS_NAME) $(OBJS_BONUS) $(LFT_DIR)/libft.a $(LDLIBS)
+	$(CC) $(CFLAGS) -o $(BONUS_NAME) $(COMMON_OBJS) $(BONUS_ONLY_OBJS) $(LFT_DIR)/libft.a $(LDLIBS)
 	@printf "\033[1;32m[OK] ✅ Compilation of $(BONUS_NAME) completed.\033[0m\n"
 
 $(OBJ_DIR)/%.o: $(SRC_DIR)/%.c
