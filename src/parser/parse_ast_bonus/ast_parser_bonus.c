@@ -23,7 +23,7 @@ int					parse_token(t_command *cmd, t_list **tokens_ptr,
 static t_ast		*parse_expr(t_list **tokens, t_ctx *ctx, int *err);
 static t_ast		*parse_factor(t_list **tokens, t_ctx *ctx, int *err);
 static t_pipeline	*parse_pipeline(t_list **tokens, t_ctx *ctx, int *err);
-static t_command	*build_command(t_list **tokens_ptr, t_ctx *ctx, int *err);
+static t_command	*build_command(t_list **tokens_ptr, t_ctx *ctx);
 
 t_ast	*ast_parser(t_list *tokens, t_ctx *ctx)
 {
@@ -192,7 +192,7 @@ static t_pipeline	*parse_pipeline(t_list **tokens, t_ctx *ctx, int *err)
 		if (tok->type == TOKEN_EOF || tok->type == TOKEN_AND
 			|| tok->type == TOKEN_OR || tok->type == TOKEN_RPAREN)
 			break ;
-		cmd = build_command(tokens, ctx, err);
+		cmd = build_command(tokens, ctx);
 		if (!cmd)
 		{
 			pipeline_destroy(pipeline);
@@ -241,7 +241,7 @@ static char	**build_argv_from_list(t_list *lst)
 	return (argv);
 }
 
-static t_command	*build_command(t_list **tokens_ptr, t_ctx *ctx, int *err)
+static t_command	*build_command(t_list **tokens_ptr, t_ctx *ctx)
 {
 	t_command	*cmd;
 	t_list		*arg_list;
@@ -267,8 +267,6 @@ static t_command	*build_command(t_list **tokens_ptr, t_ctx *ctx, int *err)
 	}
 	if (!arg_list)
 	{
-		if (!*err)
-			*err = 1;
 		free(cmd);
 		return (NULL);
 	}

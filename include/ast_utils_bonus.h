@@ -1,17 +1,17 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   ast_utils.h                                        :+:      :+:    :+:   */
+/*   ast_utils_bonus.h                                  :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: cde-la-r <code@cesardelarosa.xyz>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/08 12:18:10 by cde-la-r          #+#    #+#             */
-/*   Updated: 2025/04/12 12:06:08 by cesi             ###   ########.fr       */
+/*   Updated: 2025/04/16 11:30:26 by cesi             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef AST_UTILS_H
-# define AST_UTILS_H
+#ifndef AST_UTILS_BONUS_H
+# define AST_UTILS_BONUS_H
 
 # include "structs.h"
 
