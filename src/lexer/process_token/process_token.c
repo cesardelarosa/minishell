@@ -19,23 +19,14 @@
 int	process_token(char **s, t_list **tokens, int joined)
 {
 	if (**s == '\'')
-	{
-		if (process_single_quote(s, tokens, joined) < 0)
-			return (-1);
-		return (1);
-	}
+		return (process_single_quote(s, tokens, joined));
 	if (**s == '\"')
-	{
-		if (process_double_quote(s, tokens, joined) < 0)
-			return (-1);
-		return (1);
-	}
-	if (**s == '|' && process_pipe(s, tokens) == 0)
-		return (1);
-	if (**s == '<' && process_redirect_in(s, tokens) == 0)
-		return (1);
-	if (**s == '>' && process_redirect_out(s, tokens) == 0)
-		return (1);
-	process_word(s, tokens, joined);
-	return (1);
+		return (process_double_quote(s, tokens, joined));
+	if (**s == '|' )
+		return (process_pipe(s, tokens));
+	if (**s == '<')
+		return (process_redirect_in(s, tokens));
+	if (**s == '>' )
+		return (process_redirect_out(s, tokens));
+	return (process_word(s, tokens, joined));
 }

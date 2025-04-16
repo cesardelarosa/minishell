@@ -29,7 +29,7 @@ static char	*read_word(const char **s)
 	return (ft_substr(start, 0, len));
 }
 
-void	process_word(char **s, t_list **tokens, int joined)
+int	process_word(char **s, t_list **tokens, int joined)
 {
 	t_token	*token;
 	char	*value;
@@ -37,4 +37,5 @@ void	process_word(char **s, t_list **tokens, int joined)
 	value = read_word((const char **)s);
 	token = create_token(TOKEN_WORD, value, joined);
 	ft_lstadd_back(tokens, ft_lstnew(token));
+	return (0);
 }
