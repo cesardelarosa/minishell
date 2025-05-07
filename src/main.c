@@ -6,7 +6,7 @@
 /*   By: cde-la-r <code@cesardelarosa.xyz>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/29 17:52:04 by cde-la-r          #+#    #+#             */
-/*   Updated: 2025/04/13 12:42:56 by cesi             ###   ########.fr       */
+/*   Updated: 2025/05/07 23:19:47 by cesi             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,32 +20,40 @@
 #include <stdlib.h>
 #include <unistd.h>
 
+#define EXIT 0
+#define CONTINUE 1
+
 extern volatile sig_atomic_t	g_sigint_received;
 
-int	main(int argc, char **argv, char **envp)
+static int	shell_loop(t_ctx *ctx)
 {
-	t_ctx		ctx;
 	char		*line;
 	t_list		*tokens;
 	t_pipeline	*pipeline;
 
+	setup_signals(INTERACTIVE_MODE);
+	line = read_prompt(ctx->status);
+	if (!line)
+		return (EXIT);
+	tokens = lexer(line);
+	if (!tokens)
+		return (CONTINUE);
+	pipeline = parser(tokens, ctx);
+	if (!pipeline)
+		return (CONTINUE);
+	setup_signals(COMMAND_MODE);
+	ctx->status = exec(pipeline);
+	return (CONTINUE);
+}
+
+int	main(int argc, char **argv, char **envp)
+{
+	t_ctx	ctx;
+
 	(void)argc;
 	(void)argv;
 	ctx = init_ctx(envp);
-	while (42)
-	{
-		setup_signals(INTERACTIVE_MODE);
-		line = read_prompt(ctx.status);
-		if (!line)
-			break ;
-		tokens = lexer(line);
-		if (!tokens)
-			continue ;
-		pipeline = parser(tokens, &ctx);
-		if (!pipeline)
-			continue ;
-		setup_signals(COMMAND_MODE);
-		ctx.status = exec(pipeline);
-	}
+	while (shell_loop(&ctx))
+		;
 	return (destroy_ctx(&ctx));
 }
