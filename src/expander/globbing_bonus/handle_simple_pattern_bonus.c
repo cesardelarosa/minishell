@@ -67,7 +67,7 @@ int	handle_simple_pattern(const char *pattern, int flags, t_ftglob *p)
 	process_entries(dir, pattern, &m);
 	closedir(dir);
 	m.matches[0] = ft_strdup(pattern);
-	if (!m.count && (flags & GLOB_NOCHECK) && !m.matches[0])
+	if (!m.count && (flags & (1 << 0)) && !m.matches[0])
 		return (1);
 	m.matches = realloc(m.matches, sizeof(char *) * (m.count + 1));
 	if (!m.matches)

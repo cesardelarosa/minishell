@@ -6,7 +6,7 @@
 /*   By: cde-la-r <code@cesardelarosa.xyz>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/09 12:22:22 by cde-la-r          #+#    #+#             */
-/*   Updated: 2025/04/16 11:29:46 by cesi             ###   ########.fr       */
+/*   Updated: 2025/05/07 13:59:56 by cesi             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,8 +14,6 @@
 # define FT_GLOB_BONUS_H
 
 # include <stddef.h>
-
-# define GLOB_NOCHECK (1 << 0)
 
 typedef struct s_ftglob
 {

@@ -18,7 +18,7 @@ static int	finalize_matches(t_matches *m, int flags, const char *pattern)
 {
 	char	**temp;
 
-	if (m->count == 0 && (flags & GLOB_NOCHECK))
+	if (m->count == 0 && (flags & (1 << 0)))
 	{
 		m->matches[0] = ft_strdup(pattern);
 		if (!m->matches[0])
