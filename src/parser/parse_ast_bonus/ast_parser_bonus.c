@@ -6,7 +6,7 @@
 /*   By: cde-la-r <code@cesardelarosa.xyz>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/07 23:59:26 by cde-la-r          #+#    #+#             */
-/*   Updated: 2025/06/17 21:13:26 by cde-la-r         ###   ########.fr       */
+/*   Updated: 2025/06/17 21:17:05 by cesi             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -102,8 +102,7 @@ static t_ast	*parse_factor(t_list **tokens, t_ctx *ctx, int *err)
 		{
 			*err = 1;
 			ft_putstr_fd("minishell: syntax error: missing ')'\n", 2);
-			ast_destroy(node);
-			return (NULL);
+			return (ast_destroy(node), NULL);
 		}
 		*tokens = (*tokens)->next;
 		return (ast_create(AST_GROUP, node, NULL, NULL));
@@ -111,10 +110,7 @@ static t_ast	*parse_factor(t_list **tokens, t_ctx *ctx, int *err)
 	node = ast_create(AST_PIPE, NULL, NULL, NULL);
 	node->pipeline = parse_pipeline(tokens, ctx, err);
 	if (!node->pipeline || *err)
-	{
-		ast_destroy(node);
-		return (NULL);
-	}
+		return (ast_destroy(node), NULL);
 	return (node);
 }
 
@@ -211,6 +207,9 @@ static int	parse_word_bonus(t_list **arg_lst, t_token *token, t_ctx *ctx)
 {
 	char	*expanded;
 	int		is_multiple;
+	t_list	*last_node;
+	char	*full_pattern;
+	t_list	*curr;
 
 	expanded = expand_value(token->value, token->type, ctx, &is_multiple);
 	if (!expanded)
@@ -219,10 +218,8 @@ static int	parse_word_bonus(t_list **arg_lst, t_token *token, t_ctx *ctx)
 	{
 		if (token->joined && *arg_lst)
 		{
-			t_list	*last_node = ft_lstlast(*arg_lst);
-			char	*full_pattern = ft_strjoin(last_node->content, expanded);
-			t_list	*curr;
-
+			last_node = ft_lstlast(*arg_lst);
+			full_pattern = ft_strjoin(last_node->content, expanded);
 			free(expanded);
 			if (!full_pattern)
 				return (0);
