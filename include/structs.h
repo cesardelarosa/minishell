@@ -6,7 +6,7 @@
 /*   By: cde-la-r <code@cesardelarosa.xyz>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/08 13:01:51 by cde-la-r          #+#    #+#             */
-/*   Updated: 2025/04/04 10:53:11 by cde-la-r         ###   ########.fr       */
+/*   Updated: 2025/06/17 23:15:13 by cde-la-r         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -55,5 +55,7 @@ typedef struct s_command
 	t_list		*redirs;
 	t_pipeline	*p;
 }	t_command;
+
+typedef int	(*t_token_parser_ft)(t_command *, t_list **, t_list **, t_ctx *);
 
 #endif

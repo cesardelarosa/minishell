@@ -6,7 +6,7 @@
 /*   By: cde-la-r <code@cesardelarosa.xyz>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/07 23:59:26 by cde-la-r          #+#    #+#             */
-/*   Updated: 2025/06/17 21:17:05 by cesi             ###   ########.fr       */
+/*   Updated: 2025/06/17 23:15:45 by cde-la-r         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,7 +23,6 @@
 static t_ast		*parse_expr(t_list **tokens, t_ctx *ctx, int *err);
 static t_ast		*parse_factor(t_list **tokens, t_ctx *ctx, int *err);
 static t_pipeline	*parse_pipeline(t_list **tokens, t_ctx *ctx, int *err);
-static t_command	*build_command(t_list **tokens_ptr, t_ctx *ctx);
 static int			parse_token_bonus(t_command *cmd, t_list **tokens_ptr,
 						t_list **arg_lst, t_ctx *ctx);
 static int			parse_word_bonus(t_list **arg_lst, t_token *token,
@@ -32,6 +31,8 @@ int					handle_joined_token(t_list *arg_lst, char *expanded,
 						t_token_type type, int is_multiple);
 int					handle_normal_token(t_list **arg_lst, char *expanded,
 						t_token_type type, int is_multiple);
+t_command			*build_command(t_list **tokens_ptr, t_ctx *ctx,
+						t_token_parser_ft parse_ft);
 
 t_ast	*ast_parser(t_list *tokens, t_ctx *ctx)
 {
@@ -127,7 +128,7 @@ static t_pipeline	*parse_pipeline(t_list **tokens, t_ctx *ctx, int *err)
 		if (tok->type == TOKEN_EOF || tok->type == TOKEN_AND
 			|| tok->type == TOKEN_OR || tok->type == TOKEN_RPAREN)
 			break ;
-		cmd = build_command(tokens, ctx);
+		cmd = build_command(tokens, ctx, &parse_token_bonus);
 		if (!cmd)
 		{
 			*err = 1;
@@ -141,43 +142,6 @@ static t_pipeline	*parse_pipeline(t_list **tokens, t_ctx *ctx, int *err)
 			break ;
 	}
 	return (pipeline);
-}
-
-static t_command	*build_command(t_list **tokens_ptr, t_ctx *ctx)
-{
-	t_command	*cmd;
-	t_list		*arg_list;
-	t_token		*token;
-	t_list		*current_arg;
-	int			i;
-
-	cmd = command_create(NULL);
-	arg_list = NULL;
-	while (*tokens_ptr)
-	{
-		token = (t_token *)(*tokens_ptr)->content;
-		if (token->type == TOKEN_PIPE || token->type == TOKEN_EOF
-			|| token->type == TOKEN_AND || token->type == TOKEN_OR
-			|| token->type == TOKEN_RPAREN)
-			break ;
-		if (!parse_token_bonus(cmd, tokens_ptr, &arg_list, ctx))
-		{
-			command_destroy(cmd);
-			ft_lstclear(&arg_list, free);
-			return (NULL);
-		}
-	}
-	cmd->argv = (char **)ft_calloc(ft_lstsize(arg_list) + 1, sizeof(char *));
-	current_arg = arg_list;
-	i = 0;
-	while (current_arg)
-	{
-		cmd->argv[i] = ft_strdup((char *)current_arg->content);
-		current_arg = current_arg->next;
-		i++;
-	}
-	ft_lstclear(&arg_list, free);
-	return (cmd);
 }
 
 static int	parse_token_bonus(t_command *cmd, t_list **tokens_ptr,

@@ -6,7 +6,7 @@
 /*   By: cde-la-r <code@cesardelarosa.xyz>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/29 18:08:20 by cde-la-r          #+#    #+#             */
-/*   Updated: 2025/04/13 12:22:14 by cesi             ###   ########.fr       */
+/*   Updated: 2025/06/17 23:16:25 by cde-la-r         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,6 +18,17 @@
 
 int			parse_token(t_command *cmd, t_list **tokens_ptr, t_list **arg_lst,
 				t_ctx *ctx);
+
+static int	is_command_part(t_token_type type)
+{
+	return (type == TOKEN_WORD
+		|| type == TOKEN_SINGLE_QUOTED_STRING
+		|| type == TOKEN_DOUBLE_QUOTED_STRING
+		|| type == TOKEN_REDIRECT_IN
+		|| type == TOKEN_REDIRECT_OUT
+		|| type == TOKEN_HEREDOC
+		|| type == TOKEN_APPEND);
+}
 
 static char	**build_argv_from_list(t_list *lst)
 {
@@ -41,7 +52,8 @@ static char	**build_argv_from_list(t_list *lst)
 	return (argv);
 }
 
-static t_command	*build_command(t_list **tokens_ptr, t_ctx *ctx)
+t_command	*build_command(t_list **tokens_ptr, t_ctx *ctx,
+	t_token_parser_ft parse_ft)
 {
 	t_command	*cmd;
 	t_list		*arg_list;
@@ -54,9 +66,9 @@ static t_command	*build_command(t_list **tokens_ptr, t_ctx *ctx)
 	while (*tokens_ptr)
 	{
 		token = (t_token *)(*tokens_ptr)->content;
-		if (token->type == TOKEN_PIPE || token->type == TOKEN_EOF)
+		if (!is_command_part(token->type))
 			break ;
-		if (!parse_token(cmd, tokens_ptr, &arg_list, ctx))
+		if (!parse_ft(cmd, tokens_ptr, &arg_list, ctx))
 		{
 			free(cmd);
 			ft_lstclear(&arg_list, free);
@@ -82,7 +94,7 @@ t_pipeline	*parser(t_list *tokens, t_ctx *ctx)
 	{
 		if (((t_token *)current_tokens->content)->type == TOKEN_EOF)
 			break ;
-		cmd = build_command(&current_tokens, ctx);
+		cmd = build_command(&current_tokens, ctx, &parse_token);
 		if (!pipeline_add_command(pipeline, cmd))
 		{
 			ft_putstr_fd("Error: failed to add command to pipeline\n", 2);
