@@ -6,7 +6,7 @@
 /*   By: cde-la-r <code@cesardelarosa.xyz>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/07 23:59:26 by cde-la-r          #+#    #+#             */
-/*   Updated: 2025/06/17 17:35:05 by cde-la-r         ###   ########.fr       */
+/*   Updated: 2025/06/17 21:13:26 by cde-la-r         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,7 +28,6 @@ static int			parse_token_bonus(t_command *cmd, t_list **tokens_ptr,
 						t_list **arg_lst, t_ctx *ctx);
 static int			parse_word_bonus(t_list **arg_lst, t_token *token,
 						t_ctx *ctx);
-static int			handle_globbing(t_list **args_lst, char *pattern);
 int					handle_joined_token(t_list *arg_lst, char *expanded,
 						t_token_type type, int is_multiple);
 int					handle_normal_token(t_list **arg_lst, char *expanded,
@@ -220,44 +219,29 @@ static int	parse_word_bonus(t_list **arg_lst, t_token *token, t_ctx *ctx)
 	{
 		if (token->joined && *arg_lst)
 		{
-			handle_joined_token(*arg_lst, expanded, token->type, is_multiple);
-			char *final_pattern = ft_strdup(ft_lstlast(*arg_lst)->content);
-			ft_lstdelone(ft_lstlast(*arg_lst), free);
-			return (handle_globbing(arg_lst, final_pattern));
+			t_list	*last_node = ft_lstlast(*arg_lst);
+			char	*full_pattern = ft_strjoin(last_node->content, expanded);
+			t_list	*curr;
+
+			free(expanded);
+			if (!full_pattern)
+				return (0);
+			curr = *arg_lst;
+			if (curr == last_node)
+				*arg_lst = NULL;
+			else
+			{
+				while (curr->next != last_node)
+					curr = curr->next;
+				curr->next = NULL;
+			}
+			ft_lstdelone(last_node, free);
+			return (handle_globbing(arg_lst, full_pattern));
 		}
 		return (handle_globbing(arg_lst, expanded));
 	}
 	if (token->joined && *arg_lst)
 		return (handle_joined_token(*arg_lst, expanded, token->type,
 				is_multiple));
-	else
-		return (handle_normal_token(arg_lst, expanded, token->type,
-				is_multiple));
-}
-
-static int	handle_globbing(t_list **args_lst, char *pattern)
-{
-	t_ftglob	glob_result;
-	size_t		i;
-
-	if (ft_glob(pattern, 0, &glob_result) != 0)
-	{
-		free(pattern);
-		return (0);
-	}
-	if (glob_result.gl_pathc > 0)
-	{
-		i = 0;
-		while (i < glob_result.gl_pathc)
-		{
-			ft_lstadd_back(args_lst,
-				ft_lstnew(ft_strdup(glob_result.gl_pathv[i])));
-			i++;
-		}
-	}
-	else
-		ft_lstadd_back(args_lst, ft_lstnew(ft_strdup(pattern)));
-	free(pattern);
-	ft_globfree(&glob_result);
-	return (1);
+	return (handle_normal_token(arg_lst, expanded, token->type, is_multiple));
 }

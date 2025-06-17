@@ -6,7 +6,7 @@
 /*   By: cde-la-r <code@cesardelarosa.xyz>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/09 12:22:22 by cde-la-r          #+#    #+#             */
-/*   Updated: 2025/05/07 13:59:56 by cesi             ###   ########.fr       */
+/*   Updated: 2025/06/17 21:13:08 by cde-la-r         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,6 +14,7 @@
 # define FT_GLOB_BONUS_H
 
 # include <stddef.h>
+# include "libft.h"
 
 typedef struct s_ftglob
 {
@@ -49,5 +50,6 @@ int			handle_path_pattern(const char *pattern, int flags, t_ftglob *p);
 int			handle_simple_pattern(const char *pattern, int flags, t_ftglob *p);
 int			ft_glob(const char *pattern, int flags, t_ftglob *p);
 void		ft_globfree(t_ftglob *p);
+int			handle_globbing(t_list **args_lst, char *pattern);
 
 #endif

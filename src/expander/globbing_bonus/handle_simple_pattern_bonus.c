@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   handle_simple_pattern.c                            :+:      :+:    :+:   */
+/*   handle_simple_pattern_bonus.c                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: cde-la-r <code@cesardelarosa.xyz>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/10 08:36:02 by cde-la-r          #+#    #+#             */
-/*   Updated: 2025/04/10 08:41:41 by cesi             ###   ########.fr       */
+/*   Updated: 2025/06/17 21:14:51 by cde-la-r         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -66,9 +66,13 @@ int	handle_simple_pattern(const char *pattern, int flags, t_ftglob *p)
 		return (1);
 	process_entries(dir, pattern, &m);
 	closedir(dir);
-	m.matches[0] = ft_strdup(pattern);
-	if (!m.count && (flags & (1 << 0)) && !m.matches[0])
-		return (1);
+	if (!m.count && (flags & (1 << 0)))
+	{
+		m.matches[0] = ft_strdup(pattern);
+		if (!m.matches[0])
+			return (1);
+		m.count = 1;
+	}
 	m.matches = realloc(m.matches, sizeof(char *) * (m.count + 1));
 	if (!m.matches)
 		return (1);
