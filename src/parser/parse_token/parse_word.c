@@ -6,7 +6,7 @@
 /*   By: cde-la-r <code@cesardelarosa.xyz>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/29 18:08:20 by cde-la-r          #+#    #+#             */
-/*   Updated: 2025/04/10 13:41:47 by cesi             ###   ########.fr       */
+/*   Updated: 2025/06/17 16:50:02 by cesi             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,7 +18,7 @@
 char	*expand_value(char *value, t_token_type type, t_ctx *ctx,
 			int *is_multiple);
 
-static int	handle_joined_multiple(char *expanded, t_list *last_node)
+int	handle_joined_multiple(char *expanded, t_list *last_node)
 {
 	char	**words;
 	char	*joined;
@@ -47,8 +47,8 @@ static int	handle_joined_multiple(char *expanded, t_list *last_node)
 	return (free(words), 1);
 }
 
-static int	handle_joined_token(t_list *arg_lst, char *expanded,
-		t_token_type type, int is_multiple)
+int	handle_joined_token(t_list *arg_lst, char *expanded, t_token_type type,
+		int is_multiple)
 {
 	t_list	*last_node;
 	char	*joined;
@@ -67,7 +67,7 @@ static int	handle_joined_token(t_list *arg_lst, char *expanded,
 	return (handle_joined_multiple(expanded, last_node));
 }
 
-static int	handle_normal_multiple(t_list **arg_lst, char *expanded)
+int	handle_normal_multiple(t_list **arg_lst, char *expanded)
 {
 	char	**words;
 	int		i;
@@ -87,8 +87,8 @@ static int	handle_normal_multiple(t_list **arg_lst, char *expanded)
 	return (1);
 }
 
-static int	handle_normal_token(t_list **arg_lst, char *expanded,
-		t_token_type type, int is_multiple)
+int	handle_normal_token(t_list **arg_lst, char *expanded, t_token_type type,
+		int is_multiple)
 {
 	if (type == TOKEN_DOUBLE_QUOTED_STRING || !is_multiple)
 	{

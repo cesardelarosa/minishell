@@ -6,50 +6,54 @@
 /*   By: cde-la-r <code@cesardelarosa.xyz>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/07 23:59:26 by cde-la-r          #+#    #+#             */
-/*   Updated: 2025/04/12 14:11:36 by cesi             ###   ########.fr       */
+/*   Updated: 2025/06/17 17:35:05 by cde-la-r         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "ast_utils_bonus.h"
 #include "lexer.h"
+#include "ast_utils_bonus.h"
+#include "expander.h"
+#include "ft_glob_bonus.h"
 #include "libft.h"
+#include "parse_token.h"
 #include "struct_creation.h"
 #include "structs.h"
 #include <stdlib.h>
-
-int					parse_token(t_command *cmd, t_list **tokens_ptr,
-						t_list **arg_lst, t_ctx *ctx);
 
 static t_ast		*parse_expr(t_list **tokens, t_ctx *ctx, int *err);
 static t_ast		*parse_factor(t_list **tokens, t_ctx *ctx, int *err);
 static t_pipeline	*parse_pipeline(t_list **tokens, t_ctx *ctx, int *err);
 static t_command	*build_command(t_list **tokens_ptr, t_ctx *ctx);
+static int			parse_token_bonus(t_command *cmd, t_list **tokens_ptr,
+						t_list **arg_lst, t_ctx *ctx);
+static int			parse_word_bonus(t_list **arg_lst, t_token *token,
+						t_ctx *ctx);
+static int			handle_globbing(t_list **args_lst, char *pattern);
+int					handle_joined_token(t_list *arg_lst, char *expanded,
+						t_token_type type, int is_multiple);
+int					handle_normal_token(t_list **arg_lst, char *expanded,
+						t_token_type type, int is_multiple);
 
 t_ast	*ast_parser(t_list *tokens, t_ctx *ctx)
 {
 	int		err;
 	t_ast	*root;
-	t_token	*tok;
 
 	err = 0;
 	if (!tokens)
 		return (NULL);
 	root = parse_expr(&tokens, ctx, &err);
-	if (!root)
-		return (NULL);
-	if (tokens)
+	if (err)
 	{
-		tok = (t_token *)tokens->content;
-		if (tok->type != TOKEN_EOF)
-		{
-			if (err == 0)
-			{
-				ft_putstr_fd("syntax error: unexpected token\n", 2);
-				err = 1;
-			}
+		if (root)
 			ast_destroy(root);
-			return (NULL);
-		}
+		return (NULL);
+	}
+	if (tokens && ((t_token *)tokens->content)->type != TOKEN_EOF)
+	{
+		ft_putstr_fd("minishell: syntax error near unexpected token\n", 2);
+		ast_destroy(root);
+		return (NULL);
 	}
 	return (root);
 }
@@ -62,8 +66,8 @@ static t_ast	*parse_expr(t_list **tokens, t_ctx *ctx, int *err)
 	t_ast	*right;
 
 	left = parse_factor(tokens, ctx, err);
-	if (!left)
-		return (NULL);
+	if (!left || *err)
+		return (left);
 	while (*tokens)
 	{
 		tok = (t_token *)(*tokens)->content;
@@ -73,24 +77,11 @@ static t_ast	*parse_expr(t_list **tokens, t_ctx *ctx, int *err)
 		right = parse_factor(tokens, ctx, err);
 		if (!right)
 		{
-			if (*err == 0)
-			{
-				ft_putstr_fd("syntax error: invalid expression\n", 2);
-				*err = 1;
-			}
+			*err = 1;
 			ast_destroy(left);
 			return (NULL);
 		}
-		if (tok->type == TOKEN_AND)
-			node = ast_create(AST_AND, left, right, NULL);
-		else
-			node = ast_create(AST_OR, left, right, NULL);
-		if (!node)
-		{
-			ast_destroy(left);
-			ast_destroy(right);
-			return (NULL);
-		}
+		node = ast_create(tok->type, left, right, NULL);
 		left = node;
 	}
 	return (left);
@@ -100,81 +91,32 @@ static t_ast	*parse_factor(t_list **tokens, t_ctx *ctx, int *err)
 {
 	t_ast	*node;
 	t_token	*tok;
-	t_ast	*expr;
 
-	if (!*tokens)
-		return (NULL);
 	tok = (t_token *)(*tokens)->content;
 	if (tok->type == TOKEN_LPAREN)
 	{
 		*tokens = (*tokens)->next;
-		expr = parse_expr(tokens, ctx, err);
-		if (!expr)
-		{
-			if (*err == 0)
-			{
-				ft_putstr_fd("syntax error: invalid group expression\n", 2);
-				*err = 1;
-			}
-			return (NULL);
-		}
+		node = parse_expr(tokens, ctx, err);
+		if (!node || *err)
+			return (node);
 		if (!*tokens || ((t_token *)(*tokens)->content)->type != TOKEN_RPAREN)
 		{
-			if (*err == 0)
-			{
-				ft_putstr_fd("syntax error: missing ')'\n", 2);
-				*err = 1;
-			}
-			ast_destroy(expr);
+			*err = 1;
+			ft_putstr_fd("minishell: syntax error: missing ')'\n", 2);
+			ast_destroy(node);
 			return (NULL);
 		}
 		*tokens = (*tokens)->next;
-		if (expr && expr->type == AST_PIPE && expr->pipeline
-			&& expr->pipeline->cmd_count == 0)
-		{
-			if (*err == 0)
-			{
-				ft_putstr_fd("syntax error near unexpected token `)'\n", 2);
-				*err = 1;
-			}
-			ast_destroy(expr);
-			return (NULL);
-		}
-		node = ast_create(AST_GROUP, expr, NULL, NULL);
-		if (!node)
-		{
-			ast_destroy(expr);
-			return (NULL);
-		}
-		return (node);
+		return (ast_create(AST_GROUP, node, NULL, NULL));
 	}
-	else
+	node = ast_create(AST_PIPE, NULL, NULL, NULL);
+	node->pipeline = parse_pipeline(tokens, ctx, err);
+	if (!node->pipeline || *err)
 	{
-		node = malloc(sizeof(t_ast));
-		if (!node)
-			return (NULL);
-		node->pipeline = parse_pipeline(tokens, ctx, err);
-		if (!node->pipeline)
-		{
-			free(node);
-			return (NULL);
-		}
-		if (node->pipeline->cmd_count == 0)
-		{
-			if (*err == 0)
-			{
-				ft_putstr_fd("syntax error: empty command\n", 2);
-				*err = 1;
-			}
-			pipeline_destroy(node->pipeline);
-			free(node);
-			return (NULL);
-		}
-		node->type = AST_PIPE;
-		node->left = NULL;
-		node->right = NULL;
-		return (node);
+		ast_destroy(node);
+		return (NULL);
 	}
+	return (node);
 }
 
 static t_pipeline	*parse_pipeline(t_list **tokens, t_ctx *ctx, int *err)
@@ -184,8 +126,6 @@ static t_pipeline	*parse_pipeline(t_list **tokens, t_ctx *ctx, int *err)
 	t_token		*tok;
 
 	pipeline = pipeline_create(ctx);
-	if (!pipeline || !*tokens)
-		return (NULL);
 	while (*tokens)
 	{
 		tok = (t_token *)(*tokens)->content;
@@ -195,50 +135,17 @@ static t_pipeline	*parse_pipeline(t_list **tokens, t_ctx *ctx, int *err)
 		cmd = build_command(tokens, ctx);
 		if (!cmd)
 		{
-			pipeline_destroy(pipeline);
-			if (*err == 0)
-			{
-				ft_putstr_fd("syntax error: invalid command\n", 2);
-				*err = 1;
-			}
-			return (NULL);
-		}
-		if (!pipeline_add_command(pipeline, cmd))
-		{
-			ft_putstr_fd("Error: failed to add command to pipeline\n", 2);
+			*err = 1;
 			pipeline_destroy(pipeline);
 			return (NULL);
 		}
-		if (*tokens)
-		{
-			tok = (t_token *)(*tokens)->content;
-			if (tok->type == TOKEN_PIPE)
-				*tokens = (*tokens)->next;
-		}
+		pipeline_add_command(pipeline, cmd);
+		if (*tokens && ((t_token *)(*tokens)->content)->type == TOKEN_PIPE)
+			*tokens = (*tokens)->next;
+		else
+			break ;
 	}
 	return (pipeline);
-}
-
-static char	**build_argv_from_list(t_list *lst)
-{
-	size_t	count;
-	size_t	i;
-	char	**argv;
-	t_list	*current;
-
-	count = ft_lstsize(lst);
-	argv = ft_calloc(count + 1, sizeof(char *));
-	if (!argv)
-		return (NULL);
-	i = 0;
-	current = lst;
-	while (current)
-	{
-		argv[i++] = ft_strdup((char *)current->content);
-		current = current->next;
-	}
-	argv[i] = NULL;
-	return (argv);
 }
 
 static t_command	*build_command(t_list **tokens_ptr, t_ctx *ctx)
@@ -246,31 +153,111 @@ static t_command	*build_command(t_list **tokens_ptr, t_ctx *ctx)
 	t_command	*cmd;
 	t_list		*arg_list;
 	t_token		*token;
+	t_list		*current_arg;
+	int			i;
 
-	cmd = ft_calloc(1, sizeof(t_command));
-	if (!cmd)
-		return (NULL);
+	cmd = command_create(NULL);
 	arg_list = NULL;
 	while (*tokens_ptr)
 	{
 		token = (t_token *)(*tokens_ptr)->content;
 		if (token->type == TOKEN_PIPE || token->type == TOKEN_EOF
 			|| token->type == TOKEN_AND || token->type == TOKEN_OR
-			|| token->type == TOKEN_RPAREN || token->type == TOKEN_LPAREN)
+			|| token->type == TOKEN_RPAREN)
 			break ;
-		if (!parse_token(cmd, tokens_ptr, &arg_list, ctx))
+		if (!parse_token_bonus(cmd, tokens_ptr, &arg_list, ctx))
 		{
-			free(cmd);
+			command_destroy(cmd);
 			ft_lstclear(&arg_list, free);
 			return (NULL);
 		}
 	}
-	if (!arg_list)
+	cmd->argv = (char **)ft_calloc(ft_lstsize(arg_list) + 1, sizeof(char *));
+	current_arg = arg_list;
+	i = 0;
+	while (current_arg)
 	{
-		free(cmd);
-		return (NULL);
+		cmd->argv[i] = ft_strdup((char *)current_arg->content);
+		current_arg = current_arg->next;
+		i++;
 	}
-	cmd->argv = build_argv_from_list(arg_list);
 	ft_lstclear(&arg_list, free);
 	return (cmd);
+}
+
+static int	parse_token_bonus(t_command *cmd, t_list **tokens_ptr,
+		t_list **arg_lst, t_ctx *ctx)
+{
+	t_token	*token;
+	int		result;
+
+	token = (t_token *)(*tokens_ptr)->content;
+	if (token->type == TOKEN_ERROR)
+		return (parse_error(token));
+	if (token->type == TOKEN_REDIRECT_IN || token->type == TOKEN_REDIRECT_OUT
+		|| token->type == TOKEN_HEREDOC || token->type == TOKEN_APPEND)
+		return (parse_redirection(cmd, tokens_ptr, token->type, ctx));
+	if (token->type == TOKEN_WORD || token->type == TOKEN_SINGLE_QUOTED_STRING
+		|| token->type == TOKEN_DOUBLE_QUOTED_STRING)
+	{
+		result = parse_word_bonus(arg_lst, token, ctx);
+		*tokens_ptr = (*tokens_ptr)->next;
+		return (result);
+	}
+	*tokens_ptr = (*tokens_ptr)->next;
+	return (1);
+}
+
+static int	parse_word_bonus(t_list **arg_lst, t_token *token, t_ctx *ctx)
+{
+	char	*expanded;
+	int		is_multiple;
+
+	expanded = expand_value(token->value, token->type, ctx, &is_multiple);
+	if (!expanded)
+		return (0);
+	if (token->type == TOKEN_WORD && ft_strchr(expanded, '*'))
+	{
+		if (token->joined && *arg_lst)
+		{
+			handle_joined_token(*arg_lst, expanded, token->type, is_multiple);
+			char *final_pattern = ft_strdup(ft_lstlast(*arg_lst)->content);
+			ft_lstdelone(ft_lstlast(*arg_lst), free);
+			return (handle_globbing(arg_lst, final_pattern));
+		}
+		return (handle_globbing(arg_lst, expanded));
+	}
+	if (token->joined && *arg_lst)
+		return (handle_joined_token(*arg_lst, expanded, token->type,
+				is_multiple));
+	else
+		return (handle_normal_token(arg_lst, expanded, token->type,
+				is_multiple));
+}
+
+static int	handle_globbing(t_list **args_lst, char *pattern)
+{
+	t_ftglob	glob_result;
+	size_t		i;
+
+	if (ft_glob(pattern, 0, &glob_result) != 0)
+	{
+		free(pattern);
+		return (0);
+	}
+	if (glob_result.gl_pathc > 0)
+	{
+		i = 0;
+		while (i < glob_result.gl_pathc)
+		{
+			ft_lstadd_back(args_lst,
+				ft_lstnew(ft_strdup(glob_result.gl_pathv[i])));
+			i++;
+		}
+	}
+	else
+		ft_lstadd_back(args_lst, ft_lstnew(ft_strdup(pattern)));
+	free(pattern);
+	ft_globfree(&glob_result);
+	return (1);
 }
