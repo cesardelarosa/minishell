@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   ast_create.c                                       :+:      :+:    :+:   */
+/*   ast_create_bonus.c                                 :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: cde-la-r <code@cesardelarosa.xyz>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/08 12:19:06 by cde-la-r          #+#    #+#             */
-/*   Updated: 2025/04/12 12:15:04 by cesi             ###   ########.fr       */
+/*   Updated: 2025/06/18 11:03:19 by cesi             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,7 +15,8 @@
 #include "struct_creation.h"
 #include <stdlib.h>
 
-t_ast	*ast_create(int type, t_ast *left, t_ast *right, t_pipeline *pipeline)
+t_ast	*ast_create(t_ast_type type, t_ast *left, t_ast *right,
+		t_pipeline *pipeline)
 {
 	t_ast	*node;
 

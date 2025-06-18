@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   exec.c                                             :+:      :+:    :+:   */
+/*   exec_builtin_in_parent.c                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: cde-la-r <code@cesardelarosa.xyz>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/01 11:02:08 by cde-la-r          #+#    #+#             */
-/*   Updated: 2025/04/10 11:37:26 by cesi             ###   ########.fr       */
+/*   Updated: 2025/06/18 10:48:19 by cesi             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,7 +30,7 @@ static void	restore_io(int saved_stdin, int saved_stdout)
 	close(saved_stdout);
 }
 
-int	exec_builtin_in_parent(t_pipeline *p, t_builtin_ft ft)
+int	exec_builtin_in_parent(t_pipeline *p, t_builtin_ft builtin_ft)
 {
 	int			saved_stdin;
 	int			saved_stdout;
@@ -45,15 +45,14 @@ int	exec_builtin_in_parent(t_pipeline *p, t_builtin_ft ft)
 		restore_io(saved_stdin, saved_stdout);
 		error_exit_code(1, "redirection failed", NULL, cmd->p);
 	}
-	if (ft == ft_exit)
+	if (builtin_ft == ft_exit)
 	{
 		restore_io(saved_stdin, saved_stdout);
 		rl_clear_history();
 		destroy_ctx(p->ctx);
 		error_exit_code(ft_atoi(cmd->argv[1]), NULL, NULL, cmd->p);
 	}
-	status = ft(cmd->argv, p->ctx->env);
+	status = builtin_ft(cmd->argv, p->ctx->env);
 	restore_io(saved_stdin, saved_stdout);
-	pipeline_destroy(p);
 	return (status);
 }

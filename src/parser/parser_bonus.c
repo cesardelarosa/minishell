@@ -6,7 +6,7 @@
 /*   By: cde-la-r <code@cesardelarosa.xyz>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/07 23:59:26 by cde-la-r          #+#    #+#             */
-/*   Updated: 2025/06/18 00:35:28 by cesi             ###   ########.fr       */
+/*   Updated: 2025/06/18 11:08:44 by cesi             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -83,6 +83,15 @@ static t_ast	*parse_factor(t_list **tokens, t_ctx *ctx, int *err)
 	return (node);
 }
 
+static t_ast_type	token_to_ast_type(t_token_type token_type)
+{
+	if (token_type == TOKEN_AND)
+		return (AST_AND);
+	if (token_type == TOKEN_OR)
+		return (AST_OR);
+	return (AST_ERROR);
+}
+
 static t_ast	*parse_expr(t_list **tokens, t_ctx *ctx, int *err)
 {
 	t_ast	*left;
@@ -106,7 +115,7 @@ static t_ast	*parse_expr(t_list **tokens, t_ctx *ctx, int *err)
 			ast_destroy(left);
 			return (NULL);
 		}
-		node = ast_create(tok->type, left, right, NULL);
+		node = ast_create(token_to_ast_type(tok->type), left, right, NULL);
 		left = node;
 	}
 	return (left);

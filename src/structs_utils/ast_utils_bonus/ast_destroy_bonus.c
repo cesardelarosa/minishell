@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   ast_destroy.c                                      :+:      :+:    :+:   */
+/*   ast_destroy_bonus.c                                :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: cde-la-r <code@cesardelarosa.xyz>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/08 12:19:06 by cde-la-r          #+#    #+#             */
-/*   Updated: 2025/04/12 12:41:21 by cesi             ###   ########.fr       */
+/*   Updated: 2025/06/18 10:28:31 by cesi             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,6 +19,8 @@ void	ast_destroy(t_ast *ast)
 {
 	if (!ast)
 		return ;
+	if (ast->pipeline)
+		pipeline_destroy(ast->pipeline);
 	if (ast->left)
 		ast_destroy(ast->left);
 	if (ast->right)

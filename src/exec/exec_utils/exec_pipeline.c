@@ -97,7 +97,6 @@ static int	wait_for_children(t_pipeline *p)
 			exit_status = 128 + WTERMSIG(status);
 		i++;
 	}
-	pipeline_destroy(p);
 	return (exit_status);
 }
 

@@ -6,7 +6,7 @@
 /*   By: cde-la-r <code@cesardelarosa.xyz>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/29 17:52:04 by cde-la-r          #+#    #+#             */
-/*   Updated: 2025/05/07 23:19:47 by cesi             ###   ########.fr       */
+/*   Updated: 2025/06/18 10:46:41 by cesi             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,6 +43,7 @@ static int	shell_loop(t_ctx *ctx)
 		return (CONTINUE);
 	setup_signals(COMMAND_MODE);
 	ctx->status = exec(pipeline);
+	pipeline_destroy(pipeline);
 	return (CONTINUE);
 }
 

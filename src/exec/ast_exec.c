@@ -6,7 +6,7 @@
 /*   By: cde-la-r <code@cesardelarosa.xyz>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/08 00:06:34 by cde-la-r          #+#    #+#             */
-/*   Updated: 2025/04/12 13:09:19 by cesi             ###   ########.fr       */
+/*   Updated: 2025/06/18 10:29:59 by cesi             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,16 +23,10 @@ static int	exec_group(t_ast *ast);
 
 int	ast_exec(t_ast *ast)
 {
-	int	status;
-
 	if (!ast)
 		return (-1);
 	if (ast->type == AST_PIPE)
-	{
-		status = exec(ast->pipeline);
-		ast->pipeline = NULL;
-		return (status);
-	}
+		return (exec(ast->pipeline));
 	else if (ast->type == AST_AND)
 		return (exec_and(ast));
 	else if (ast->type == AST_OR)
