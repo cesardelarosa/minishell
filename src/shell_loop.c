@@ -6,32 +6,45 @@
 /*   By: cde-la-r <code@cesardelarosa.xyz>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/29 17:52:04 by cde-la-r          #+#    #+#             */
-/*   Updated: 2025/06/18 15:55:46 by cesi             ###   ########.fr       */
+/*   Updated: 2025/06/18 15:47:17 by cesi             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "ast_utils_bonus.h"
 #include "core.h"
 #include "libft.h"
 #include "signals.h"
 #include "struct_creation.h"
 #include <stdio.h>
-#include <stdlib.h>
-#include <unistd.h>
 #include <readline/history.h>
 #include <readline/readline.h>
+#include <stdlib.h>
+#include <unistd.h>
 
-int	shell_loop(t_ctx *ctx);
+#define EXIT 0
+#define CONTINUE 1
 
-int	main(int argc, char **argv, char **envp)
+extern volatile sig_atomic_t	g_sigint_received;
+
+int	shell_loop(t_ctx *ctx)
 {
-	t_ctx	ctx;
+	char		*line;
+	t_list		*tokens;
+	t_pipeline	*pipeline;
 
-	(void)argc;
-	(void)argv;
-	ctx = init_ctx(envp);
-	while (shell_loop(&ctx))
-		;
-	destroy_ctx(&ctx);
-	return (ctx.status);
+	setup_signals(INTERACTIVE_MODE);
+	line = read_prompt(ctx->status);
+	if (!line)
+		return (EXIT);
+	tokens = lexer(line);
+	free(line);
+	if (!tokens)
+		return (CONTINUE);
+	pipeline = parser(tokens, ctx);
+	ft_lstclear(&tokens, free_token);
+	if (!pipeline)
+		return (CONTINUE);
+	setup_signals(COMMAND_MODE);
+	ctx->status = exec(pipeline);
+	pipeline_destroy(pipeline);
+	return (CONTINUE);
 }

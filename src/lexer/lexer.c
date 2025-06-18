@@ -6,7 +6,7 @@
 /*   By: cde-la-r <code@cesardelarosa.xyz>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/29 17:20:26 by cde-la-r          #+#    #+#             */
-/*   Updated: 2025/04/04 17:22:36 by cesi             ###   ########.fr       */
+/*   Updated: 2025/06/18 11:55:26 by cesi             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,6 +38,5 @@ t_list	*lexer(char *input)
 			break ;
 	}
 	ft_lstadd_back(&tokens, ft_lstnew(create_token(TOKEN_EOF, NULL, 0)));
-	free(input);
 	return (tokens);
 }

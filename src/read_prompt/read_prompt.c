@@ -6,7 +6,7 @@
 /*   By: cde-la-r <code@cesardelarosa.xyz>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/29 17:51:38 by cde-la-r          #+#    #+#             */
-/*   Updated: 2025/04/07 18:30:01 by cesi             ###   ########.fr       */
+/*   Updated: 2025/06/18 15:59:02 by cesi             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -90,9 +90,7 @@ static char	*build_prompt(int status)
 	status_indicator = NULL;
 	if (isatty(STDOUT_FILENO))
 	{
-		if (status == 0)
-			status_indicator = ft_strdup(GREEN "✓ " RESET);
-		else
+		if (status != 0)
 			status_indicator = ft_strdup(RED "✗ " RESET);
 		return (ft_strjoin_free(ft_strjoin_free(ft_strjoin_free(ft_strjoin_free(
 							ft_strjoin_free(ft_strjoin_free(ft_strjoin_free(

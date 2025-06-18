@@ -6,7 +6,7 @@
 /*   By: cde-la-r <code@cesardelarosa.xyz>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/07 23:59:26 by cde-la-r          #+#    #+#             */
-/*   Updated: 2025/06/18 00:36:21 by cesi             ###   ########.fr       */
+/*   Updated: 2025/06/18 17:24:59 by cde-la-r         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -70,7 +70,7 @@ static int	parse_word_bonus(t_list **arg_lst, t_token *token, t_ctx *ctx)
 	return (handle_normal_token(arg_lst, expanded, token->type, is_multiple));
 }
 
-int	parse_token_bonus(t_command *cmd, t_list **tokens_ptr, t_list **arg_lst,
+int	parse_token(t_command *cmd, t_list **tokens_ptr, t_list **arg_lst,
 		t_ctx *ctx)
 {
 	t_token	*token;

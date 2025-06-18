@@ -6,7 +6,7 @@
 /*   By: cde-la-r <code@cesardelarosa.xyz>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/29 18:04:00 by cde-la-r          #+#    #+#             */
-/*   Updated: 2025/04/07 14:25:35 by cesi             ###   ########.fr       */
+/*   Updated: 2025/06/18 15:51:12 by cesi             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,6 +22,6 @@ t_pipeline	*parser(t_list *tokens, t_ctx *ctx);
 void		free_tokens(t_list *tokens);
 int			exec(t_pipeline *p);
 t_ctx		init_ctx(char **envp);
-int			destroy_ctx(t_ctx *ctx);
+void		destroy_ctx(t_ctx *ctx);
 
 #endif

@@ -1,20 +1,23 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   build_command.c                                    :+:      :+:    :+:   */
+/*   parse_command.c                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: cde-la-r <code@cesardelarosa.xyz>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/03/29 18:08:20 by cde-la-r          #+#    #+#             */
-/*   Updated: 2025/06/18 00:38:28 by cesi             ###   ########.fr       */
+/*   Created: 2025/06/18 13:16:49 by cde-la-r          #+#    #+#             */
+/*   Updated: 2025/06/18 15:42:36 by cesi             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
+#include "lexer.h"
 #include "libft.h"
 #include "struct_creation.h"
 #include <stdio.h>
 #include <stdlib.h>
-#include "lexer.h"
+
+int			parse_token(t_command *cmd, t_list **tokens_ptr, t_list **arg_lst,
+				t_ctx *ctx);
 
 static int	is_command_part(t_token_type type)
 {
@@ -49,7 +52,7 @@ static char	**build_argv_from_list(t_list *lst)
 	return (argv);
 }
 
-t_command	*build_command(t_list **tokens_ptr, t_ctx *ctx,
+t_command	*parse_command(t_list **tokens_ptr, t_ctx *ctx,
 	t_token_parser_ft parse_ft)
 {
 	t_command	*cmd;

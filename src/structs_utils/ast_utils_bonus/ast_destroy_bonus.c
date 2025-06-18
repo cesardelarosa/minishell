@@ -19,11 +19,11 @@ void	ast_destroy(t_ast *ast)
 {
 	if (!ast)
 		return ;
-	if (ast->pipeline)
-		pipeline_destroy(ast->pipeline);
 	if (ast->left)
 		ast_destroy(ast->left);
 	if (ast->right)
 		ast_destroy(ast->right);
+	if (ast->pipeline_str)
+		free(ast->pipeline_str);
 	free(ast);
 }
