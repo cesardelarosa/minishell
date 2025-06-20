@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   main.c                                             :+:      :+:    :+:   */
+/*   shell_loop.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: cde-la-r <code@cesardelarosa.xyz>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/29 17:52:04 by cde-la-r          #+#    #+#             */
-/*   Updated: 2025/06/18 15:47:17 by cesi             ###   ########.fr       */
+/*   Updated: 2025/06/20 22:12:53 by cde-la-r         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,7 +32,7 @@ int	shell_loop(t_ctx *ctx)
 	t_pipeline	*pipeline;
 
 	setup_signals(INTERACTIVE_MODE);
-	line = read_prompt(ctx->status);
+	line = read_prompt(ctx);
 	if (!line)
 		return (EXIT);
 	tokens = lexer(line);

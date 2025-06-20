@@ -6,7 +6,7 @@
 /*   By: cde-la-r <code@cesardelarosa.xyz>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/29 18:04:00 by cde-la-r          #+#    #+#             */
-/*   Updated: 2025/06/18 15:51:12 by cesi             ###   ########.fr       */
+/*   Updated: 2025/06/20 22:13:54 by cde-la-r         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,7 +17,7 @@
 # include "libft.h"
 # include "structs.h"
 
-char		*read_prompt(int status);
+char		*read_prompt(t_ctx *ctx);
 t_pipeline	*parser(t_list *tokens, t_ctx *ctx);
 void		free_tokens(t_list *tokens);
 int			exec(t_pipeline *p);

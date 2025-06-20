@@ -6,10 +6,11 @@
 /*   By: cde-la-r <code@cesardelarosa.xyz>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/29 17:51:38 by cde-la-r          #+#    #+#             */
-/*   Updated: 2025/06/18 15:59:02 by cesi             ###   ########.fr       */
+/*   Updated: 2025/06/20 22:30:42 by cde-la-r         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
+#include "structs.h"
 #include "libft.h"
 #include <stdio.h>
 #include <fcntl.h>
@@ -58,26 +59,29 @@ static char	*get_user(void)
 	return (ft_strdup(user));
 }
 
-static char	*get_cwd(const char *user)
+char	*get_cwd(t_env *env)
 {
-	char	cwd[PATH_MAX];
-	size_t	ulen;
+	char		*pwd_path;
+	char		*home_path;
+	size_t		home_len;
 
-	if (!getcwd(cwd, sizeof(cwd)))
-		return (ft_strdup("unknown"));
-	ulen = ft_strlen(user);
-	if (!ft_strncmp(cwd, "/home/", 6) && !ft_strncmp(cwd + 6, user, ulen)
-		&& (cwd[6 + ulen] == '/' || cwd[6 + ulen] == '\0'))
+	pwd_path = env_get(env, "PWD");
+	home_path = env_get(env, "HOME");
+	if (!pwd_path)
+		return (ft_strdup(""));
+	if (home_path)
 	{
-		if (cwd[6 + ulen] == '\0')
+		home_len = ft_strlen(home_path);
+		if (ft_strcmp(pwd_path, home_path) == 0)
 			return (ft_strdup("~"));
-		else
-			return (ft_strjoin("~", cwd + 6 + ulen));
+		if (ft_strncmp(pwd_path, home_path, home_len) == 0
+			&& pwd_path[home_len] == '/')
+			return (ft_strjoin("~", pwd_path + home_len));
 	}
-	return (ft_strdup(cwd));
+	return (ft_strdup(pwd_path));
 }
 
-static char	*build_prompt(int status)
+static char	*build_prompt(t_ctx *ctx)
 {
 	char	*user;
 	char	*host;
@@ -86,11 +90,11 @@ static char	*build_prompt(int status)
 
 	user = get_user();
 	host = get_hostname();
-	cwd = get_cwd(user);
+	cwd = get_cwd(ctx->env);
 	status_indicator = NULL;
 	if (isatty(STDOUT_FILENO))
 	{
-		if (status != 0)
+		if (ctx->status != 0)
 			status_indicator = ft_strdup(RED "✗ " RESET);
 		return (ft_strjoin_free(ft_strjoin_free(ft_strjoin_free(ft_strjoin_free(
 							ft_strjoin_free(ft_strjoin_free(ft_strjoin_free(
@@ -104,7 +108,7 @@ static char	*build_prompt(int status)
 				cwd, 3), "via minishell$ ", 1));
 }
 
-char	*read_prompt(int status)
+char	*read_prompt(t_ctx *ctx)
 {
 	char	*line;
 	char	*prompt;
@@ -112,7 +116,7 @@ char	*read_prompt(int status)
 
 	while (1)
 	{
-		prompt = build_prompt(status);
+		prompt = build_prompt(ctx);
 		line = readline(prompt);
 		free(prompt);
 		if (!line)

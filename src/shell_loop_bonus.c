@@ -6,7 +6,7 @@
 /*   By: cde-la-r <code@cesardelarosa.xyz>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/29 17:52:04 by cde-la-r          #+#    #+#             */
-/*   Updated: 2025/06/20 13:29:42 by cde-la-r         ###   ########.fr       */
+/*   Updated: 2025/06/20 22:12:49 by cde-la-r         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,7 +36,7 @@ int	shell_loop(t_ctx *ctx)
 	t_ast	*ast_root;
 
 	setup_signals(INTERACTIVE_MODE);
-	line = read_prompt(ctx->status);
+	line = read_prompt(ctx);
 	if (!line)
 		return (EXIT);
 	parser_line = line;

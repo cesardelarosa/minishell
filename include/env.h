@@ -6,7 +6,7 @@
 /*   By: cde-la-r <code@cesardelarosa.xyz>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/04 00:18:27 by cde-la-r          #+#    #+#             */
-/*   Updated: 2025/04/04 00:43:55 by cesi             ###   ########.fr       */
+/*   Updated: 2025/06/20 22:44:15 by cde-la-r         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,5 +37,6 @@ int					env_is_valid_key(const char *key);
 char				*env_expand_variables(char *str, t_env *env);
 void				env_print_sorted(t_env *env);
 void				env_update_envp(t_env *env);
+void				env_setup_shell_vars(t_env *env, char *prog_name);
 
 #endif

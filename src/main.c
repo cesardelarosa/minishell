@@ -6,7 +6,7 @@
 /*   By: cde-la-r <code@cesardelarosa.xyz>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/29 17:52:04 by cde-la-r          #+#    #+#             */
-/*   Updated: 2025/06/18 15:55:46 by cesi             ###   ########.fr       */
+/*   Updated: 2025/06/20 22:44:37 by cde-la-r         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,6 +30,7 @@ int	main(int argc, char **argv, char **envp)
 	(void)argc;
 	(void)argv;
 	ctx = init_ctx(envp);
+	env_setup_shell_vars(ctx.env, argv[0]);
 	while (shell_loop(&ctx))
 		;
 	destroy_ctx(&ctx);
