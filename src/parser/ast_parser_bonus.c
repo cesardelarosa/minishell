@@ -6,7 +6,7 @@
 /*   By: cde-la-r <code@cesardelarosa.xyz>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/07 23:59:26 by cde-la-r          #+#    #+#             */
-/*   Updated: 2025/06/18 17:23:25 by cde-la-r         ###   ########.fr       */
+/*   Updated: 2025/06/20 13:09:49 by cde-la-r         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -101,7 +101,7 @@ static t_ast	*parse_factor(char **s, t_ctx *ctx, int *err)
 		}
 		return (NULL);
 	}
-	return (ast_create(AST_PIPE, NULL, NULL, pipeline_str));
+	return (ast_create(AST_PIPE, NULL, NULL, pipeline_str, ctx));
 }
 
 static t_ast	*parse_term(char **s, t_ctx *ctx, int *err)
@@ -114,6 +114,7 @@ static t_ast	*parse_term(char **s, t_ctx *ctx, int *err)
 		return (node);
 	while (peek_operator(*s) == AST_AND)
 	{
+		skip_whitespace(s);
 		*s += 2;
 		right = parse_factor(s, ctx, err);
 		if (*err || !right)
@@ -125,7 +126,7 @@ static t_ast	*parse_term(char **s, t_ctx *ctx, int *err)
 			ast_destroy(node);
 			return (NULL);
 		}
-		node = ast_create(AST_AND, node, right, NULL);
+		node = ast_create(AST_AND, node, right, NULL, ctx);
 	}
 	return (node);
 }
@@ -140,6 +141,7 @@ static t_ast	*parse_expression(char **s, t_ctx *ctx, int *err)
 		return (node);
 	while (peek_operator(*s) == AST_OR)
 	{
+		skip_whitespace(s);
 		*s += 2;
 		right = parse_term(s, ctx, err);
 		if (*err || !right)
@@ -151,7 +153,7 @@ static t_ast	*parse_expression(char **s, t_ctx *ctx, int *err)
 			ast_destroy(node);
 			return (NULL);
 		}
-		node = ast_create(AST_OR, node, right, NULL);
+		node = ast_create(AST_OR, node, right, NULL, ctx);
 	}
 	return (node);
 }

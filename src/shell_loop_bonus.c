@@ -6,7 +6,7 @@
 /*   By: cde-la-r <code@cesardelarosa.xyz>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/29 17:52:04 by cde-la-r          #+#    #+#             */
-/*   Updated: 2025/06/18 16:57:09 by cde-la-r         ###   ########.fr       */
+/*   Updated: 2025/06/20 13:01:07 by cde-la-r         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,13 +32,15 @@ extern volatile sig_atomic_t	g_sigint_received;
 int	shell_loop(t_ctx *ctx)
 {
 	char	*line;
+	char	*parser_line;
 	t_ast	*ast_root;
 
 	setup_signals(INTERACTIVE_MODE);
 	line = read_prompt(ctx->status);
 	if (!line)
 		return (EXIT);
-	ast_root = ast_parser(&line, ctx);
+	parser_line = line;
+	ast_root = ast_parser(&parser_line, ctx);
 	if (!ast_root)
 		ctx->status = 2;
 	else

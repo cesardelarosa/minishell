@@ -6,7 +6,7 @@
 /*   By: cde-la-r <code@cesardelarosa.xyz>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/08 12:18:10 by cde-la-r          #+#    #+#             */
-/*   Updated: 2025/06/18 16:52:07 by cde-la-r         ###   ########.fr       */
+/*   Updated: 2025/06/20 12:58:45 by cde-la-r         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,7 +34,7 @@ typedef struct s_ast
 }					t_ast;
 
 t_ast				*ast_create(t_ast_type type, t_ast *left, t_ast *right,
-						char *pipeline_str);
+						char *pipeline_str, t_ctx *ctx);
 void				ast_destroy(t_ast *ast);
 
 #endif
