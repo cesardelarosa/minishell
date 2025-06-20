@@ -6,7 +6,7 @@
 /*   By: cde-la-r <code@cesardelarosa.xyz>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/07 23:59:26 by cde-la-r          #+#    #+#             */
-/*   Updated: 2025/06/20 13:31:01 by cde-la-r         ###   ########.fr       */
+/*   Updated: 2025/06/20 13:42:06 by cde-la-r         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,6 +14,8 @@
 #include "core.h"
 #include "libft.h"
 #include <stdio.h>
+
+#define SYNTAX_ERROR_MSG "syntax error near unexpected token"
 
 static t_ast		*parse_expression(char **s, int *err);
 
@@ -75,8 +77,7 @@ static t_ast	*parse_factor(char **s, int *err)
 		skip_whitespace(s);
 		if (**s != ')')
 		{
-			ft_putstr_fd("minishell: syntax error near unexpected token `)'\n",
-				2);
+			ft_putstr_fd("minishell: " SYNTAX_ERROR_MSG " `)'\n", 2);
 			*err = 1;
 			ast_destroy(node);
 			return (NULL);
@@ -86,7 +87,7 @@ static t_ast	*parse_factor(char **s, int *err)
 	}
 	if (peek_operator(*s) != AST_ERROR || **s == ')')
 	{
-		ft_putstr_fd("minishell: syntax error near unexpected token\n", 2);
+		ft_putstr_fd("minishell: " SYNTAX_ERROR_MSG "\n", 2);
 		*err = 1;
 		return (NULL);
 	}
@@ -96,7 +97,7 @@ static t_ast	*parse_factor(char **s, int *err)
 		free(pipeline_str);
 		if (**s)
 		{
-			ft_putstr_fd("minishell: syntax error near unexpected token\n", 2);
+			ft_putstr_fd("minishell: " SYNTAX_ERROR_MSG "\n", 2);
 			*err = 1;
 		}
 		return (NULL);
@@ -120,8 +121,7 @@ static t_ast	*parse_term(char **s, int *err)
 		if (*err || !right)
 		{
 			if (!*err)
-				ft_putstr_fd("minishell: syntax error near unexpected token `&&'\n",
-					2);
+				ft_putstr_fd("minishell: " SYNTAX_ERROR_MSG " `&&'\n", 2);
 			*err = 1;
 			ast_destroy(node);
 			return (NULL);
@@ -147,8 +147,7 @@ static t_ast	*parse_expression(char **s, int *err)
 		if (*err || !right)
 		{
 			if (!*err)
-				ft_putstr_fd("minishell: syntax error near unexpected token `||'\n",
-					2);
+				ft_putstr_fd("minishell: " SYNTAX_ERROR_MSG " `||'\n", 2);
 			*err = 1;
 			ast_destroy(node);
 			return (NULL);
@@ -171,7 +170,7 @@ t_ast	*ast_parser(char **s)
 	skip_whitespace(s);
 	if (**s != '\0' && !error)
 	{
-		ft_putstr_fd("minishell: syntax error near unexpected token\n", 2);
+		ft_putstr_fd("minishell: " SYNTAX_ERROR_MSG "\n", 2);
 		error = 1;
 	}
 	if (error && root)
