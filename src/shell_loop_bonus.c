@@ -6,7 +6,7 @@
 /*   By: cde-la-r <code@cesardelarosa.xyz>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/29 17:52:04 by cde-la-r          #+#    #+#             */
-/*   Updated: 2025/06/20 13:01:07 by cde-la-r         ###   ########.fr       */
+/*   Updated: 2025/06/20 13:29:42 by cde-la-r         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,8 +24,8 @@
 #define EXIT 0
 #define CONTINUE 1
 
-int								ast_exec(t_ast *ast);
-t_ast							*ast_parser(char **s, t_ctx *ctx);
+int								ast_exec(t_ast *ast, t_ctx *ctx);
+t_ast							*ast_parser(char **s);
 
 extern volatile sig_atomic_t	g_sigint_received;
 
@@ -40,13 +40,13 @@ int	shell_loop(t_ctx *ctx)
 	if (!line)
 		return (EXIT);
 	parser_line = line;
-	ast_root = ast_parser(&parser_line, ctx);
+	ast_root = ast_parser(&parser_line);
 	if (!ast_root)
 		ctx->status = 2;
 	else
 	{
 		setup_signals(COMMAND_MODE);
-		ctx->status = ast_exec(ast_root);
+		ctx->status = ast_exec(ast_root, ctx);
 		ast_destroy(ast_root);
 	}
 	free(line);

@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   ast_exec_bonus.c                                   :+:      :+:    :+:   */
+/*   exec_ast_bonus.c                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: cde-la-r <code@cesardelarosa.xyz>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/08 00:06:34 by cde-la-r          #+#    #+#             */
-/*   Updated: 2025/06/18 16:52:38 by cde-la-r         ###   ########.fr       */
+/*   Updated: 2025/06/20 13:26:08 by cde-la-r         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,7 +18,7 @@
 #include "struct_creation.h"
 
 int			exec(t_pipeline *p);
-int			ast_exec(t_ast *ast);
+int			ast_exec(t_ast *ast, t_ctx *ctx);
 
 static int	exec_pipeline(char *pipeline_str, t_ctx *ctx)
 {
@@ -38,48 +38,48 @@ static int	exec_pipeline(char *pipeline_str, t_ctx *ctx)
 	return (status);
 }
 
-static int	exec_and(t_ast *ast)
+static int	exec_and(t_ast *ast, t_ctx *ctx)
 {
 	int	status;
 
 	if (!ast)
 		return (-1);
-	status = ast_exec(ast->left);
+	status = ast_exec(ast->left, ctx);
 	if (status == 0)
-		status = ast_exec(ast->right);
+		status = ast_exec(ast->right, ctx);
 	return (status);
 }
 
-static int	exec_or(t_ast *ast)
+static int	exec_or(t_ast *ast, t_ctx *ctx)
 {
 	int	status;
 
 	if (!ast)
 		return (-1);
-	status = ast_exec(ast->left);
+	status = ast_exec(ast->left, ctx);
 	if (status != 0)
-		status = ast_exec(ast->right);
+		status = ast_exec(ast->right, ctx);
 	return (status);
 }
 
-static int	exec_group(t_ast *ast)
+static int	exec_group(t_ast *ast, t_ctx *ctx)
 {
 	if (!ast)
 		return (-1);
-	return (ast_exec(ast->left));
+	return (ast_exec(ast->left, ctx));
 }
 
-int	ast_exec(t_ast *ast)
+int	ast_exec(t_ast *ast, t_ctx *ctx)
 {
 	if (!ast)
 		return (-1);
 	if (ast->type == AST_PIPE)
-		return (exec_pipeline(ast->pipeline_str, ast->ctx));
+		return (exec_pipeline(ast->pipeline_str, ctx));
 	else if (ast->type == AST_AND)
-		return (exec_and(ast));
+		return (exec_and(ast, ctx));
 	else if (ast->type == AST_OR)
-		return (exec_or(ast));
+		return (exec_or(ast, ctx));
 	else if (ast->type == AST_GROUP)
-		return (exec_group(ast));
+		return (exec_group(ast, ctx));
 	return (-1);
 }

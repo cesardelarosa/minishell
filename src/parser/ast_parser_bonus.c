@@ -6,7 +6,7 @@
 /*   By: cde-la-r <code@cesardelarosa.xyz>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/07 23:59:26 by cde-la-r          #+#    #+#             */
-/*   Updated: 2025/06/20 13:09:49 by cde-la-r         ###   ########.fr       */
+/*   Updated: 2025/06/20 13:31:01 by cde-la-r         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,7 +15,7 @@
 #include "libft.h"
 #include <stdio.h>
 
-static t_ast		*parse_expression(char **s, t_ctx *ctx, int *err);
+static t_ast		*parse_expression(char **s, int *err);
 
 static void	skip_whitespace(char **s)
 {
@@ -60,7 +60,7 @@ static char	*extract_pipeline(char **s)
 	return (ft_substr(start, 0, *s - start));
 }
 
-static t_ast	*parse_factor(char **s, t_ctx *ctx, int *err)
+static t_ast	*parse_factor(char **s, int *err)
 {
 	t_ast	*node;
 	char	*pipeline_str;
@@ -69,7 +69,7 @@ static t_ast	*parse_factor(char **s, t_ctx *ctx, int *err)
 	if (**s == '(')
 	{
 		(*s)++;
-		node = parse_expression(s, ctx, err);
+		node = parse_expression(s, err);
 		if (*err)
 			return (node);
 		skip_whitespace(s);
@@ -101,22 +101,22 @@ static t_ast	*parse_factor(char **s, t_ctx *ctx, int *err)
 		}
 		return (NULL);
 	}
-	return (ast_create(AST_PIPE, NULL, NULL, pipeline_str, ctx));
+	return (ast_create(AST_PIPE, NULL, NULL, pipeline_str));
 }
 
-static t_ast	*parse_term(char **s, t_ctx *ctx, int *err)
+static t_ast	*parse_term(char **s, int *err)
 {
 	t_ast	*node;
 	t_ast	*right;
 
-	node = parse_factor(s, ctx, err);
+	node = parse_factor(s, err);
 	if (*err || !node)
 		return (node);
 	while (peek_operator(*s) == AST_AND)
 	{
 		skip_whitespace(s);
 		*s += 2;
-		right = parse_factor(s, ctx, err);
+		right = parse_factor(s, err);
 		if (*err || !right)
 		{
 			if (!*err)
@@ -126,24 +126,24 @@ static t_ast	*parse_term(char **s, t_ctx *ctx, int *err)
 			ast_destroy(node);
 			return (NULL);
 		}
-		node = ast_create(AST_AND, node, right, NULL, ctx);
+		node = ast_create(AST_AND, node, right, NULL);
 	}
 	return (node);
 }
 
-static t_ast	*parse_expression(char **s, t_ctx *ctx, int *err)
+static t_ast	*parse_expression(char **s, int *err)
 {
 	t_ast	*node;
 	t_ast	*right;
 
-	node = parse_term(s, ctx, err);
+	node = parse_term(s, err);
 	if (*err || !node)
 		return (node);
 	while (peek_operator(*s) == AST_OR)
 	{
 		skip_whitespace(s);
 		*s += 2;
-		right = parse_term(s, ctx, err);
+		right = parse_term(s, err);
 		if (*err || !right)
 		{
 			if (!*err)
@@ -153,12 +153,12 @@ static t_ast	*parse_expression(char **s, t_ctx *ctx, int *err)
 			ast_destroy(node);
 			return (NULL);
 		}
-		node = ast_create(AST_OR, node, right, NULL, ctx);
+		node = ast_create(AST_OR, node, right, NULL);
 	}
 	return (node);
 }
 
-t_ast	*ast_parser(char **s, t_ctx *ctx)
+t_ast	*ast_parser(char **s)
 {
 	int		error;
 	t_ast	*root;
@@ -167,7 +167,7 @@ t_ast	*ast_parser(char **s, t_ctx *ctx)
 	skip_whitespace(s);
 	if (!**s)
 		return (NULL);
-	root = parse_expression(s, ctx, &error);
+	root = parse_expression(s, &error);
 	skip_whitespace(s);
 	if (**s != '\0' && !error)
 	{
