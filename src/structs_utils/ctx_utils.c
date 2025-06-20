@@ -1,28 +1,36 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   free_token.c                                       :+:      :+:    :+:   */
+/*   ctx_utils.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: cde-la-r <code@cesardelarosa.xyz>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/03/29 17:20:26 by cde-la-r          #+#    #+#             */
-/*   Updated: 2025/03/31 23:39:21 by cesi             ###   ########.fr       */
+/*   Created: 2025/06/20 09:43:38 by cde-la-r          #+#    #+#             */
+/*   Updated: 2025/06/20 09:43:42 by cde-la-r         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "lexer.h"
+#include "structs.h"
 #include "libft.h"
-#include <stdio.h>
-#include <stdlib.h>
+#include "env.h"
 
-void	free_token(void *token_ptr)
+t_ctx	init_ctx(char **envp)
 {
-	t_token	*token;
+	t_ctx	ctx;
 
-	token = (t_token *)token_ptr;
-	if (token)
+	ctx.status = 0;
+	ctx.envp = envp;
+	ctx.env = env_init(envp);
+	if (!ctx.env)
 	{
-		free(token->value);
-		free(token);
+		ft_putstr_fd("minishell: env_init failed\n", 2);
+		exit(EXIT_FAILURE);
 	}
+	return (ctx);
+}
+
+void	destroy_ctx(t_ctx *ctx)
+{
+	if (ctx->env)
+		env_destroy(ctx->env);
 }

@@ -1,25 +1,41 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   process_or_bonus.c                                 :+:      :+:    :+:   */
+/*   token_utils.c                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: cde-la-r <code@cesardelarosa.xyz>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/04/07 23:34:24 by cde-la-r          #+#    #+#             */
-/*   Updated: 2025/04/12 11:03:57 by cesi             ###   ########.fr       */
+/*   Created: 2025/06/20 09:44:47 by cde-la-r          #+#    #+#             */
+/*   Updated: 2025/06/20 09:44:50 by cde-la-r         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "lexer.h"
 #include "libft.h"
+#include <stdio.h>
 #include <stdlib.h>
 
-int	process_or(char **s, t_list **tokens)
+t_token	*create_token(t_token_type type, char *value, int joined)
 {
 	t_token	*token;
 
-	token = create_token(TOKEN_OR, ft_strdup("||"), 0);
-	ft_lstadd_back(tokens, ft_lstnew(token));
-	(*s) += 2;
-	return (0);
+	token = malloc(sizeof(t_token));
+	if (!token)
+		return (NULL);
+	token->type = type;
+	token->value = value;
+	token->joined = joined;
+	return (token);
+}
+
+void	free_token(void *token_ptr)
+{
+	t_token	*token;
+
+	token = (t_token *)token_ptr;
+	if (token)
+	{
+		free(token->value);
+		free(token);
+	}
 }

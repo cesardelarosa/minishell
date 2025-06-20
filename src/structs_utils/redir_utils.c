@@ -1,29 +1,41 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   create_token.c                                     :+:      :+:    :+:   */
+/*   redir_utils.c                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: cde-la-r <code@cesardelarosa.xyz>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/03/29 17:20:26 by cde-la-r          #+#    #+#             */
-/*   Updated: 2025/04/04 16:40:19 by cesi             ###   ########.fr       */
+/*   Created: 2025/06/20 09:27:18 by cde-la-r          #+#    #+#             */
+/*   Updated: 2025/06/20 09:27:24 by cde-la-r         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "lexer.h"
-#include "libft.h"
-#include <stdio.h>
+#include "struct_creation.h"
 #include <stdlib.h>
 
-t_token	*create_token(t_token_type type, char *value, int joined)
+t_redir	*redir_create(t_redir_type type, char *file, t_command *parent_cmd)
 {
-	t_token	*token;
+	t_redir	*r;
 
-	token = malloc(sizeof(t_token));
-	if (!token)
+	r = ft_calloc(1, sizeof(t_redir));
+	if (!r)
 		return (NULL);
-	token->type = type;
-	token->value = value;
-	token->joined = joined;
-	return (token);
+	r->type = type;
+	r->file = ft_strdup(file);
+	if (!r->file)
+	{
+		free(r);
+		return (NULL);
+	}
+	r->cmd = parent_cmd;
+	return (r);
+}
+
+void	redir_destroy(void *content)
+{
+	t_redir	*r;
+
+	r = (t_redir *)content;
+	free(r->file);
+	free(r);
 }

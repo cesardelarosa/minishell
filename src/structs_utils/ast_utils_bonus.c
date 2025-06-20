@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   ast_destroy_bonus.c                                :+:      :+:    :+:   */
+/*   ast_utils_bonus.c                                  :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: cde-la-r <code@cesardelarosa.xyz>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/04/08 12:19:06 by cde-la-r          #+#    #+#             */
-/*   Updated: 2025/06/18 10:28:31 by cesi             ###   ########.fr       */
+/*   Created: 2025/06/20 09:39:02 by cde-la-r          #+#    #+#             */
+/*   Updated: 2025/06/20 09:39:10 by cde-la-r         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,6 +14,21 @@
 #include "libft.h"
 #include "struct_creation.h"
 #include <stdlib.h>
+
+t_ast	*ast_create(t_ast_type type, t_ast *left, t_ast *right,
+		char *pipeline_str)
+{
+	t_ast	*node;
+
+	node = malloc(sizeof(t_ast));
+	if (!node)
+		return (NULL);
+	node->type = type;
+	node->left = left;
+	node->right = right;
+	node->pipeline_str = pipeline_str;
+	return (node);
+}
 
 void	ast_destroy(t_ast *ast)
 {
