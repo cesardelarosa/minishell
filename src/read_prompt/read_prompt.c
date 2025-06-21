@@ -6,7 +6,7 @@
 /*   By: cde-la-r <code@cesardelarosa.xyz>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/29 17:51:38 by cde-la-r          #+#    #+#             */
-/*   Updated: 2025/06/22 00:01:48 by cde-la-r         ###   ########.fr       */
+/*   Updated: 2025/06/22 00:37:11 by cesi             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,16 +20,12 @@
 #include <stdlib.h>
 #include <unistd.h>
 
-
-#define I_START "\001"
-#define I_END "\002"
-
-#define GREEN I_START "\033[1;32m" I_END
-#define BLUE I_START "\033[1;34m" I_END
-#define YELLOW I_START "\033[1;33m" I_END
-#define MAGENTA I_START "\033[1;35m" I_END
-#define RESET I_START "\033[0m" I_END
-#define RED I_START "\033[1;31m" I_END
+#define GREEN "\001\033[1;32m\002" 
+#define BLUE "\001\033[1;34m\002"
+#define YELLOW "\001\033[1;33m\002"
+#define MAGENTA "\001\033[1;35m\002"
+#define RESET  "\001\033[0m\002"
+#define RED "\001\033[1;31m\002"
 
 static char	*get_hostname(void)
 {

@@ -1,18 +1,41 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   recursive_glob.c                                   :+:      :+:    :+:   */
+/*   recursive_glob_bonus.c                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: cde-la-r <code@cesardelarosa.xyz>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/09 19:35:16 by cde-la-r          #+#    #+#             */
-/*   Updated: 2025/04/10 08:41:11 by cesi             ###   ########.fr       */
+/*   Updated: 2025/06/22 00:30:23 by cde-la-r         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "ft_glob_bonus.h"
 #include <dirent.h>
 #include <stdlib.h>
+
+int	match_pattern(const char *pattern, const char *str)
+{
+	if (!*pattern)
+		return (!*str);
+	if (*pattern == '*')
+	{
+		while (*pattern == '*')
+			pattern++;
+		if (!*pattern)
+			return (1);
+		while (*str)
+		{
+			if (match_pattern(pattern, str))
+				return (1);
+			str++;
+		}
+		return (0);
+	}
+	if (*pattern != *str)
+		return (0);
+	return (match_pattern(pattern + 1, str + 1));
+}
 
 static int	handle_new_path(char *new_path, t_glob_context *ctx, int seg_index)
 {

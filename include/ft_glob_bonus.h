@@ -6,7 +6,7 @@
 /*   By: cde-la-r <code@cesardelarosa.xyz>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/09 12:22:22 by cde-la-r          #+#    #+#             */
-/*   Updated: 2025/06/17 21:13:08 by cde-la-r         ###   ########.fr       */
+/*   Updated: 2025/06/22 00:23:38 by cde-la-r         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,8 +48,6 @@ void		bubble_sort(char **arr, size_t count);
 int			init_matches(char ***matches, size_t *capacity);
 int			handle_path_pattern(const char *pattern, int flags, t_ftglob *p);
 int			handle_simple_pattern(const char *pattern, int flags, t_ftglob *p);
-int			ft_glob(const char *pattern, int flags, t_ftglob *p);
-void		ft_globfree(t_ftglob *p);
 int			handle_globbing(t_list **args_lst, char *pattern);
 
 #endif
