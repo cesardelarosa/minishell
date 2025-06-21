@@ -6,7 +6,7 @@
 /*   By: cde-la-r <code@cesardelarosa.xyz>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/07 23:59:26 by cde-la-r          #+#    #+#             */
-/*   Updated: 2025/06/20 14:14:40 by cde-la-r         ###   ########.fr       */
+/*   Updated: 2025/06/21 14:16:45 by cde-la-r         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,47 +18,9 @@
 #define SYNTAX_ERROR_MSG "syntax error near unexpected token"
 
 static t_ast	*parse_expression(char **s, int *err);
-
-static void	skip_whitespace(char **s)
-{
-	while (ft_iswhitespace(**s))
-		(*s)++;
-}
-
-static t_ast_type	peek_operator(char *s)
-{
-	skip_whitespace(&s);
-	if (ft_strncmp(s, "&&", 2) == 0)
-		return (AST_AND);
-	if (ft_strncmp(s, "||", 2) == 0)
-		return (AST_OR);
-	return (AST_ERROR);
-}
-
-static char	*extract_pipeline_str(char **s)
-{
-	char	*start;
-	char	quote;
-
-	start = *s;
-	while (**s)
-	{
-		if (peek_operator(*s) != AST_ERROR || **s == '(' || **s == ')')
-			break ;
-		if (**s == '\'' || **s == '\"')
-		{
-			quote = **s;
-			(*s)++;
-			while (**s && **s != quote)
-				(*s)++;
-			if (**s)
-				(*s)++;
-		}
-		else
-			(*s)++;
-	}
-	return (ft_substr(start, 0, *s - start));
-}
+void			skip_whitespace(char **s);
+t_ast_type		peek_operator(char *s);
+t_ast			*parse_pipeline_str(char **s, int *err);
 
 static t_ast	*parse_group(char **s, int *err)
 {
@@ -78,30 +40,6 @@ static t_ast	*parse_group(char **s, int *err)
 	}
 	(*s)++;
 	return (node);
-}
-
-static t_ast	*parse_pipeline_str(char **s, int *err)
-{
-	char	*pipeline_str;
-
-	if (peek_operator(*s) != AST_ERROR || **s == ')')
-	{
-		ft_putstr_fd("minishell: " SYNTAX_ERROR_MSG "\n", 2);
-		*err = 1;
-		return (NULL);
-	}
-	pipeline_str = ft_strtrim(extract_pipeline_str(s), " \t");
-	if (!pipeline_str || !*pipeline_str)
-	{
-		free(pipeline_str);
-		if (**s)
-		{
-			ft_putstr_fd("minishell: " SYNTAX_ERROR_MSG "\n", 2);
-			*err = 1;
-		}
-		return (NULL);
-	}
-	return (ast_create(AST_PIPE, NULL, NULL, pipeline_str));
 }
 
 static t_ast	*parse_factor(char **s, int *err)
