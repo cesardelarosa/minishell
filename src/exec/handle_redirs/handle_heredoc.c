@@ -6,7 +6,7 @@
 /*   By: cde-la-r <code@cesardelarosa.xyz>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/08 12:27:40 by cde-la-r          #+#    #+#             */
-/*   Updated: 2025/04/11 19:29:15 by cesi             ###   ########.fr       */
+/*   Updated: 2025/06/21 11:46:39 by cde-la-r         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -89,9 +89,7 @@ int	handle_heredoc(t_redir *redir)
 	int		pipefd[2];
 	pid_t	pid;
 	int		status;
-	int		result;
 
-	result = 0;
 	if (pipe(pipefd) < 0)
 		error_exit_code(1, strerror(errno), "pipe", redir->cmd->p);
 	setup_signals(HEREDOC_MODE);
@@ -105,9 +103,9 @@ int	handle_heredoc(t_redir *redir)
 	setup_signals(INTERACTIVE_MODE);
 	if ((WIFSIGNALED(status) && WTERMSIG(status) == SIGINT)
 		|| (WIFEXITED(status) && WEXITSTATUS(status) == 130))
-		result = 130;
-	else if (dup2(pipefd[0], STDIN_FILENO) < 0)
-		result = -1;
-	close(pipefd[0]);
-	return (result);
+	{
+		close(pipefd[0]);
+		return (-2);
+	}
+	return (pipefd[0]);
 }
