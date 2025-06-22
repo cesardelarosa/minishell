@@ -6,7 +6,7 @@
 /*   By: cde-la-r <code@cesardelarosa.xyz>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/29 18:08:20 by cde-la-r          #+#    #+#             */
-/*   Updated: 2025/06/17 16:50:02 by cesi             ###   ########.fr       */
+/*   Updated: 2025/06/23 00:55:13 by cde-la-r         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -104,6 +104,7 @@ int	parse_word(t_list **arg_lst, t_token *token, t_ctx *ctx)
 	int		is_multiple;
 	int		result;
 
+	is_multiple = 0;
 	expanded = expand_value(token->value, token->type, ctx, &is_multiple);
 	if (!expanded)
 		return (0);
