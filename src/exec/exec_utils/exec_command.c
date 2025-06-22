@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   execute_command.c                                  :+:      :+:    :+:   */
+/*   exec_command.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: cde-la-r <code@cesardelarosa.xyz>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/10 12:15:14 by cde-la-r          #+#    #+#             */
-/*   Updated: 2025/04/11 12:24:02 by cesi             ###   ########.fr       */
+/*   Updated: 2025/06/22 22:59:54 by cde-la-r         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -71,18 +71,19 @@ static char	*find_executable(char *cmd, char **envp)
 
 void	execute_command(t_command *cmd)
 {
-	char							*path;
-	t_builtin_ft					builtin_ft;
-	int								redir_status;
+	char			*path;
+	t_builtin_ft	builtin_ft;
+	int				redir_status;
 
 	redir_status = handle_redirs(cmd->redirs);
 	if (redir_status == 130)
 		error_exit_code(redir_status, NULL, NULL, cmd->p);
 	if (redir_status != 0)
-		error_exit_code(redir_status, "redirection failed", NULL, cmd->p);
+		error_exit_code(1, "redirection failed", NULL, cmd->p);
 	builtin_ft = get_builtin_ft(cmd->argv[0]);
 	if (builtin_ft)
-		exit(builtin_ft(cmd->argv, cmd->p->ctx->env));
+		error_exit_code(builtin_ft(cmd->argv, cmd->p->ctx->env),
+			NULL, NULL, cmd->p);
 	path = find_executable(cmd->argv[0], cmd->p->ctx->env->envp);
 	if (!path)
 		error_exit_code(127, "Command not found", cmd->argv[0], cmd->p);
