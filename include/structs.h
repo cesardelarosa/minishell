@@ -6,7 +6,7 @@
 /*   By: cde-la-r <code@cesardelarosa.xyz>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/08 13:01:51 by cde-la-r          #+#    #+#             */
-/*   Updated: 2025/06/18 00:40:02 by cesi             ###   ########.fr       */
+/*   Updated: 2025/06/23 17:04:14 by cde-la-r         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,9 +26,10 @@ typedef enum e_redir_type
 
 typedef struct s_ctx
 {
-	int						status;
+	char					*prog_name;
 	char					**envp;
 	t_env					*env;
+	int						status;
 }							t_ctx;
 
 typedef struct s_command	t_command;

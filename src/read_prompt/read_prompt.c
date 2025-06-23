@@ -6,7 +6,7 @@
 /*   By: cde-la-r <code@cesardelarosa.xyz>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/29 17:51:38 by cde-la-r          #+#    #+#             */
-/*   Updated: 2025/06/22 00:37:11 by cesi             ###   ########.fr       */
+/*   Updated: 2025/06/23 17:44:03 by cde-la-r         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,6 +33,7 @@ static char	*get_hostname(void)
 	char	buf[256];
 	int		n;
 	char	*host;
+	char	*dot;
 
 	fd = open("/etc/hostname", O_RDONLY);
 	if (fd < 0)
@@ -46,6 +47,11 @@ static char	*get_hostname(void)
 	buf[n] = '\0';
 	close(fd);
 	host = ft_strtrim(buf, "\n");
+	if (!host)
+		return (ft_strdup("unknown"));
+	dot = ft_strchr(host, '.');
+	if (dot)
+		*dot = '\0';
 	return (host);
 }
 
@@ -86,26 +92,25 @@ static char	*build_prompt(t_ctx *ctx)
 	char	*user;
 	char	*host;
 	char	*cwd;
-	char	*status_indicator;
+	char	*error;
 
 	user = get_user();
 	host = get_hostname();
 	cwd = get_cwd(ctx->env);
-	status_indicator = NULL;
-	if (isatty(STDOUT_FILENO))
-	{
-		if (ctx->status != 0)
-			status_indicator = ft_strdup(RED "✗ " RESET);
+	error = NULL;
+	if (!isatty(STDOUT_FILENO))
 		return (ft_strjoin_free(ft_strjoin_free(ft_strjoin_free(ft_strjoin_free(
-							ft_strjoin_free(ft_strjoin_free(ft_strjoin_free(
-										status_indicator, GREEN, 1), user, 3),
-								RESET " at " BLUE, 1), host, 3), RESET " in "
-						YELLOW, 1), cwd, 3), RESET " via " MAGENTA "minishell"
-				RESET "$ ", 1));
-	}
+							ft_strjoin_free(user, " at ", 1), host, 3), " in ",
+						1), cwd, 3), "via minishell$ ", 1));
+	if (ctx->status != 0)
+		error = ft_strdup(RED "✗ " RESET);
 	return (ft_strjoin_free(ft_strjoin_free(ft_strjoin_free(ft_strjoin_free(
-						ft_strjoin_free(user, " at ", 1), host, 3), " in ", 1),
-				cwd, 3), "via minishell$ ", 1));
+						ft_strjoin_free(ft_strjoin_free(ft_strjoin_free(
+									ft_strjoin_free(ft_strjoin_free(error,
+											GREEN, 1), user, 3), RESET "@"
+									BLUE, 1), host, 3), RESET ":" YELLOW, 1),
+						cwd, 3), RESET "(" MAGENTA, 1), ctx->prog_name, 1),
+			RESET ")$ ", 1));
 }
 
 char	*read_prompt(t_ctx *ctx)
