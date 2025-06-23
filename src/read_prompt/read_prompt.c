@@ -6,7 +6,7 @@
 /*   By: cde-la-r <code@cesardelarosa.xyz>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/29 17:51:38 by cde-la-r          #+#    #+#             */
-/*   Updated: 2025/06/23 18:31:45 by cde-la-r         ###   ########.fr       */
+/*   Updated: 2025/06/23 18:54:03 by cde-la-r         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -109,11 +109,11 @@ static char	*build_prompt(t_ctx *ctx)
 	return (ft_strjoin_free(ft_strjoin_free(ft_strjoin_free(ft_strjoin_free(
 						ft_strjoin_free(ft_strjoin_free(ft_strjoin_free(
 									ft_strjoin_free(ft_strjoin_free(
-											ft_strjoin_free(error, "(", 1),
-											MAGENTA, 1), ctx->prog_name, 1),
-									RESET ") " GREEN, 1), user, 3), RESET "@"
-							BLUE, 1), host, 3), RESET ":" YELLOW, 1), cwd, 3),
-			RESET "$ ", 1));
+											ft_strjoin_free("(" MAGENTA,
+												ctx->prog_name, 0), RESET ") ",
+											1), error, 3), GREEN, 1),
+								user, 3), RESET "@" BLUE, 1), host, 3), RESET
+					":" YELLOW, 1), cwd, 3), RESET "$ ", 1));
 }
 
 char	*read_prompt(t_ctx *ctx)
