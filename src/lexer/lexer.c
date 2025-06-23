@@ -34,8 +34,10 @@ t_list	*lexer(char *input)
 			ws++;
 		joined = (ws == s);
 		s = ws;
-		if (!*s || process_token(&s, &tokens, joined) < 0)
+		if (!*s)
 			break ;
+		if (process_token(&s, &tokens, joined) < 0)
+			return (ft_lstclear(&tokens, free_token), NULL);
 	}
 	ft_lstadd_back(&tokens, ft_lstnew(create_token(TOKEN_EOF, NULL, 0)));
 	return (tokens);

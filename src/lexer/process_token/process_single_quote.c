@@ -41,8 +41,7 @@ int	process_single_quote(char **s, t_list **tokens, int joined)
 	value = read_single_quoted((const char **)s);
 	if (!value)
 	{
-		token = create_token(TOKEN_ERROR, ft_strdup("Unclosed quote"), 0);
-		ft_lstadd_back(tokens, ft_lstnew(token));
+		ft_putstr_fd("minishell: syntax error: unclosed single quote\n", 2);
 		return (-1);
 	}
 	token = create_token(TOKEN_SINGLE_QUOTED_STRING, value, joined);
