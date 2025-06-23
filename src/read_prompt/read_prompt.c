@@ -6,7 +6,7 @@
 /*   By: cde-la-r <code@cesardelarosa.xyz>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/29 17:51:38 by cde-la-r          #+#    #+#             */
-/*   Updated: 2025/06/23 17:44:03 by cde-la-r         ###   ########.fr       */
+/*   Updated: 2025/06/23 18:31:45 by cde-la-r         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -100,17 +100,20 @@ static char	*build_prompt(t_ctx *ctx)
 	error = NULL;
 	if (!isatty(STDOUT_FILENO))
 		return (ft_strjoin_free(ft_strjoin_free(ft_strjoin_free(ft_strjoin_free(
-							ft_strjoin_free(user, " at ", 1), host, 3), " in ",
-						1), cwd, 3), "via minishell$ ", 1));
+							ft_strjoin_free(ft_strjoin_free(ft_strjoin_free(
+										ft_strjoin_free("(", ctx->prog_name, 1),
+										") ", 1), user, 3), "@", 1), host, 3),
+						":", 1), cwd, 3), "$ ", 1));
 	if (ctx->status != 0)
 		error = ft_strdup(RED "✗ " RESET);
 	return (ft_strjoin_free(ft_strjoin_free(ft_strjoin_free(ft_strjoin_free(
 						ft_strjoin_free(ft_strjoin_free(ft_strjoin_free(
-									ft_strjoin_free(ft_strjoin_free(error,
-											GREEN, 1), user, 3), RESET "@"
-									BLUE, 1), host, 3), RESET ":" YELLOW, 1),
-						cwd, 3), RESET "(" MAGENTA, 1), ctx->prog_name, 1),
-			RESET ")$ ", 1));
+									ft_strjoin_free(ft_strjoin_free(
+											ft_strjoin_free(error, "(", 1),
+											MAGENTA, 1), ctx->prog_name, 1),
+									RESET ") " GREEN, 1), user, 3), RESET "@"
+							BLUE, 1), host, 3), RESET ":" YELLOW, 1), cwd, 3),
+			RESET "$ ", 1));
 }
 
 char	*read_prompt(t_ctx *ctx)
