@@ -6,7 +6,7 @@
 /*   By: cde-la-r <code@cesardelarosa.xyz>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/18 13:16:49 by cde-la-r          #+#    #+#             */
-/*   Updated: 2025/06/18 15:42:36 by cesi             ###   ########.fr       */
+/*   Updated: 2025/06/23 15:17:24 by cde-la-r         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -70,12 +70,14 @@ t_command	*parse_command(t_list **tokens_ptr, t_ctx *ctx,
 			break ;
 		if (!parse_ft(cmd, tokens_ptr, &arg_list, ctx))
 		{
-			free(cmd);
+			command_destroy(cmd);
 			ft_lstclear(&arg_list, free);
 			return (NULL);
 		}
 	}
 	cmd->argv = build_argv_from_list(arg_list);
 	ft_lstclear(&arg_list, free);
+	if (!cmd->argv || !cmd->argv[0])
+		return (command_destroy(cmd), NULL);
 	return (cmd);
 }
