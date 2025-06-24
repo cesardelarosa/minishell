@@ -35,6 +35,7 @@ void	heredoc_sigint_handler(int sig)
 	(void)sig;
 	g_sigint_received = 1;
 	ioctl(STDIN_FILENO, TIOCSTI, "\n");
+	write(STDOUT_FILENO, "\033[A", 3);
 }
 
 static void	command_sigint_handler(int sig)
