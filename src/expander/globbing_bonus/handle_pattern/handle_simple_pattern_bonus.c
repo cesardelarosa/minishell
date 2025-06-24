@@ -6,7 +6,7 @@
 /*   By: cde-la-r <code@cesardelarosa.xyz>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/10 08:36:02 by cde-la-r          #+#    #+#             */
-/*   Updated: 2025/06/17 21:14:51 by cde-la-r         ###   ########.fr       */
+/*   Updated: 2025/06/25 01:25:20 by cde-la-r         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -61,6 +61,7 @@ int	handle_simple_pattern(const char *pattern, int flags, t_ftglob *p)
 {
 	DIR			*dir;
 	t_matches	m;
+	char		**temp_matches;
 
 	if (!init_dir_and_matches(&dir, &m))
 		return (1);
@@ -73,9 +74,11 @@ int	handle_simple_pattern(const char *pattern, int flags, t_ftglob *p)
 			return (1);
 		m.count = 1;
 	}
-	m.matches = realloc(m.matches, sizeof(char *) * (m.count + 1));
-	if (!m.matches)
+	temp_matches = ft_realloc(m.matches, sizeof(char *) * m.capacity,
+			sizeof(char *) * (m.count + 1));
+	if (!temp_matches)
 		return (1);
+	m.matches = temp_matches;
 	m.matches[m.count] = NULL;
 	bubble_sort(m.matches, m.count);
 	p->gl_pathc = m.count;

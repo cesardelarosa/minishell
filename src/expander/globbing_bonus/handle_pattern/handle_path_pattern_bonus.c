@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   handle_path_pattern.c                              :+:      :+:    :+:   */
+/*   handle_path_pattern_bonus.c                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: cde-la-r <code@cesardelarosa.xyz>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/10 08:33:58 by cde-la-r          #+#    #+#             */
-/*   Updated: 2025/04/10 08:35:16 by cde-la-r         ###   ########.fr       */
+/*   Updated: 2025/06/25 01:27:09 by cde-la-r         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,6 +17,7 @@
 static int	finalize_matches(t_matches *m, int flags, const char *pattern)
 {
 	char	**temp;
+	size_t	old_bytes;
 
 	if (m->count == 0 && (flags & (1 << 0)))
 	{
@@ -25,7 +26,8 @@ static int	finalize_matches(t_matches *m, int flags, const char *pattern)
 			return (1);
 		m->count = 1;
 	}
-	temp = realloc(m->matches, sizeof(char *) * (m->count + 1));
+	old_bytes = sizeof(char *) * m->capacity;
+	temp = ft_realloc(m->matches, old_bytes, sizeof(char *) * (m->count + 1));
 	if (!temp)
 		return (1);
 	m->matches = temp;

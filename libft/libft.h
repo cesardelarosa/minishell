@@ -6,7 +6,7 @@
 /*   By: cde-la-r <cde-la-r@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/07 12:06:10 by cde-la-r          #+#    #+#             */
-/*   Updated: 2025/04/03 22:49:50 by cesi             ###   ########.fr       */
+/*   Updated: 2025/06/25 01:23:52 by cde-la-r         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -86,5 +86,6 @@ size_t	ft_strcspn(const char *s, const char *reject);
 char	*ft_ftoa(double n, int precision);
 char	*ft_strjoin_free(char *s1, char *s2, int free_flag);
 int		ft_iswhitespace(char c);
+void	*ft_realloc(void *ptr, size_t old_size, size_t new_size);
 
 #endif 

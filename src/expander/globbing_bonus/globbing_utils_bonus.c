@@ -6,7 +6,7 @@
 /*   By: cde-la-r <code@cesardelarosa.xyz>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/10 08:32:29 by cde-la-r          #+#    #+#             */
-/*   Updated: 2025/06/22 00:32:47 by cde-la-r         ###   ########.fr       */
+/*   Updated: 2025/06/25 01:24:55 by cde-la-r         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,11 +20,14 @@ int	add_match(char ***results, size_t *res_count, size_t *res_capacity,
 		char *new_path)
 {
 	char	**temp;
+	size_t	old_bytes;
 
 	if (*res_count >= *res_capacity)
 	{
+		old_bytes = sizeof(char *) * (*res_capacity);
 		*res_capacity *= 2;
-		temp = realloc(*results, sizeof(char *) * (*res_capacity));
+		temp = ft_realloc(*results, old_bytes, sizeof(char *)
+				* (*res_capacity));
 		if (!temp)
 			return (0);
 		*results = temp;
