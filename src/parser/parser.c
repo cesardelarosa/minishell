@@ -15,6 +15,9 @@
 #include "struct_creation.h"
 #include <stdio.h>
 #include <stdlib.h>
+#include "signals.h"
+
+extern volatile sig_atomic_t	g_sigint_received;
 
 int			parse_token(t_command *cmd, t_list **tokens_ptr, t_list **arg_lst,
 				t_ctx *ctx);
@@ -71,7 +74,14 @@ t_pipeline	*parser(t_list *tokens, t_ctx *ctx)
 	{
 		cmd = parse_command(&current_tokens, ctx, &parse_token);
 		if (!cmd)
-			return (parsing_error(p, NULL));
+		{
+			if (g_sigint_received)
+			{
+				pipeline_destroy(p);
+				return (NULL);
+			}
+			return (parsing_error(p, (t_token *)current_tokens->content));
+		}
 		if (!pipeline_add_command(p, cmd))
 			return (parsing_error(p, NULL));
 		if (!handle_post_command_token(&current_tokens, p))

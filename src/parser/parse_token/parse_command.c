@@ -58,6 +58,7 @@ t_command	*parse_command(t_list **tokens_ptr, t_ctx *ctx,
 	t_command	*cmd;
 	t_list		*arg_list;
 	t_token		*token;
+	int			ret;
 
 	cmd = ft_calloc(1, sizeof(t_command));
 	if (!cmd)
@@ -68,7 +69,8 @@ t_command	*parse_command(t_list **tokens_ptr, t_ctx *ctx,
 		token = (t_token *)(*tokens_ptr)->content;
 		if (!is_command_part(token->type))
 			break ;
-		if (!parse_ft(cmd, tokens_ptr, &arg_list, ctx))
+		ret = parse_ft(cmd, tokens_ptr, &arg_list, ctx);
+		if (ret != 1)
 		{
 			command_destroy(cmd);
 			ft_lstclear(&arg_list, free);

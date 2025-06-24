@@ -61,6 +61,7 @@ int	shell_loop(t_ctx *ctx)
 	t_list		*tokens;
 	t_pipeline	*pipeline;
 
+	g_sigint_received = 0;
 	setup_signals(INTERACTIVE_MODE);
 	line = read_prompt(ctx);
 	if (!line)
@@ -71,8 +72,16 @@ int	shell_loop(t_ctx *ctx)
 		return (CONTINUE);
 	pipeline = parser(tokens, ctx);
 	ft_lstclear(&tokens, free_token);
-	if (!pipeline)
+	if (g_sigint_received)
+	{
+		ctx->status = 130;
 		return (CONTINUE);
+	}
+	if (!pipeline)
+	{
+		ctx->status = 2;
+		return (CONTINUE);
+	}
 	setup_signals(COMMAND_MODE);
 	ctx->status = exec(pipeline) % 256;
 	update_underscore_var(pipeline, ctx);

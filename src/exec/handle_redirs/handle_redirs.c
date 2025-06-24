@@ -12,22 +12,30 @@
 
 #include "handle_redir.h"
 #include "structs.h"
+#include "errors.h"
+#include <unistd.h>
+#include <string.h>
+#include <errno.h>
 
-static int	prepare_heredocs(t_list *redirs)
+static int	apply_heredoc_redir(t_redir *r)
 {
-	t_redir	*r;
+	int	pipefd[2];
 
-	while (redirs)
+	if (pipe(pipefd) < 0)
 	{
-		r = (t_redir *)redirs->content;
-		if (r->type == REDIR_HEREDOC)
-		{
-			r->heredoc_fd = handle_heredoc(r);
-			if (r->heredoc_fd < 0)
-				return (r->heredoc_fd);
-		}
-		redirs = redirs->next;
+		error_exit_code(1, strerror(errno), "pipe", r->cmd->p);
+		return (-1);
 	}
+	if (r->heredoc_buf)
+		write(pipefd[1], r->heredoc_buf, ft_strlen(r->heredoc_buf));
+	close(pipefd[1]);
+	if (dup2(pipefd[0], STDIN_FILENO) < 0)
+	{
+		close(pipefd[0]);
+		error_exit_code(1, strerror(errno), "dup2", r->cmd->p);
+		return (-1);
+	}
+	close(pipefd[0]);
 	return (0);
 }
 
@@ -47,10 +55,7 @@ static int	apply_redirections(t_list *redirs)
 		else if (r->type == REDIR_APPEND)
 			status = handle_redir_append(r);
 		else if (r->type == REDIR_HEREDOC)
-		{
-			if (dup2(r->heredoc_fd, STDIN_FILENO) < 0)
-				status = -1;
-		}
+			status = apply_heredoc_redir(r);
 		redirs = redirs->next;
 	}
 	return (status);
@@ -58,16 +63,7 @@ static int	apply_redirections(t_list *redirs)
 
 int	handle_redirs(t_list *redirs)
 {
-	int	status;
-	int	prep_status;
-
-	prep_status = prepare_heredocs(redirs);
-	if (prep_status != 0)
-	{
-		if (prep_status == -2)
-			return (130);
-		return (-1);
-	}
-	status = apply_redirections(redirs);
-	return (status);
+	if (!redirs)
+		return (0);
+	return (apply_redirections(redirs));
 }

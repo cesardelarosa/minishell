@@ -10,30 +10,34 @@
 /*                                                                            */
 /* ************************************************************************** */
 
+#include "parser.h"
 #include "lexer.h"
 #include "libft.h"
 #include "struct_creation.h"
+#include "signals.h"
 #include <stdlib.h>
 #include <stdio.h>
+#include <stdbool.h>
+
+extern volatile sig_atomic_t	g_sigint_received;
 
 char	*expand_value(char *value, t_token_type type, t_ctx *ctx,
 			int *is_multiple);
 
 static int	check_token_existence(t_list **tokens_ptr)
 {
-	*tokens_ptr = (*tokens_ptr)->next;
-	if (!*tokens_ptr)
+	if (!(*tokens_ptr)->next ||
+		((t_token *)(*tokens_ptr)->next->content)->type == TOKEN_EOF)
 		return (0);
+	*tokens_ptr = (*tokens_ptr)->next;
 	return (1);
 }
 
 static int	validate_token_type(t_token *token)
 {
-	if (token->type != TOKEN_WORD
-		&& token->type != TOKEN_SINGLE_QUOTED_STRING
-		&& token->type != TOKEN_DOUBLE_QUOTED_STRING)
-		return (0);
-	return (1);
+	return (token->type == TOKEN_WORD
+		|| token->type == TOKEN_SINGLE_QUOTED_STRING
+		|| token->type == TOKEN_DOUBLE_QUOTED_STRING);
 }
 
 static int	process_expansion(t_token *token, t_ctx *ctx, char **expanded)
@@ -54,17 +58,36 @@ static int	process_expansion(t_token *token, t_ctx *ctx, char **expanded)
 	return (1);
 }
 
-static void	add_redirection(t_command *cmd, t_token_type op_type,
-		char *expanded)
+static int	handle_heredoc(t_command *cmd, t_token *token, t_ctx *ctx)
 {
-	if (op_type == TOKEN_REDIRECT_IN)
-		command_add_redir(cmd, REDIR_INPUT, expanded);
-	else if (op_type == TOKEN_REDIRECT_OUT)
-		command_add_redir(cmd, REDIR_OUTPUT, expanded);
-	else if (op_type == TOKEN_HEREDOC)
-		command_add_redir(cmd, REDIR_HEREDOC, expanded);
-	else if (op_type == TOKEN_APPEND)
-		command_add_redir(cmd, REDIR_APPEND, expanded);
+	bool	expand;
+	char	*delimiter;
+	char	*buffer;
+	t_redir	*redir;
+	t_list	*node;
+
+	expand = (token->type == TOKEN_WORD);
+	delimiter = ft_strdup(token->value);
+	if (!delimiter)
+		return (0);
+	setup_signals(HEREDOC_MODE);
+	buffer = read_heredoc_input(delimiter, expand, ctx);
+	setup_signals(INTERACTIVE_MODE);
+	if (!buffer)
+	{
+		free(delimiter);
+		return (-1);
+	}
+	redir = redir_create(REDIR_HEREDOC, delimiter, cmd);
+	free(delimiter);
+	if (!redir)
+		return (free(buffer), 0);
+	redir->heredoc_buf = buffer;
+	node = ft_lstnew(redir);
+	if (!node)
+		return (redir_destroy(redir), 0);
+	ft_lstadd_back(&cmd->redirs, node);
+	return (1);
 }
 
 int	parse_redirection(t_command *cmd, t_list **tokens_ptr,
@@ -79,16 +102,26 @@ int	parse_redirection(t_command *cmd, t_list **tokens_ptr,
 	token = (t_token *)(*tokens_ptr)->content;
 	if (!validate_token_type(token))
 		return (0);
-	ret = process_expansion(token, ctx, &expanded);
-	if (ret == 0)
-		return (0);
-	else if (ret == 2)
+	if (op_type == TOKEN_HEREDOC)
+		ret = handle_heredoc(cmd, token, ctx);
+	else
 	{
-		*tokens_ptr = (*tokens_ptr)->next;
-		return (0);
+		ret = process_expansion(token, ctx, &expanded);
+		if (ret != 1)
+		{
+			if (ret == 2)
+				*tokens_ptr = (*tokens_ptr)->next;
+			return (0);
+		}
+		if (op_type == TOKEN_REDIRECT_IN)
+			command_add_redir(cmd, REDIR_INPUT, expanded);
+		else if (op_type == TOKEN_REDIRECT_OUT)
+			command_add_redir(cmd, REDIR_OUTPUT, expanded);
+		else if (op_type == TOKEN_APPEND)
+			command_add_redir(cmd, REDIR_APPEND, expanded);
+		free(expanded);
 	}
-	add_redirection(cmd, op_type, expanded);
-	free(expanded);
-	*tokens_ptr = (*tokens_ptr)->next;
-	return (1);
+	if (ret == 1)
+		*tokens_ptr = (*tokens_ptr)->next;
+	return (ret);
 }

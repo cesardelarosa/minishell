@@ -10,6 +10,7 @@
 /*                                                                            */
 /* ************************************************************************** */
 
+
 #ifndef STRUCTS_H
 # define STRUCTS_H
 
@@ -39,7 +40,7 @@ typedef struct s_redir
 	t_redir_type			type;
 	char					*file;
 	t_command				*cmd;
-	int						heredoc_fd;
+	char					*heredoc_buf;
 }							t_redir;
 
 typedef struct s_pipeline

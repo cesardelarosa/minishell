@@ -10,6 +10,7 @@
 /*                                                                            */
 /* ************************************************************************** */
 
+
 #include "struct_creation.h"
 #include <stdlib.h>
 
@@ -28,7 +29,7 @@ t_redir	*redir_create(t_redir_type type, char *file, t_command *parent_cmd)
 		return (NULL);
 	}
 	r->cmd = parent_cmd;
-	r->heredoc_fd = -1;
+	r->heredoc_buf = NULL;
 	return (r);
 }
 
@@ -37,8 +38,8 @@ void	redir_destroy(void *content)
 	t_redir	*r;
 
 	r = (t_redir *)content;
-	if (r->heredoc_fd >= 0)
-		close(r->heredoc_fd);
+	if (r->heredoc_buf)
+		free(r->heredoc_buf);
 	free(r->file);
 	free(r);
 }

@@ -10,104 +10,81 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "common.h"
-#include "errors.h"
-#include "signals.h"
-#include "struct_creation.h"
-#include "structs.h"
-#include <stdio.h>
-#include <readline/history.h>
+#include "parser.h"
+#include "env.h"
+#include "libft.h"
 #include <readline/readline.h>
-#include <signal.h>
+#include <stdio.h>
 #include <stdbool.h>
+#include "signals.h"
 
-#define EOF_MSG "warning: here-document delimited by end-of-file\n"
+#define EOF_MSG "minishell: warning: here-document delimited by end-of-file\n"
 
 extern volatile sig_atomic_t	g_sigint_received;
 
-void							destroy_ctx(t_ctx *ctx);
-
-static void	cleanup_heredoc(int write_fd, t_redir *redir)
+static char	*append_line_to_buffer(char *buffer, char *line)
 {
-	close(write_fd);
-	rl_clear_history();
-	destroy_ctx(redir->cmd->p->ctx);
-	pipeline_destroy(redir->cmd->p);
-	if (g_sigint_received)
-		exit(130);
-	exit(0);
+	char	*with_newline;
+	char	*new_buffer;
+
+	with_newline = ft_strjoin(line, "\n");
+	if (!with_newline)
+	{
+		free(buffer);
+		return (NULL);
+	}
+	new_buffer = ft_strjoin(buffer, with_newline);
+	free(with_newline);
+	free(buffer);
+	return (new_buffer);
 }
 
-static bool	process_line(char *line, int write_fd, t_redir *redir)
-{
-	char	*expanded;
-
-	expanded = env_expand_variables(line, redir->cmd->p->ctx->env);
-	free(line);
-	if (!expanded)
-		return (false);
-	ft_putendl_fd(expanded, write_fd);
-	free(expanded);
-	return (true);
-}
-
-static void	read_heredoc_lines(int write_fd, t_redir *redir)
+char	*read_heredoc_input(char *delimiter, bool expand_vars, t_ctx *ctx)
 {
 	char	*line;
+	char	*buffer;
+	char	*processed_line;
 
+	buffer = ft_strdup("");
+	if (!buffer)
+		return (NULL);
 	g_sigint_received = 0;
-	while (1)
+	while (g_sigint_received == 0)
 	{
 		line = readline("> ");
 		if (!line || g_sigint_received)
 		{
 			if (!line && !g_sigint_received)
-				ft_putstr_fd(EOF_MSG, STDERR_FILENO);
+				ft_putstr_fd(EOF_MSG, 2);
 			free(line);
 			break ;
 		}
-		if (ft_strcmp(line, redir->file) == 0)
+		if (ft_strcmp(line, delimiter) == 0)
 		{
 			free(line);
 			break ;
 		}
-		if (!process_line(line, write_fd, redir))
-			break ;
+		processed_line = line;
+		if (expand_vars)
+		{
+			processed_line = env_expand_variables(line, ctx->env);
+			free(line);
+			if (!processed_line)
+			{
+				free(buffer);
+				return (NULL);
+			}
+		}
+		buffer = append_line_to_buffer(buffer, processed_line);
+		if (expand_vars)
+			free(processed_line);
+		if (!buffer)
+			return (NULL);
 	}
-	cleanup_heredoc(write_fd, redir);
-}
-
-static void	heredoc_child(int pipefd[], t_redir *redir)
-{
-	close(pipefd[0]);
-	read_heredoc_lines(pipefd[1], redir);
-}
-
-int	handle_heredoc(t_redir *redir)
-{
-	int		pipefd[2];
-	pid_t	pid;
-	int		status;
-	int		wait_ret;
-
-	if (pipe(pipefd) < 0)
-		error_exit_code(1, strerror(errno), "pipe", redir->cmd->p);
-	setup_signals(HEREDOC_MODE);
-	pid = fork();
-	if (pid < 0)
-		error_exit_code(1, strerror(errno), "fork", redir->cmd->p);
-	if (pid == 0)
-		heredoc_child(pipefd, redir);
-	close(pipefd[1]);
-	wait_ret = waitpid(pid, &status, 0);
-	while (wait_ret == -1 && errno == EINTR)
-		wait_ret = waitpid(pid, &status, 0);
-	setup_signals(INTERACTIVE_MODE);
-	if ((WIFSIGNALED(status) && WTERMSIG(status) == SIGINT)
-		|| (WIFEXITED(status) && WEXITSTATUS(status) == 130))
+	if (g_sigint_received)
 	{
-		close(pipefd[0]);
-		return (-2);
+		free(buffer);
+		return (NULL);
 	}
-	return (pipefd[0]);
+	return (buffer);
 }

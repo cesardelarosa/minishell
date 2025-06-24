@@ -33,7 +33,7 @@ void	heredoc_sigint_handler(int sig)
 {
 	(void)sig;
 	g_sigint_received = 1;
-	close(STDIN_FILENO);
+	rl_done = 1;
 }
 
 static void	command_sigint_handler(int sig)

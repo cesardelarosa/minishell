@@ -16,8 +16,10 @@
 # include "structs.h"
 # include "libft.h"
 # include "lexer.h"
+# include <stdbool.h>
 
 t_pipeline	*parse_tokens(t_list *tokens);
 void		free_tokens(t_list *tokens);
+char		*read_heredoc_input(char *delimiter, bool expand_vars, t_ctx *ctx);
 
 #endif
