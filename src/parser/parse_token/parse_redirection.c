@@ -26,8 +26,8 @@ char	*expand_value(char *value, t_token_type type, t_ctx *ctx,
 
 static int	check_token_existence(t_list **tokens_ptr)
 {
-	if (!(*tokens_ptr)->next ||
-		((t_token *)(*tokens_ptr)->next->content)->type == TOKEN_EOF)
+	if (!(*tokens_ptr)->next
+		|| ((t_token *)(*tokens_ptr)->next->content)->type == TOKEN_EOF)
 		return (0);
 	*tokens_ptr = (*tokens_ptr)->next;
 	return (1);
