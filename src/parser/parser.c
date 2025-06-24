@@ -6,7 +6,7 @@
 /*   By: cde-la-r <code@cesardelarosa.xyz>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/29 18:08:20 by cde-la-r          #+#    #+#             */
-/*   Updated: 2025/06/23 15:20:33 by cde-la-r         ###   ########.fr       */
+/*   Updated: 2025/06/24 23:28:27 by cde-la-r         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -76,10 +76,7 @@ t_pipeline	*parser(t_list *tokens, t_ctx *ctx)
 		if (!cmd)
 		{
 			if (g_sigint_received)
-			{
-				pipeline_destroy(p);
-				return (NULL);
-			}
+				return (pipeline_destroy(p), NULL);
 			return (parsing_error(p, (t_token *)current_tokens->content));
 		}
 		if (!pipeline_add_command(p, cmd))
