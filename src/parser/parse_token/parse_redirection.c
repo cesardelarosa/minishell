@@ -6,7 +6,7 @@
 /*   By: cde-la-r <code@cesardelarosa.xyz>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/05 21:25:45 by cde-la-r          #+#    #+#             */
-/*   Updated: 2025/06/24 07:57:37 by cde-la-r         ###   ########.fr       */
+/*   Updated: 2025/06/24 23:20:28 by cde-la-r         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -74,10 +74,7 @@ static int	handle_heredoc(t_command *cmd, t_token *token, t_ctx *ctx)
 	buffer = read_heredoc_input(delimiter, expand, ctx);
 	setup_signals(INTERACTIVE_MODE);
 	if (!buffer)
-	{
-		free(delimiter);
-		return (-1);
-	}
+		return (free(delimiter), -1);
 	redir = redir_create(REDIR_HEREDOC, delimiter, cmd);
 	free(delimiter);
 	if (!redir)
