@@ -6,7 +6,7 @@
 /*   By: cde-la-r <code@cesardelarosa.xyz>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/20 09:27:18 by cde-la-r          #+#    #+#             */
-/*   Updated: 2025/06/20 09:27:24 by cde-la-r         ###   ########.fr       */
+/*   Updated: 2025/06/24 12:20:58 by cde-la-r         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,6 +28,7 @@ t_redir	*redir_create(t_redir_type type, char *file, t_command *parent_cmd)
 		return (NULL);
 	}
 	r->cmd = parent_cmd;
+	r->heredoc_fd = -1;
 	return (r);
 }
 
@@ -36,6 +37,8 @@ void	redir_destroy(void *content)
 	t_redir	*r;
 
 	r = (t_redir *)content;
+	if (r->heredoc_fd >= 0)
+		close(r->heredoc_fd);
 	free(r->file);
 	free(r);
 }

@@ -6,7 +6,7 @@
 /*   By: cde-la-r <code@cesardelarosa.xyz>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/08 13:01:51 by cde-la-r          #+#    #+#             */
-/*   Updated: 2025/06/23 17:04:14 by cde-la-r         ###   ########.fr       */
+/*   Updated: 2025/06/24 12:20:13 by cde-la-r         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,6 +39,7 @@ typedef struct s_redir
 	t_redir_type			type;
 	char					*file;
 	t_command				*cmd;
+	int						heredoc_fd;
 }							t_redir;
 
 typedef struct s_pipeline
