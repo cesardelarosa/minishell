@@ -6,7 +6,7 @@
 /*   By: cde-la-r <code@cesardelarosa.xyz>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/05 21:25:45 by cde-la-r          #+#    #+#             */
-/*   Updated: 2025/06/24 23:20:28 by cde-la-r         ###   ########.fr       */
+/*   Updated: 2025/06/25 00:38:48 by cde-la-r         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -75,7 +75,7 @@ static int	handle_heredoc(t_command *cmd, t_token *token, t_ctx *ctx)
 	setup_signals(INTERACTIVE_MODE);
 	if (!buffer)
 		return (free(delimiter), -1);
-	redir = redir_create(REDIR_HEREDOC, delimiter, cmd);
+	redir = redir_create(TOKEN_HEREDOC, delimiter, cmd);
 	free(delimiter);
 	if (!redir)
 		return (free(buffer), 0);
@@ -104,21 +104,15 @@ int	parse_redirection(t_command *cmd, t_list **tokens_ptr,
 	else
 	{
 		ret = process_expansion(token, ctx, &expanded);
-		if (ret != 1)
-		{
-			if (ret == 2)
-				*tokens_ptr = (*tokens_ptr)->next;
+		if (ret == 0)
 			return (0);
+		if (ret == 1)
+		{
+			command_add_redir(cmd, op_type, expanded);
+			free(expanded);
 		}
-		if (op_type == TOKEN_REDIRECT_IN)
-			command_add_redir(cmd, REDIR_INPUT, expanded);
-		else if (op_type == TOKEN_REDIRECT_OUT)
-			command_add_redir(cmd, REDIR_OUTPUT, expanded);
-		else if (op_type == TOKEN_APPEND)
-			command_add_redir(cmd, REDIR_APPEND, expanded);
-		free(expanded);
 	}
-	if (ret == 1)
+	if (ret == 1 || ret == 2)
 		*tokens_ptr = (*tokens_ptr)->next;
-	return (ret);
+	return (ret == 1);
 }

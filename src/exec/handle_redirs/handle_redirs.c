@@ -6,7 +6,7 @@
 /*   By: cde-la-r <code@cesardelarosa.xyz>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/08 12:27:28 by cde-la-r          #+#    #+#             */
-/*   Updated: 2025/06/21 12:14:00 by cde-la-r         ###   ########.fr       */
+/*   Updated: 2025/06/25 00:25:10 by cde-la-r         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,13 +28,13 @@ int	handle_redirs(t_list *redirs)
 	while (redirs && status == 0)
 	{
 		r = (t_redir *)redirs->content;
-		if (r->type == REDIR_INPUT)
+		if (r->type == TOKEN_REDIRECT_IN)
 			status = handle_redir_in(r);
-		else if (r->type == REDIR_OUTPUT)
+		else if (r->type == TOKEN_REDIRECT_OUT)
 			status = handle_redir_out(r);
-		else if (r->type == REDIR_APPEND)
+		else if (r->type == TOKEN_APPEND)
 			status = handle_redir_append(r);
-		else if (r->type == REDIR_HEREDOC)
+		else if (r->type == TOKEN_HEREDOC)
 			status = handle_heredoc(r);
 		redirs = redirs->next;
 	}

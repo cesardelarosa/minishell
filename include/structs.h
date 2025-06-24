@@ -6,7 +6,7 @@
 /*   By: cde-la-r <code@cesardelarosa.xyz>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/08 13:01:51 by cde-la-r          #+#    #+#             */
-/*   Updated: 2025/06/24 12:20:13 by cde-la-r         ###   ########.fr       */
+/*   Updated: 2025/06/25 00:32:09 by cde-la-r         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,14 +15,7 @@
 
 # include "env.h"
 # include "libft.h"
-
-typedef enum e_redir_type
-{
-	REDIR_INPUT,
-	REDIR_OUTPUT,
-	REDIR_APPEND,
-	REDIR_HEREDOC
-}							t_redir_type;
+# include "lexer.h"
 
 typedef struct s_ctx
 {
@@ -36,7 +29,7 @@ typedef struct s_command	t_command;
 
 typedef struct s_redir
 {
-	t_redir_type			type;
+	t_token_type			type;
 	char					*file;
 	t_command				*cmd;
 	char					*heredoc_buf;

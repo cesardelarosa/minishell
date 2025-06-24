@@ -6,14 +6,14 @@
 /*   By: cde-la-r <code@cesardelarosa.xyz>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/20 09:27:18 by cde-la-r          #+#    #+#             */
-/*   Updated: 2025/06/24 12:20:58 by cde-la-r         ###   ########.fr       */
+/*   Updated: 2025/06/25 00:29:51 by cde-la-r         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "struct_creation.h"
 #include <stdlib.h>
 
-t_redir	*redir_create(t_redir_type type, char *file, t_command *parent_cmd)
+t_redir	*redir_create(t_token_type type, char *file, t_command *parent_cmd)
 {
 	t_redir	*r;
 

@@ -6,7 +6,7 @@
 /*   By: cde-la-r <code@cesardelarosa.xyz>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/20 09:29:07 by cde-la-r          #+#    #+#             */
-/*   Updated: 2025/06/20 09:29:10 by cde-la-r         ###   ########.fr       */
+/*   Updated: 2025/06/25 00:30:31 by cde-la-r         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,7 +37,7 @@ void	command_destroy(void *content)
 	free(cmd);
 }
 
-int	command_add_redir(t_command *cmd, t_redir_type type, char *file)
+int	command_add_redir(t_command *cmd, t_token_type type, char *file)
 {
 	t_redir	*r;
 	t_list	*node;
