@@ -39,24 +39,43 @@ static char	*append_line_to_buffer(char *buffer, char *line)
 	return (new_buffer);
 }
 
+static int	process_and_append(char *line, char **buffer,
+	bool expand, t_ctx *ctx)
+{
+	char	*processed_line;
+
+	if (expand)
+	{
+		processed_line = env_expand_variables(line, ctx->env);
+		free(line);
+	}
+	else
+		processed_line = line;
+	if (!processed_line)
+	{
+		free(*buffer);
+		return (-1);
+	}
+	*buffer = append_line_to_buffer(*buffer, processed_line);
+	free(processed_line);
+	if (!*buffer)
+		return (-1);
+	return (1);
+}
+
 char	*read_heredoc_input(char *delimiter, bool expand_vars, t_ctx *ctx)
 {
 	char	*line;
 	char	*buffer;
-	char	*processed_line;
 
 	buffer = ft_strdup("");
 	if (!buffer)
 		return (NULL);
-	while (1)
+	while (true)
 	{
 		line = readline("> ");
 		if (g_sigint_received)
-		{
-			free(line);
-			free(buffer);
-			return (NULL);
-		}
+			return (free(line), free(buffer), NULL);
 		if (!line)
 		{
 			ft_putstr_fd(EOF_MSG, 2);
@@ -67,21 +86,7 @@ char	*read_heredoc_input(char *delimiter, bool expand_vars, t_ctx *ctx)
 			free(line);
 			break ;
 		}
-		processed_line = line;
-		if (expand_vars)
-		{
-			processed_line = env_expand_variables(line, ctx->env);
-			free(line);
-			if (!processed_line)
-			{
-				free(buffer);
-				return (NULL);
-			}
-		}
-		buffer = append_line_to_buffer(buffer, processed_line);
-		if (expand_vars)
-			free(processed_line);
-		if (!buffer)
+		if (process_and_append(line, &buffer, expand_vars, ctx) == -1)
 			return (NULL);
 	}
 	return (buffer);
