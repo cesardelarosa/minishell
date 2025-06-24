@@ -6,7 +6,7 @@
 /*   By: cde-la-r <code@cesardelarosa.xyz>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/29 17:52:04 by cde-la-r          #+#    #+#             */
-/*   Updated: 2025/06/20 22:12:49 by cde-la-r         ###   ########.fr       */
+/*   Updated: 2025/06/25 00:59:58 by cde-la-r         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,8 +26,6 @@
 
 int								ast_exec(t_ast *ast, t_ctx *ctx);
 t_ast							*ast_parser(char **s);
-
-extern volatile sig_atomic_t	g_sigint_received;
 
 int	shell_loop(t_ctx *ctx)
 {

@@ -6,7 +6,7 @@
 /*   By: cde-la-r <code@cesardelarosa.xyz>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/29 17:52:04 by cde-la-r          #+#    #+#             */
-/*   Updated: 2025/06/24 23:27:24 by cde-la-r         ###   ########.fr       */
+/*   Updated: 2025/06/25 00:59:20 by cde-la-r         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,8 +22,6 @@
 
 #define EXIT 0
 #define CONTINUE 1
-
-extern volatile sig_atomic_t	g_sigint_received;
 
 static char	*get_last_arg(char **argv)
 {

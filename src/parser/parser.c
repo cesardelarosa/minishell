@@ -6,7 +6,7 @@
 /*   By: cde-la-r <code@cesardelarosa.xyz>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/29 18:08:20 by cde-la-r          #+#    #+#             */
-/*   Updated: 2025/06/24 23:28:27 by cde-la-r         ###   ########.fr       */
+/*   Updated: 2025/06/25 01:01:06 by cde-la-r         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,8 +16,6 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include "signals.h"
-
-extern volatile sig_atomic_t	g_sigint_received;
 
 int			parse_token(t_command *cmd, t_list **tokens_ptr, t_list **arg_lst,
 				t_ctx *ctx);

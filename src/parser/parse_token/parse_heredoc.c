@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   handle_heredoc.c                                   :+:      :+:    :+:   */
+/*   parse_heredoc.c                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: cde-la-r <code@cesardelarosa.xyz>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/08 12:27:40 by cde-la-r          #+#    #+#             */
-/*   Updated: 2025/06/24 13:06:05 by cde-la-r         ###   ########.fr       */
+/*   Updated: 2025/06/25 01:00:49 by cde-la-r         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,8 +19,6 @@
 #include "signals.h"
 
 #define EOF_MSG "minishell: warning: here-document delimited by end-of-file\n"
-
-extern volatile sig_atomic_t	g_sigint_received;
 
 static char	*append_line_to_buffer(char *buffer, char *line)
 {

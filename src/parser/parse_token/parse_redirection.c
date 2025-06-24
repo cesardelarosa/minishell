@@ -6,7 +6,7 @@
 /*   By: cde-la-r <code@cesardelarosa.xyz>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/05 21:25:45 by cde-la-r          #+#    #+#             */
-/*   Updated: 2025/06/25 00:38:48 by cde-la-r         ###   ########.fr       */
+/*   Updated: 2025/06/25 01:00:30 by cde-la-r         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,8 +18,6 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <stdbool.h>
-
-extern volatile sig_atomic_t	g_sigint_received;
 
 char	*expand_value(char *value, t_token_type type, t_ctx *ctx,
 			int *is_multiple);
