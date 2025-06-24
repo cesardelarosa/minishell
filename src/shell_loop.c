@@ -74,7 +74,7 @@ int	shell_loop(t_ctx *ctx)
 	if (!pipeline)
 		return (CONTINUE);
 	setup_signals(COMMAND_MODE);
-	ctx->status = exec(pipeline);
+	ctx->status = exec(pipeline) % 256;
 	update_underscore_var(pipeline, ctx);
 	pipeline_destroy(pipeline);
 	return (CONTINUE);

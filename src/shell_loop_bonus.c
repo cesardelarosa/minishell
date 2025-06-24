@@ -46,7 +46,7 @@ int	shell_loop(t_ctx *ctx)
 	else
 	{
 		setup_signals(COMMAND_MODE);
-		ctx->status = ast_exec(ast_root, ctx);
+		ctx->status = ast_exec(ast_root, ctx) % 256;
 		ast_destroy(ast_root);
 	}
 	free(line);
