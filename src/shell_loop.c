@@ -6,7 +6,7 @@
 /*   By: cde-la-r <code@cesardelarosa.xyz>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/29 17:52:04 by cde-la-r          #+#    #+#             */
-/*   Updated: 2025/06/23 17:02:09 by cde-la-r         ###   ########.fr       */
+/*   Updated: 2025/06/24 23:27:24 by cde-la-r         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -73,15 +73,9 @@ int	shell_loop(t_ctx *ctx)
 	pipeline = parser(tokens, ctx);
 	ft_lstclear(&tokens, free_token);
 	if (g_sigint_received)
-	{
-		ctx->status = 130;
-		return (CONTINUE);
-	}
+		return (ctx->status = 130, CONTINUE);
 	if (!pipeline)
-	{
-		ctx->status = 2;
-		return (CONTINUE);
-	}
+		return (ctx->status = 2, CONTINUE);
 	setup_signals(COMMAND_MODE);
 	ctx->status = exec(pipeline) % 256;
 	update_underscore_var(pipeline, ctx);
