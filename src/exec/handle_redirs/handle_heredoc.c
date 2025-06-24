@@ -48,15 +48,18 @@ char	*read_heredoc_input(char *delimiter, bool expand_vars, t_ctx *ctx)
 	buffer = ft_strdup("");
 	if (!buffer)
 		return (NULL);
-	g_sigint_received = 0;
-	while (g_sigint_received == 0)
+	while (1)
 	{
 		line = readline("> ");
-		if (!line || g_sigint_received)
+		if (g_sigint_received)
 		{
-			if (!line && !g_sigint_received)
-				ft_putstr_fd(EOF_MSG, 2);
 			free(line);
+			free(buffer);
+			return (NULL);
+		}
+		if (!line)
+		{
+			ft_putstr_fd(EOF_MSG, 2);
 			break ;
 		}
 		if (ft_strcmp(line, delimiter) == 0)
@@ -80,11 +83,6 @@ char	*read_heredoc_input(char *delimiter, bool expand_vars, t_ctx *ctx)
 			free(processed_line);
 		if (!buffer)
 			return (NULL);
-	}
-	if (g_sigint_received)
-	{
-		free(buffer);
-		return (NULL);
 	}
 	return (buffer);
 }

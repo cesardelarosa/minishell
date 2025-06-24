@@ -16,6 +16,7 @@
 #include <stdio.h>
 #include <readline/readline.h>
 #include <readline/history.h>
+#include <sys/ioctl.h>
 
 volatile sig_atomic_t	g_sigint_received = 0;
 
@@ -33,7 +34,7 @@ void	heredoc_sigint_handler(int sig)
 {
 	(void)sig;
 	g_sigint_received = 1;
-	rl_done = 1;
+	ioctl(STDIN_FILENO, TIOCSTI, "\n");
 }
 
 static void	command_sigint_handler(int sig)
