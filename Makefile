@@ -43,6 +43,7 @@ COMMON_SRCS := \
 	parser/parse_token/parse_error.c \
 	parser/parse_token/parse_redirection.c \
 	parser/parse_token/parse_word.c \
+	parser/parse_token/parse_heredoc.c \
 	read_prompt/read_prompt.c \
 	signals/signals.c \
 	structs_utils/command_utils.c \
