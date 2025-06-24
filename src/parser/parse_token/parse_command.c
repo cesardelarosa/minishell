@@ -6,7 +6,7 @@
 /*   By: cde-la-r <code@cesardelarosa.xyz>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/18 13:16:49 by cde-la-r          #+#    #+#             */
-/*   Updated: 2025/06/23 15:17:24 by cde-la-r         ###   ########.fr       */
+/*   Updated: 2025/06/24 23:24:04 by cde-la-r         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -58,7 +58,6 @@ t_command	*parse_command(t_list **tokens_ptr, t_ctx *ctx,
 	t_command	*cmd;
 	t_list		*arg_list;
 	t_token		*token;
-	int			ret;
 
 	cmd = ft_calloc(1, sizeof(t_command));
 	if (!cmd)
@@ -69,8 +68,7 @@ t_command	*parse_command(t_list **tokens_ptr, t_ctx *ctx,
 		token = (t_token *)(*tokens_ptr)->content;
 		if (!is_command_part(token->type))
 			break ;
-		ret = parse_ft(cmd, tokens_ptr, &arg_list, ctx);
-		if (ret != 1)
+		if (parse_ft(cmd, tokens_ptr, &arg_list, ctx) != 1)
 		{
 			command_destroy(cmd);
 			ft_lstclear(&arg_list, free);
