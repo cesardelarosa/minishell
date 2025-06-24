@@ -6,7 +6,7 @@
 /*   By: cde-la-r <code@cesardelarosa.xyz>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/20 09:43:38 by cde-la-r          #+#    #+#             */
-/*   Updated: 2025/06/23 17:45:40 by cde-la-r         ###   ########.fr       */
+/*   Updated: 2025/06/24 08:08:32 by cde-la-r         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,11 +17,13 @@
 t_ctx	init_ctx(char **envp, char *prog_name)
 {
 	t_ctx	ctx;
+	char	*last_slash;
 
-	if (ft_strlen(prog_name) > 2)
-		ctx.prog_name = ft_strdup(prog_name + 2);
+	last_slash = ft_strrchr(prog_name, '/');
+	if (last_slash)
+		ctx.prog_name = ft_strdup(last_slash + 1);
 	else
-		ctx.prog_name = 0;
+		ctx.prog_name = ft_strdup(prog_name);
 	ctx.envp = envp;
 	ctx.env = env_init(envp);
 	ctx.status = 0;

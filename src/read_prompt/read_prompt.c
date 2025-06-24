@@ -6,7 +6,7 @@
 /*   By: cde-la-r <code@cesardelarosa.xyz>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/29 17:51:38 by cde-la-r          #+#    #+#             */
-/*   Updated: 2025/06/23 18:54:03 by cde-la-r         ###   ########.fr       */
+/*   Updated: 2025/06/23 21:38:33 by cde-la-r         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,7 +27,7 @@
 #define RESET  "\001\033[0m\002"
 #define RED "\001\033[1;31m\002"
 
-static char	*get_hostname(void)
+static char	*get_host(void)
 {
 	int		fd;
 	char	buf[256];
@@ -89,31 +89,28 @@ char	*get_cwd(t_env *env)
 
 static char	*build_prompt(t_ctx *ctx)
 {
-	char	*user;
-	char	*host;
-	char	*cwd;
 	char	*error;
 
-	user = get_user();
-	host = get_hostname();
-	cwd = get_cwd(ctx->env);
-	error = NULL;
 	if (!isatty(STDOUT_FILENO))
 		return (ft_strjoin_free(ft_strjoin_free(ft_strjoin_free(ft_strjoin_free(
 							ft_strjoin_free(ft_strjoin_free(ft_strjoin_free(
 										ft_strjoin_free("(", ctx->prog_name, 1),
-										") ", 1), user, 3), "@", 1), host, 3),
-						":", 1), cwd, 3), "$ ", 1));
+										") ", 1), get_user(), 3), "@", 1),
+							get_host(), 3), ":", 1), get_cwd(ctx->env), 3),
+				"$ ", 1));
 	if (ctx->status != 0)
-		error = ft_strdup(RED "✗ " RESET);
+		error = ft_strdup(RED " ✗ " RESET);
+	else
+		error = ft_strdup(" ");
 	return (ft_strjoin_free(ft_strjoin_free(ft_strjoin_free(ft_strjoin_free(
 						ft_strjoin_free(ft_strjoin_free(ft_strjoin_free(
 									ft_strjoin_free(ft_strjoin_free(
 											ft_strjoin_free("(" MAGENTA,
-												ctx->prog_name, 0), RESET ") ",
+												ctx->prog_name, 0), RESET ")",
 											1), error, 3), GREEN, 1),
-								user, 3), RESET "@" BLUE, 1), host, 3), RESET
-					":" YELLOW, 1), cwd, 3), RESET "$ ", 1));
+								get_user(), 3), RESET "@" BLUE, 1), get_host(),
+						3), RESET ":" YELLOW, 1), get_cwd(ctx->env), 3), RESET
+			"$ ", 1));
 }
 
 char	*read_prompt(t_ctx *ctx)

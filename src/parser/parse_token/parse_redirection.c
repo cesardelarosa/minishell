@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   handle_redirection.c                               :+:      :+:    :+:   */
+/*   parse_redirection.c                                :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: cde-la-r <code@cesardelarosa.xyz>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/05 21:25:45 by cde-la-r          #+#    #+#             */
-/*   Updated: 2025/04/05 21:25:48 by cde-la-r         ###   ########.fr       */
+/*   Updated: 2025/06/24 07:57:37 by cde-la-r         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,10 +23,7 @@ static int	check_token_existence(t_list **tokens_ptr)
 {
 	*tokens_ptr = (*tokens_ptr)->next;
 	if (!*tokens_ptr)
-	{
-		ft_putstr_fd("Error: redirection operator without target\n", 2);
 		return (0);
-	}
 	return (1);
 }
 
@@ -35,10 +32,7 @@ static int	validate_token_type(t_token *token)
 	if (token->type != TOKEN_WORD
 		&& token->type != TOKEN_SINGLE_QUOTED_STRING
 		&& token->type != TOKEN_DOUBLE_QUOTED_STRING)
-	{
-		ft_putstr_fd("Error: redirection target must be a word\n", 2);
 		return (0);
-	}
 	return (1);
 }
 
