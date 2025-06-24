@@ -6,7 +6,7 @@
 /*   By: cde-la-r <code@cesardelarosa.xyz>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/08 12:27:40 by cde-la-r          #+#    #+#             */
-/*   Updated: 2025/06/21 11:46:39 by cde-la-r         ###   ########.fr       */
+/*   Updated: 2025/06/24 13:06:05 by cde-la-r         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,7 +25,7 @@
 
 extern volatile sig_atomic_t	g_sigint_received;
 
-int								destroy_ctx(t_ctx *ctx);
+void							destroy_ctx(t_ctx *ctx);
 
 static void	cleanup_heredoc(int write_fd, t_redir *redir)
 {
@@ -61,7 +61,7 @@ static void	read_heredoc_lines(int write_fd, t_redir *redir)
 		line = readline("> ");
 		if (!line || g_sigint_received)
 		{
-			if (!g_sigint_received)
+			if (!line && !g_sigint_received)
 				ft_putstr_fd(EOF_MSG, STDERR_FILENO);
 			free(line);
 			break ;
@@ -80,7 +80,6 @@ static void	read_heredoc_lines(int write_fd, t_redir *redir)
 static void	heredoc_child(int pipefd[], t_redir *redir)
 {
 	close(pipefd[0]);
-	setup_signals(RESET_MODE);
 	read_heredoc_lines(pipefd[1], redir);
 }
 
@@ -89,6 +88,7 @@ int	handle_heredoc(t_redir *redir)
 	int		pipefd[2];
 	pid_t	pid;
 	int		status;
+	int		wait_ret;
 
 	if (pipe(pipefd) < 0)
 		error_exit_code(1, strerror(errno), "pipe", redir->cmd->p);
@@ -99,7 +99,9 @@ int	handle_heredoc(t_redir *redir)
 	if (pid == 0)
 		heredoc_child(pipefd, redir);
 	close(pipefd[1]);
-	waitpid(pid, &status, 0);
+	wait_ret = waitpid(pid, &status, 0);
+	while (wait_ret == -1 && errno == EINTR)
+		wait_ret = waitpid(pid, &status, 0);
 	setup_signals(INTERACTIVE_MODE);
 	if ((WIFSIGNALED(status) && WTERMSIG(status) == SIGINT)
 		|| (WIFEXITED(status) && WEXITSTATUS(status) == 130))

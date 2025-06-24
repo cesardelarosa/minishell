@@ -6,7 +6,7 @@
 /*   By: cde-la-r <code@cesardelarosa.xyz>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/11 11:35:53 by cde-la-r          #+#    #+#             */
-/*   Updated: 2025/04/11 17:16:25 by cde-la-r         ###   ########.fr       */
+/*   Updated: 2025/06/24 13:06:18 by cde-la-r         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,7 +33,7 @@ void	heredoc_sigint_handler(int sig)
 {
 	(void)sig;
 	g_sigint_received = 1;
-	write(STDOUT_FILENO, "\n", 1);
+	close(STDIN_FILENO);
 }
 
 static void	command_sigint_handler(int sig)
