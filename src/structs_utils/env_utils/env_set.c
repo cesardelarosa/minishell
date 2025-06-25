@@ -9,7 +9,6 @@
 /*   Updated: 2025/04/04 00:24:01 by cesi             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
-
 #include "env.h"
 #include "libft.h"
 #include <stdlib.h>
@@ -27,7 +26,8 @@ static t_envvar	*envvar_new(const char *key, const char *value)
 	return (node);
 }
 
-int	env_set(t_env *env, const char *key, const char *value, int overwrite)
+static t_envvar	*find_and_update_envvar(t_env *env, const char *key,
+		const char *value, int overwrite)
 {
 	t_envvar	*curr;
 
@@ -41,16 +41,43 @@ int	env_set(t_env *env, const char *key, const char *value, int overwrite)
 				free(curr->value);
 				curr->value = ft_strdup(value);
 			}
-			env_update_envp(env);
-			return (0);
+			return (curr);
 		}
 		curr = curr->next;
 	}
-	curr = envvar_new(key, value);
-	if (!curr)
+	return (NULL);
+}
+
+static int	append_new_envvar(t_env *env, const char *key, const char *value)
+{
+	t_envvar	*new_node;
+	t_envvar	*last;
+
+	new_node = envvar_new(key, value);
+	if (!new_node)
 		return (-1);
-	curr->next = env->head;
-	env->head = curr;
+	if (env->head == NULL)
+		env->head = new_node;
+	else
+	{
+		last = env->head;
+		while (last->next)
+			last = last->next;
+		last->next = new_node;
+	}
+	return (0);
+}
+
+int	env_set(t_env *env, const char *key, const char *value, int overwrite)
+{
+	t_envvar	*existing_var;
+
+	existing_var = find_and_update_envvar(env, key, value, overwrite);
+	if (existing_var == NULL)
+	{
+		if (append_new_envvar(env, key, value) != 0)
+			return (-1);
+	}
 	env_update_envp(env);
 	return (0);
 }
