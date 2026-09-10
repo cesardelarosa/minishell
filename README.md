@@ -35,7 +35,7 @@ To compile and execute this project, the following packages must be installed on
 
 1. **Clone the repository:**
 ```bash
-git clone <your_repository_url>
+git clone https://github.com/cesardelarosa/minishell.git
 cd minishell
 
 ```
