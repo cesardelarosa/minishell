@@ -13,10 +13,10 @@
 #include "parser.h"
 #include "env.h"
 #include "libft.h"
-#include <readline/readline.h>
 #include <stdio.h>
 #include <stdbool.h>
 #include "signals.h"
+#include <readline/readline.h>
 
 #define EOF_MSG "minishell: warning: here-document delimited by end-of-file\n"
 
